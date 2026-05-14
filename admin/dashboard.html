@@ -1361,6 +1361,111 @@
             return html;
         }
 
+        // Social media platforms configuration
+        const socialPlatforms = [
+            { type: 'whatsapp', name: 'WhatsApp', icon: '📱', placeholder: '粘贴 WhatsApp 链接，如 https://wa.me/1234567890' },
+            { type: 'facebook', name: 'Facebook', icon: '📘', placeholder: '粘贴 Facebook 主页链接' },
+            { type: 'instagram', name: 'Instagram', icon: '📷', placeholder: '粘贴 Instagram 主页链接' },
+            { type: 'tiktok', name: 'TikTok', icon: '🎵', placeholder: '粘贴 TikTok 主页链接' },
+            { type: 'email', name: 'Email', icon: '✉️', placeholder: '输入联系邮箱' }
+        ];
+
+        // Create social media input fields
+        function createSocialMediaInputs(existingLinks) {
+            // Build lookup from existing links
+            const linkMap = {};
+            if (existingLinks && Array.isArray(existingLinks)) {
+                existingLinks.forEach(link => {
+                    if (link.type) {
+                        linkMap[link.type] = link.url || '';
+                    }
+                });
+            }
+
+            let html = '<div class="social-media-inputs">';
+            
+            socialPlatforms.forEach(platform => {
+                const currentValue = linkMap[platform.type] || '';
+                html += `
+                    <div class="social-input-item">
+                        <div class="social-input-label">
+                            <span class="social-icon">${platform.icon}</span>
+                            <span class="social-name">${platform.name}</span>
+                        </div>
+                        <input type="text" 
+                               name="social_${platform.type}" 
+                               value="${currentValue}" 
+                               placeholder="${platform.placeholder}"
+                               class="social-input">
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Add CSS for social media inputs
+        function addSocialMediaStyles() {
+            if (document.getElementById('social-media-styles')) return;
+            
+            const style = document.createElement('style');
+            style.id = 'social-media-styles';
+            style.textContent = `
+                .social-media-inputs {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                }
+                
+                .social-input-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                
+                .social-input-label {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    min-width: 110px;
+                }
+                
+                .social-icon {
+                    font-size: 20px;
+                }
+                
+                .social-name {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: var(--text);
+                }
+                
+                .social-input {
+                    flex: 1;
+                    padding: 10px 14px;
+                    border: 1px solid var(--border);
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-family: 'Inter', sans-serif;
+                    background: var(--bg);
+                    transition: all 0.2s;
+                }
+                
+                .social-input:focus {
+                    outline: none;
+                    border-color: var(--gold);
+                    box-shadow: 0 0 0 3px rgba(197, 164, 103, 0.1);
+                }
+                
+                .social-input::placeholder {
+                    color: var(--text-secondary);
+                    font-size: 13px;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
         // GitHub API helpers
         async function fetchFile(path) {
             const response = await fetch(`${API_BASE}/${path}`, {
@@ -2132,6 +2237,9 @@
         }
 
         function renderContactEditor(container, data) {
+            // Add styles for social media inputs
+            addSocialMediaStyles();
+            
             container.innerHTML = `
                 <div class="form-grid">
                     ${createFormField('板块标签', 'section_label', data.section_label || '')}
@@ -2152,8 +2260,8 @@
                     <div class="section-divider"><h3 class="section-title">社交链接</h3></div>
                     ${createFormField('社交链接标题', 'social_title', data.social_title || '')}
                     <div class="form-group full-width">
-                        <label>社交链接（JSON 数组）</label>
-                        <textarea id="social_links" rows="8" style="font-family:monospace;font-size:13px;">${data.social_links ? JSON.stringify(data.social_links, null, 2) : '[]'}</textarea>
+                        <label>社交媒体链接</label>
+                        ${createSocialMediaInputs(data.social_links || [])}
                     </div>
 
                     <div class="section-divider"><h3 class="section-title">表单</h3></div>
@@ -2340,13 +2448,32 @@
 
                     // Collect form values
                     const inputs = document.querySelectorAll('#tab-0 input, #tab-0 textarea');
+                    
+                    // For contact section, build social_links from individual inputs
+                    if (currentSection === 'contact') {
+                        const socialLinks = [];
+                        socialPlatforms.forEach(platform => {
+                            const input = document.querySelector(`input[name="social_${platform.type}"]`);
+                            if (input && input.value.trim()) {
+                                socialLinks.push({
+                                    type: platform.type,
+                                    url: input.value.trim()
+                                });
+                            }
+                        });
+                        newData.social_links = socialLinks;
+                    }
+                    
                     inputs.forEach(input => {
                         const name = input.name || input.id;
                         if (!name) return;
                         
-                        // Handle JSON fields
+                        // Skip social_* inputs - handled above for contact section
+                        if (name.startsWith('social_')) return;
+                        
+                        // Handle JSON fields (but skip social_links which is handled above)
                         if (['brand_promises', 'story_paragraphs', 'highlights', 'process_steps', 'promises', 
-                             'contact_items', 'social_links', 'steps', 'categories'].includes(name)) {
+                             'contact_items', 'steps', 'categories'].includes(name)) {
                             try {
                                 newData[name] = JSON.parse(input.value);
                             } catch (e) {
