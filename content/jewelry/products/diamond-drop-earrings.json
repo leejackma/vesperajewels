@@ -1,11 +1,12 @@
 {
   "name": "Diamond Drop Earrings",
-  "price": "$9999",
-  "category": "earrings",
-  "description": "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.",
+  "price": "$99999",
+  "category": "undefined",
+  "description": "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.",
   "images": [
-    "/assets/uploads/earring1.jpg"
+    "/assets/uploads/earring1.jpg",
+    "/assets/uploads/jewelry/product_1778778750954_1778778750957.jpg"
   ],
-  "order": "1",
-  "published": "true"
+  "order": 1,
+  "published": true
 }
