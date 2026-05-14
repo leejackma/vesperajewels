@@ -217,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (Array.isArray(jewelryData)) {
                         // Filter out unpublished products and sort by order
                         dynamicProducts.jewelry = jewelryData
-                            .filter(item => item.published !== false)
+                            .filter(item => item.published !== false && item.published !== 'false')
                             .sort((a, b) => (a.order || 999) - (b.order || 999))
                             .map((item, index) => ({
                                 name: item.name || '',
@@ -245,7 +245,7 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (Array.isArray(watchData)) {
                         // Filter out unpublished products and sort by order
                         dynamicProducts.watch = watchData
-                            .filter(item => item.published !== false)
+                            .filter(item => item.published !== false && item.published !== 'false')
                             .sort((a, b) => (a.order || 999) - (b.order || 999))
                             .map((item) => ({
                                 name: item.name || '',

@@ -2599,7 +2599,7 @@
             const panelTabs = document.getElementById('panelTabs');
             const panelContent = document.getElementById('panelContent');
             const productType = section === 'jewelry-products' ? 'jewelry' : 'watch';
-            const productDir = `content/${productType}/products`;
+            const productDir = `content/${productType === 'watch' ? 'watches' : productType}/products`;
 
             // Update header with add button
             const header = document.querySelector('.content-header');
@@ -3366,7 +3366,7 @@
                 .replace(/^-+|-+$/g, '')
                 .substring(0, 50);
             
-            const productDir = `content/${currentProductType}/products`;
+            const productDir = `content/${currentProductType === 'watch' ? 'watches' : currentProductType}/products`;
             const filename = `${slug}.json`;
             const path = editingProductPath || `${productDir}/${filename}`;
 
@@ -3395,7 +3395,7 @@
         // Rebuild products-index.json after save/delete
         async function rebuildProductsIndex(productType) {
             try {
-                const productDir = `content/${productType}/products`;
+                const productDir = `content/${productType === 'watch' ? 'watches' : productType}/products`;
                 const files = await fetchDirectory(productDir);
                 const jsonFiles = files.filter(f => f.name.endsWith('.json'));
                 const products = [];
@@ -3408,7 +3408,7 @@
                         _path: file.path
                     });
                 }
-                await saveJsonFile(`content/${productType}/products-index.json`, products, `更新产品索引`);
+                await saveJsonFile(`content/${productType === 'watch' ? 'watches' : productType}/products-index.json`, products, `更新产品索引`);
             } catch (e) {
                 console.error('重建产品索引失败:', e);
             }
