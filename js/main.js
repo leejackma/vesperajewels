@@ -173,20 +173,6 @@ document.addEventListener('DOMContentLoaded', function() {
         watch: []
     };
 
-    // Load products from markdown files
-    async function loadProductsFromCMS() {
-        try {
-            // Load jewelry products
-            const jewelryResponse = await fetch('content/jewelry/products/');
-            if (jewelryResponse.ok) {
-                // Can't list directory via fetch, so we'll try common files
-                // For now, keep using static data if fetch fails
-            }
-        } catch (e) {
-            console.log('Using default product data');
-        }
-    }
-
     // Simple frontmatter parser for markdown
     function parseFrontmatter(text) {
         const result = {};
@@ -220,78 +206,204 @@ document.addEventListener('DOMContentLoaded', function() {
         return result;
     }
 
-    // Load products from content directory
+    // Load products from JSON files (new CMS format)
     async function loadProducts() {
         try {
-            // Try to load jewelry products
-            const jewelryFiles = [
-                'diamond-solitaire-ring', 'gold-band-ring', 'pearl-necklace', 'diamond-pendant',
-                'diamond-drop-earrings', 'gold-hoop-earrings', 'tennis-bracelet', 'gold-chain-bracelet'
-            ];
-            
-            const jewelryProducts = [];
-            for (const file of jewelryFiles) {
-                try {
-                    const response = await fetch(`content/jewelry/products/${file}.md`);
-                    if (response.ok) {
-                        const text = await response.text();
-                        const fm = parseFrontmatter(text);
-                        jewelryProducts.push({
-                            name: fm.name || '',
-                            price: fm.price || '',
-                            desc: fm.description || '',
-                            category: fm.category ? fm.category.toUpperCase() : '',
-                            image: fm.image || (fm.images ? fm.images.split(',')[0].trim() : ''),
-                            images: fm.images ? fm.images.split(',').map(s => s.trim()) : (fm.image ? [fm.image] : [])
-                        });
+            // Load jewelry products from products-index.json
+            try {
+                const jewelryResponse = await fetch('content/jewelry/products-index.json');
+                if (jewelryResponse.ok) {
+                    const jewelryData = await jewelryResponse.json();
+                    if (Array.isArray(jewelryData)) {
+                        dynamicProducts.jewelry = jewelryData.map((item, index) => ({
+                            name: item.name || '',
+                            price: item.price || '',
+                            desc: item.description || '',
+                            category: item.category ? item.category.toUpperCase() : '',
+                            image: item.images?.[0] || item.image || '',
+                            images: item.images || (item.image ? [item.image] : []),
+                            badge: item.badge || ''
+                        }));
                     }
-                } catch (e) {}
-            }
-            if (jewelryProducts.length > 0) {
-                dynamicProducts.jewelry = jewelryProducts;
+                }
+            } catch (e) {
+                console.log('Failed to load jewelry products from JSON, trying individual files');
+                // Fallback: try loading individual .json files
+                const jewelryFiles = [
+                    'diamond-solitaire-ring', 'gold-band-ring', 'pearl-necklace', 'diamond-pendant',
+                    'diamond-drop-earrings', 'gold-hoop-earrings', 'tennis-bracelet', 'gold-chain-bracelet'
+                ];
+                const jewelryProducts = [];
+                for (const file of jewelryFiles) {
+                    try {
+                        const response = await fetch(`content/jewelry/products/${file}.json`);
+                        if (response.ok) {
+                            const item = await response.json();
+                            jewelryProducts.push({
+                                name: item.name || '',
+                                price: item.price || '',
+                                desc: item.description || '',
+                                category: item.category ? item.category.toUpperCase() : '',
+                                image: item.images?.[0] || item.image || '',
+                                images: item.images || (item.image ? [item.image] : [])
+                            });
+                        }
+                    } catch (e2) {}
+                }
+                if (jewelryProducts.length > 0) {
+                    dynamicProducts.jewelry = jewelryProducts;
+                }
             }
 
-            // Try to load watch products
-            const watchFiles = [
-                'classic-dress-watch', 'gold-chronograph', 'diamond-encrusted-watch',
-                'sport-chronograph', 'ladies-collection', 'skeleton-watch'
-            ];
-            
-            const watchProducts = [];
-            for (const file of watchFiles) {
-                try {
-                    const response = await fetch(`content/watches/products/${file}.md`);
-                    if (response.ok) {
-                        const text = await response.text();
-                        const fm = parseFrontmatter(text);
-                        watchProducts.push({
-                            name: fm.name || '',
-                            price: fm.price || '',
-                            desc: fm.description || '',
-                            category: fm.category ? fm.category.toUpperCase() : '',
-                            image: fm.image || (fm.images ? fm.images.split(',')[0].trim() : ''),
-                            images: fm.images ? fm.images.split(',').map(s => s.trim()) : (fm.image ? [fm.image] : [])
-                        });
+            // Load watch products from products-index.json
+            try {
+                const watchResponse = await fetch('content/watches/products-index.json');
+                if (watchResponse.ok) {
+                    const watchData = await watchResponse.json();
+                    if (Array.isArray(watchData)) {
+                        dynamicProducts.watch = watchData.map((item) => ({
+                            name: item.name || '',
+                            price: item.price || '',
+                            desc: item.description || '',
+                            category: item.category || '',
+                            image: item.image || (item.images?.[0] || ''),
+                            images: item.images || (item.image ? [item.image] : []),
+                            badge: item.badge || ''
+                        }));
                     }
-                } catch (e) {}
-            }
-            if (watchProducts.length > 0) {
-                dynamicProducts.watch = watchProducts;
+                }
+            } catch (e) {
+                console.log('Failed to load watch products from JSON, trying individual files');
+                // Fallback: try loading individual .json files
+                const watchFiles = [
+                    'classic-dress-watch', 'gold-chronograph', 'diamond-encrusted-watch',
+                    'sport-chronograph', 'ladies-collection', 'skeleton-watch'
+                ];
+                const watchProducts = [];
+                for (const file of watchFiles) {
+                    try {
+                        const response = await fetch(`content/watches/products/${file}.json`);
+                        if (response.ok) {
+                            const item = await response.json();
+                            watchProducts.push({
+                                name: item.name || '',
+                                price: item.price || '',
+                                desc: item.description || '',
+                                category: item.category || '',
+                                image: item.image || (item.images?.[0] || ''),
+                                images: item.images || (item.image ? [item.image] : [])
+                            });
+                        }
+                    } catch (e2) {}
+                }
+                if (watchProducts.length > 0) {
+                    dynamicProducts.watch = watchProducts;
+                }
             }
 
-            // Featured products = first of each category
+            // Featured products = first 4 from jewelry
             if (dynamicProducts.jewelry.length > 0) {
-                dynamicProducts.featured = [
-                    dynamicProducts.jewelry[0],
-                    ...dynamicProducts.jewelry.slice(0, 2),
-                    ...dynamicProducts.watch.slice(0, 1)
-                ].slice(0, 4);
+                dynamicProducts.featured = dynamicProducts.jewelry.slice(0, 4);
             }
 
-            console.log('Products loaded from CMS:', dynamicProducts);
+            console.log('Products loaded from JSON:', dynamicProducts);
+            
+            // Update product cards on page with dynamic data
+            updateProductCards();
+            
         } catch (e) {
-            console.log('Using default product data');
+            console.log('Using default product data:', e.message);
         }
+    }
+
+    // Update product cards on the page with dynamic data from JSON
+    function updateProductCards() {
+        // Update Featured cards
+        const featuredGrid = document.getElementById('featuredGrid');
+        if (featuredGrid && dynamicProducts.featured && dynamicProducts.featured.length > 0) {
+            const featuredCards = featuredGrid.querySelectorAll('.featured-card');
+            featuredCards.forEach((card, index) => {
+                const product = dynamicProducts.featured[index];
+                if (product) {
+                    // Update image
+                    const img = card.querySelector('img');
+                    if (img && product.image) {
+                        img.src = product.image;
+                    }
+                    // Update name
+                    const nameEl = card.querySelector('h3');
+                    if (nameEl && product.name) {
+                        nameEl.textContent = product.name;
+                    }
+                    // Update price
+                    const priceEl = card.querySelector('.text-gold');
+                    if (priceEl && product.price) {
+                        priceEl.textContent = product.price;
+                    }
+                }
+            });
+        }
+
+        // Update Jewelry cards
+        const jewelryGrid = document.getElementById('jewelryGrid');
+        if (jewelryGrid && dynamicProducts.jewelry && dynamicProducts.jewelry.length > 0) {
+            const jewelryCards = jewelryGrid.querySelectorAll('.product-card');
+            jewelryCards.forEach((card, index) => {
+                const product = dynamicProducts.jewelry[index];
+                if (product) {
+                    // Update image
+                    const img = card.querySelector('img');
+                    if (img && product.image) {
+                        img.src = product.image;
+                    }
+                    // Update name
+                    const nameEl = card.querySelector('h3');
+                    if (nameEl && product.name) {
+                        nameEl.textContent = product.name;
+                    }
+                    // Update price
+                    const priceEl = card.querySelector('.text-gold');
+                    if (priceEl && product.price) {
+                        priceEl.textContent = product.price;
+                    }
+                }
+            });
+        }
+
+        // Update Watch cards
+        const watchGrid = document.getElementById('watchGrid');
+        if (watchGrid && dynamicProducts.watch && dynamicProducts.watch.length > 0) {
+            const watchCards = watchGrid.querySelectorAll('.watch-card');
+            watchCards.forEach((card, index) => {
+                const product = dynamicProducts.watch[index];
+                if (product) {
+                    // Update image
+                    const img = card.querySelector('img');
+                    if (img && product.image) {
+                        img.src = product.image;
+                    }
+                    // Update name
+                    const nameEl = card.querySelector('h3');
+                    if (nameEl && product.name) {
+                        nameEl.textContent = product.name;
+                    }
+                    // Update price
+                    const priceEl = card.querySelector('.text-gold');
+                    if (priceEl && product.price) {
+                        priceEl.textContent = product.price;
+                    }
+                    // Update badge if exists
+                    if (product.badge) {
+                        const badge = card.querySelector('.absolute.top-4.left-4');
+                        if (badge) {
+                            badge.textContent = product.badge;
+                        }
+                    }
+                }
+            });
+        }
+
+        console.log('Product cards updated successfully');
     }
 
     window.openProductModal = function(type, id) {
