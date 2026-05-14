@@ -1,0 +1,10 @@
+---
+name: Gold Hoop Earrings
+category: earrings
+price: $890
+description: Classic gold hoop earrings in solid 18K gold. Lightweight and comfortable for all-day wear.
+image: /assets/uploads/earring2.jpg
+badge: ""
+featured: false
+published: true
+---

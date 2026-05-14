@@ -1,0 +1,10 @@
+---
+name: Gold Chain Bracelet
+category: bracelets
+price: $1,450
+description: Elegant solid gold chain bracelet with lobster clasp. Perfect for stacking or wearing alone.
+image: /assets/uploads/bracelet2.jpg
+badge: ""
+featured: false
+published: true
+---

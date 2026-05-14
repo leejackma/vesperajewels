@@ -1,0 +1,10 @@
+---
+name: Diamond Encrusted
+category: Luxury
+price: $28,500
+description: Limited edition timepiece encrusted with diamonds. A masterpiece of watchmaking and gem setting.
+image: /assets/uploads/watch3.jpg
+badge: NEW
+featured: false
+published: true
+---

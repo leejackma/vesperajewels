@@ -1,0 +1,6 @@
+---
+title: Personal Wholesale
+question: Is This Personal Or Wholesale?
+answer: "Vespera Jewels serves both retail and wholesale customers. We offer special pricing for bulk orders and business partnerships."
+order: 7
+---

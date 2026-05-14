@@ -1,0 +1,6 @@
+---
+title: Watch Collection
+section_label: TIMEPIECES
+section_title: Luxury Watches
+section_subtitle: Precision engineering meets timeless elegance
+---

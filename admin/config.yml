@@ -1,0 +1,339 @@
+# Decap CMS Configuration for Vespera Jewels
+# Access admin at /admin/index.html
+
+backend:
+  name: git-gateway
+  branch: main
+
+# Enable editorial workflow for draft/review/publish
+publish_mode: editorial_workflow
+
+# Media storage
+media_folder: "assets/uploads"
+public_folder: "/assets/uploads"
+
+# Site URL (update for production)
+site_url: https://vesperajewels.com
+display_url: https://vesperajewels.com
+logo_url: https://vesperajewels.com/assets/logo.png
+
+collections:
+  # ==========================================
+  # THEME SETTINGS
+  # ==========================================
+  - name: "theme"
+    label: "Theme Settings"
+    folder: "content/settings"
+    create: true
+    slug: "theme"
+    fields:
+      - label: "Color Scheme"
+        name: "colors"
+        widget: "object"
+        fields:
+          - {label: "Primary Background", name: "primary_bg", widget: "color", default: "#FAFAF8"}
+          - {label: "White Background", name: "white_bg", widget: "color", default: "#FFFFFF"}
+          - {label: "Dark Background", name: "dark_bg", widget: "color", default: "#0F0F0F"}
+          - {label: "Accent Gold", name: "accent_gold", widget: "color", default: "#C5A467"}
+          - {label: "Accent Gold Dark", name: "accent_gold_dark", widget: "color", default: "#B8924A"}
+          - {label: "Nav & Heading Color", name: "nav_heading_color", widget: "color", default: "#C5A467"}
+          - {label: "Primary Text", name: "text_primary", widget: "color", default: "#1A1A1A"}
+          - {label: "Medium Text", name: "text_medium", widget: "color", default: "#333333"}
+          - {label: "Secondary Text", name: "text_secondary", widget: "color", default: "#8A8A8A"}
+          - {label: "Border Color", name: "border_color", widget: "color", default: "#E8E4DE"}
+      - label: "Hero Section"
+        name: "hero"
+        widget: "object"
+        fields:
+          - {label: "Background Color", name: "bg_color", widget: "color", default: "#000000"}
+          - {label: "Overlay Opacity", name: "overlay_opacity", widget: "number", default: 40, min: 0, max: 100}
+          - {label: "Text Color", name: "text_color", widget: "color", default: "#FFFFFF"}
+      - label: "WhatsApp CTA Button"
+        name: "whatsapp_cta"
+        widget: "object"
+        fields:
+          - {label: "WhatsApp Link", name: "link", widget: "string", default: "https://wa.me/1234567890", hint: "Your WhatsApp contact link (e.g., https://wa.me/1234567890)"}
+          - {label: "Button Text", name: "text", widget: "string", default: "WHATSAPP US"}
+          - {label: "Button Background Color", name: "button_color", widget: "color", default: "#E8C468"}
+          - {label: "Icon & Text Color", name: "text_color", widget: "color", default: "#1A1A1A"}
+
+  # ==========================================
+  # HOME Section
+  # ==========================================
+  - name: "home"
+    label: "Home Section"
+    folder: "content/home"
+    create: false
+    slug: "home"
+    fields:
+      - {label: "Hero Title", name: "hero_title", widget: "string"}
+      - {label: "Hero Subtitle", name: "hero_subtitle", widget: "string"}
+      - {label: "Hero Description", name: "hero_description", widget: "string"}
+      - {label: "Hero CTA Button", name: "hero_cta", widget: "string"}
+      - {label: "Hero Background Image", name: "hero_image", widget: "image"}
+      - {label: "Featured Title", name: "featured_title", widget: "string"}
+      - {label: "Featured Subtitle", name: "featured_subtitle", widget: "string"}
+      - {label: "Craft Section Label", name: "craft_label", widget: "string", default: "OUR CRAFT"}
+      - {label: "Craft Section Title", name: "craft_title", widget: "string"}
+      - label: "Brand Promises"
+        name: "brand_promises"
+        widget: "list"
+        fields:
+          - {label: "Icon (Emoji)", name: "icon", widget: "string"}
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Description", name: "description", widget: "string"}
+
+  # ==========================================
+  # ABOUT US Section
+  # ==========================================
+  - name: "about"
+    label: "About Us"
+    folder: "content/about"
+    create: false
+    slug: "about"
+    fields:
+      - {label: "Section Label", name: "section_label", widget: "string"}
+      - {label: "Section Title", name: "section_title", widget: "string"}
+      - {label: "Story Paragraphs", name: "story_paragraphs", widget: "list", field: {label: "Paragraph", name: "paragraph", widget: "text"}}
+      - {label: "Story Image", name: "story_image", widget: "image"}
+      - {label: "Highlights Label", name: "highlights_label", widget: "string"}
+      - {label: "Highlights Title", name: "highlights_title", widget: "string"}
+      - label: "Highlights"
+        name: "highlights"
+        widget: "list"
+        fields:
+          - {label: "Icon (Emoji)", name: "icon", widget: "string"}
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Description", name: "description", widget: "text"}
+      - {label: "Process Label", name: "process_label", widget: "string"}
+      - {label: "Process Title", name: "process_title", widget: "string"}
+      - label: "Process Steps"
+        name: "process_steps"
+        widget: "list"
+        fields:
+          - {label: "Step Number", name: "number", widget: "string"}
+          - {label: "Step Title", name: "title", widget: "string"}
+      - {label: "Promises Label", name: "promises_label", widget: "string"}
+      - {label: "Promises Title", name: "promises_title", widget: "string"}
+      - label: "Promises"
+        name: "promises"
+        widget: "list"
+        fields:
+          - {label: "Promise Text", name: "text", widget: "string"}
+
+  # ==========================================
+  # JEWELRY Collection Settings
+  # ==========================================
+  - name: "jewelry_settings"
+    label: "Jewelry Settings"
+    folder: "content/jewelry"
+    create: false
+    slug: "jewelry"
+    fields:
+      - {label: "Section Label", name: "section_label", widget: "string"}
+      - {label: "Section Title", name: "section_title", widget: "string"}
+      - {label: "Section Subtitle", name: "section_subtitle", widget: "string"}
+      - label: "Categories"
+        name: "categories"
+        widget: "list"
+        fields:
+          - {label: "Category ID", name: "id", widget: "string"}
+          - {label: "Category Name", name: "name", widget: "string"}
+
+  # ==========================================
+  # JEWELRY Products
+  # ==========================================
+  - name: "jewelry"
+    label: "Jewelry Products"
+    folder: "content/jewelry/products"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "name"
+    fields:
+      - {label: "Name", name: "name", widget: "string"}
+      - {label: "Category", name: "category", widget: "select", options: ["rings", "necklaces", "earrings", "bracelets"]}
+      - {label: "Price", name: "price", widget: "string"}
+      - {label: "Description", name: "description", widget: "markdown"}
+      - {label: "Main Image", name: "image", widget: "image"}
+      - {label: "Badge", name: "badge", widget: "string", required: false, hint: "e.g., BESTSELLER, NEW"}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
+      - {label: "Published", name: "published", widget: "boolean", default: true}
+
+  # ==========================================
+  # WATCH Collection Settings
+  # ==========================================
+  - name: "watch_settings"
+    label: "Watch Settings"
+    folder: "content/watches"
+    create: false
+    slug: "watches"
+    fields:
+      - {label: "Section Label", name: "section_label", widget: "string"}
+      - {label: "Section Title", name: "section_title", widget: "string"}
+      - {label: "Section Subtitle", name: "section_subtitle", widget: "string"}
+
+  # ==========================================
+  # WATCH Products
+  # ==========================================
+  - name: "watches"
+    label: "Watch Products"
+    folder: "content/watches/products"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "name"
+    fields:
+      - {label: "Name", name: "name", widget: "string"}
+      - {label: "Category", name: "category", widget: "string"}
+      - {label: "Price", name: "price", widget: "string"}
+      - {label: "Description", name: "description", widget: "markdown"}
+      - {label: "Main Image", name: "image", widget: "image"}
+      - {label: "Badge", name: "badge", widget: "string", required: false}
+      - {label: "Featured", name: "featured", widget: "boolean", default: false}
+      - {label: "Published", name: "published", widget: "boolean", default: true}
+
+  # ==========================================
+  # FAQ Section Settings
+  # ==========================================
+  - name: "faq_settings"
+    label: "FAQ Settings"
+    folder: "content/faq"
+    create: false
+    slug: "faq"
+    fields:
+      - {label: "Section Label", name: "section_label", widget: "string"}
+      - {label: "Section Title", name: "section_title", widget: "string"}
+
+  # ==========================================
+  # FAQ Items
+  # ==========================================
+  - name: "faq"
+    label: "FAQ Items"
+    folder: "content/faq/items"
+    create: true
+    slug: "{{slug}}"
+    identifier_field: "question"
+    fields:
+      - {label: "Question", name: "question", widget: "string"}
+      - {label: "Answer", name: "answer", widget: "markdown"}
+      - {label: "Order", name: "order", widget: "number", default: 0}
+      - {label: "Published", name: "published", widget: "boolean", default: true}
+
+  # ==========================================
+  # PARTNER CASES Section Settings
+  # ==========================================
+  - name: "partner_cases_settings"
+    label: "Partner Cases Settings"
+    folder: "content/partner-cases"
+    create: false
+    slug: "settings"
+    fields:
+      - {label: "Section Label", name: "section_label", widget: "string", default: "OUR PARTNERS"}
+      - {label: "Section Title", name: "section_title", widget: "string", default: "Partner Cases"}
+      - {label: "Section Subtitle", name: "section_subtitle", widget: "string", default: "Discover our successful collaborations with prestigious brands worldwide"}
+
+  # ==========================================
+  # PARTNER CASES Items
+  # ==========================================
+  - name: "partner_cases"
+    label: "Partner Cases"
+    folder: "content/partner-cases"
+    create: true
+    slug: "case-{{order}}"
+    identifier_field: "title"
+    fields:
+      - {label: "Case Title", name: "title", widget: "string"}
+      - {label: "Description", name: "description", widget: "text"}
+      - label: "Images"
+        name: "images"
+        widget: "list"
+        summary: "{{fields.image}}"
+        field:
+          label: "Image URL"
+          name: "image"
+          widget: "image"
+      - {label: "Order", name: "order", widget: "number", default: 1}
+      - {label: "Published", name: "published", widget: "boolean", default: true}
+
+  # ==========================================
+  # Process Steps Settings
+  # ==========================================
+  - name: "process_settings"
+    label: "Process Steps Settings"
+    folder: "content/process"
+    create: false
+    slug: "process"
+    fields:
+      - {label: "Section Label", name: "section_label", widget: "string"}
+      - {label: "Section Title", name: "section_title", widget: "string"}
+
+  # ==========================================
+  # Process Steps
+  # ==========================================
+  - name: "process_steps"
+    label: "Process Steps"
+    folder: "content/process"
+    create: true
+    slug: "step-{{order}}"
+    identifier_field: "title"
+    fields:
+      - {label: "Title", name: "title", widget: "string"}
+      - {label: "Image URL", name: "image", widget: "string", hint: "Enter the full image URL"}
+      - {label: "Order", name: "order", widget: "number", default: 1}
+      - {label: "Published", name: "published", widget: "boolean", default: true}
+
+  # ==========================================
+  # HOW TO ORDER Section
+  # ==========================================
+  - name: "order"
+    label: "How to Order"
+    folder: "content/order"
+    create: false
+    slug: "how-to-order"
+    fields:
+      - {label: "Section Label", name: "section_label", widget: "string"}
+      - {label: "Section Title", name: "section_title", widget: "string"}
+      - {label: "Section Subtitle", name: "section_subtitle", widget: "string"}
+      - label: "Steps"
+        name: "steps"
+        widget: "list"
+        fields:
+          - {label: "Step Number", name: "number", widget: "string"}
+          - {label: "Step Title", name: "title", widget: "string"}
+          - {label: "Step Description", name: "description", widget: "string"}
+          - {label: "Step Image URL", name: "image", widget: "string", required: false}
+      - {label: "CTA Title", name: "cta_title", widget: "string"}
+      - {label: "CTA Subtitle", name: "cta_subtitle", widget: "string"}
+      - {label: "WhatsApp Button Text", name: "cta_whatsapp", widget: "string"}
+      - {label: "Email Button Text", name: "cta_email", widget: "string"}
+      - {label: "Form Button Text", name: "cta_form", widget: "string"}
+
+  # ==========================================
+  # CONTACT Section
+  # ==========================================
+  - name: "contact"
+    label: "Contact Info"
+    folder: "content/contact"
+    create: false
+    slug: "contact"
+    fields:
+      - {label: "Section Label", name: "section_label", widget: "string"}
+      - {label: "Section Title", name: "section_title", widget: "string"}
+      - {label: "Introduction", name: "intro", widget: "text"}
+      - label: "Contact Items"
+        name: "contact_items"
+        widget: "list"
+        fields:
+          - {label: "Type", name: "type", widget: "select", options: ["address", "phone", "email", "whatsapp"]}
+          - {label: "Icon", name: "icon", widget: "select", options: ["location", "phone", "email", "whatsapp"]}
+          - {label: "Title", name: "title", widget: "string"}
+          - {label: "Content", name: "content", widget: "text"}
+      - {label: "Social Links Title", name: "social_title", widget: "string"}
+      - label: "Social Links"
+        name: "social_links"
+        widget: "list"
+        fields:
+          - {label: "Type", name: "type", widget: "select", options: ["whatsapp", "facebook", "instagram", "tiktok", "email"]}
+          - {label: "URL", name: "url", widget: "string"}
+      - {label: "Form Title", name: "form_title", widget: "string"}
+      - {label: "Success Title", name: "form_success_title", widget: "string"}
+      - {label: "Success Message", name: "form_success_message", widget: "string"}

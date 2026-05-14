@@ -1,0 +1,12 @@
+---
+title: How to pay
+question: How to pay?
+answer: |
+  Please tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount.
+  
+  We accept Western Union, Money Gram, Wise (By Swift) and Bank Transfer. 50% deposit and 50% before shipping – we will make video and photos of the products to confirm with you before shipping. 
+  
+  For small orders, you will need to pay in advance. For larger orders, the payment terms is negotiable. We will process and issue your order as soon as possible after payment.
+order: 1
+published: true
+---

@@ -1,0 +1,25 @@
+{
+  "colors": {
+    "primary_bg": "#FAFAF8",
+    "white_bg": "#FFFFFF",
+    "dark_bg": "#0F0F0F",
+    "accent_gold": "#C5A467",
+    "accent_gold_dark": "#B8924A",
+    "nav_heading_color": "#C5A467",
+    "text_primary": "#1A1A1A",
+    "text_medium": "#333333",
+    "text_secondary": "#8A8A8A",
+    "border_color": "#E8E4DE"
+  },
+  "hero": {
+    "bg_color": "#000000",
+    "overlay_opacity": 0.4,
+    "text_color": "#FFFFFF"
+  },
+  "whatsapp_cta": {
+    "link": "https://wa.me/1234567890",
+    "text": "WHATSAPP US",
+    "button_color": "#E2B94D",
+    "text_color": "#1A1A1A"
+  }
+}

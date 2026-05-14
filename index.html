@@ -1,0 +1,1285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VESPERA JEWELS | Fine Jewelry & Luxury Timepieces</title>
+    <meta name="description" content="Vespera Jewels - Premium jewelry and luxury watches. 100% 18K solid gold, conflict-free diamonds, worldwide shipping.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    
+    <!-- Theme Loader - Load custom colors from CMS -->
+    <script>
+        async function loadTheme() {
+            try {
+                const response = await fetch('content/settings/theme.json');
+                if (!response.ok) {
+                    // Try markdown format
+                    const mdResponse = await fetch('content/settings/theme.md');
+                    if (mdResponse.ok) {
+                        const mdText = await mdResponse.text();
+                        parseThemeFromMarkdown(mdText);
+                    }
+                    return;
+                }
+                const theme = await response.json();
+                applyTheme(theme);
+            } catch (error) {
+                try {
+                    // Fallback: load markdown and parse
+                    const response = await fetch('content/settings/theme.md');
+                    if (response.ok) {
+                        const mdText = await response.text();
+                        parseThemeFromMarkdown(mdText);
+                    }
+                } catch (e) {
+                    console.log('Using default theme');
+                }
+            }
+        }
+        
+        function parseThemeFromMarkdown(mdText) {
+            const theme = { colors: {}, hero: {}, whatsapp_cta: {} };
+            const lines = mdText.split('\n');
+            
+            let currentSection = null;
+            lines.forEach(line => {
+                const trimmed = line.trim();
+                
+                // Check for section headers
+                if (trimmed === 'colors:') {
+                    currentSection = 'colors';
+                } else if (trimmed === 'hero:') {
+                    currentSection = 'hero';
+                } else if (trimmed === 'whatsapp_cta:') {
+                    currentSection = 'whatsapp_cta';
+                }
+                // Parse key-value pairs
+                else if (currentSection && trimmed.includes(':')) {
+                    const colonIndex = trimmed.indexOf(':');
+                    const key = trimmed.substring(0, colonIndex).trim();
+                    let value = trimmed.substring(colonIndex + 1).trim();
+                    
+                    // Remove quotes if present
+                    if (value.startsWith('"') && value.endsWith('"')) {
+                        value = value.slice(1, -1);
+                    }
+                    
+                    if (currentSection === 'colors') {
+                        theme.colors[key] = value;
+                    } else if (currentSection === 'hero') {
+                        if (key === 'overlay_opacity') {
+                            theme.hero[key] = parseFloat(value) / 100;
+                        } else {
+                            theme.hero[key] = value;
+                        }
+                    } else if (currentSection === 'whatsapp_cta') {
+                        theme.whatsapp_cta[key] = value;
+                    }
+                }
+            });
+            
+            applyTheme(theme);
+        }
+        
+        function applyTheme(theme) {
+            const root = document.documentElement;
+            
+            // Apply colors
+            if (theme.colors) {
+                if (theme.colors.primary_bg) {
+                    root.style.setProperty('--color-primary-bg', theme.colors.primary_bg);
+                }
+                if (theme.colors.white_bg) {
+                    root.style.setProperty('--color-white-bg', theme.colors.white_bg);
+                }
+                if (theme.colors.dark_bg) {
+                    root.style.setProperty('--color-dark-bg', theme.colors.dark_bg);
+                }
+                if (theme.colors.accent_gold) {
+                    root.style.setProperty('--color-accent', theme.colors.accent_gold);
+                }
+                if (theme.colors.accent_gold_dark) {
+                    root.style.setProperty('--color-accent-dark', theme.colors.accent_gold_dark);
+                }
+                if (theme.colors.nav_heading_color) {
+                    root.style.setProperty('--nav-heading-color', theme.colors.nav_heading_color);
+                }
+                if (theme.colors.text_primary) {
+                    root.style.setProperty('--color-text-primary', theme.colors.text_primary);
+                }
+                if (theme.colors.text_medium) {
+                    root.style.setProperty('--color-text-medium', theme.colors.text_medium);
+                }
+                if (theme.colors.text_secondary) {
+                    root.style.setProperty('--color-text-secondary', theme.colors.text_secondary);
+                }
+                if (theme.colors.border_color) {
+                    root.style.setProperty('--color-border', theme.colors.border_color);
+                }
+            }
+            
+            // Apply hero settings
+            if (theme.hero) {
+                if (theme.hero.overlay_opacity !== undefined) {
+                    root.style.setProperty('--hero-overlay-opacity', theme.hero.overlay_opacity);
+                }
+                if (theme.hero.text_color) {
+                    root.style.setProperty('--hero-text-color', theme.hero.text_color);
+                }
+            }
+            
+            // Apply WhatsApp CTA settings
+            if (theme.whatsapp_cta) {
+                const whatsappBtn = document.getElementById('whatsappCtaBtn');
+                const whatsappText = document.getElementById('whatsappCtaText');
+                
+                if (whatsappBtn && theme.whatsapp_cta.link) {
+                    whatsappBtn.href = theme.whatsapp_cta.link;
+                }
+                if (whatsappText && theme.whatsapp_cta.text) {
+                    whatsappText.textContent = theme.whatsapp_cta.text;
+                }
+                if (whatsappBtn && theme.whatsapp_cta.button_color) {
+                    whatsappBtn.style.background = theme.whatsapp_cta.button_color;
+                }
+                if (whatsappBtn && theme.whatsapp_cta.text_color) {
+                    whatsappBtn.style.color = theme.whatsapp_cta.text_color;
+                    whatsappBtn.querySelectorAll('svg, span').forEach(el => {
+                        el.style.color = theme.whatsapp_cta.text_color;
+                    });
+                }
+            }
+            
+            // Update Tailwind config dynamically
+            if (typeof tailwind !== 'undefined') {
+                tailwind.config = {
+                    theme: {
+                        extend: {
+                            colors: {
+                                cream: theme.colors?.primary_bg || '#FAFAF8',
+                                gold: theme.colors?.accent_gold || '#C5A467',
+                                goldDark: theme.colors?.accent_gold_dark || '#B8924A',
+                                textDark: theme.colors?.text_primary || '#1A1A1A',
+                                textMedium: theme.colors?.text_medium || '#333333',
+                                textLight: theme.colors?.text_secondary || '#8A8A8A',
+                                border: theme.colors?.border_color || '#E8E4DE',
+                                darkBg: theme.colors?.dark_bg || '#0F0F0F',
+                            },
+                            fontFamily: {
+                                playfair: ['Playfair Display', 'serif'],
+                                lato: ['Lato', 'sans-serif'],
+                            }
+                        }
+                    }
+                };
+            }
+        }
+        
+        // Load theme on page load
+        document.addEventListener('DOMContentLoaded', loadTheme);
+    </script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        cream: '#FAFAF8',
+                        gold: '#C5A467',
+                        goldDark: '#B8924A',
+                        textDark: '#1A1A1A',
+                        textMedium: '#333333',
+                        textLight: '#8A8A8A',
+                        border: '#E8E4DE',
+                        darkBg: '#0F0F0F',
+                    },
+                    fontFamily: {
+                        playfair: ['Playfair Display', 'serif'],
+                        lato: ['Lato', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <script src="js/content-loader.js" defer></script>
+</head>
+<body class="font-lato text-textMedium bg-white">
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed top-0 left-0 right-0 z-50 transition-all duration-300">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="flex items-center justify-between h-20">
+                <a href="#home" class="flex items-center">
+                    <span style="font-family:'Playfair Display',serif;font-size:28px;font-weight:700;color:#C5A467 !important;letter-spacing:0.12em;white-space:nowrap;line-height:80px;">VESPERA JEWELS</span>
+                </a>
+                
+                <!-- Desktop Menu -->
+                <div class="hidden lg:flex items-center space-x-8">
+                    <a href="#home" class="nav-link" style="color:#C5A467 !important;">HOME</a>
+                    <a href="#about" class="nav-link" style="color:#C5A467 !important;">ABOUT US</a>
+                    <a href="#jewelry" class="nav-link" style="color:#C5A467 !important;">JEWELRY</a>
+                    <a href="#watch" class="nav-link" style="color:#C5A467 !important;">WATCH</a>
+                    <a href="#faq" class="nav-link" style="color:#C5A467 !important;">FAQ'S</a>
+                    <a href="#order" class="nav-link" style="color:#C5A467 !important;">HOW TO ORDER</a>
+                    <a href="#partners" class="nav-link" style="color:#C5A467 !important;">PARTNER CASES</a>
+                    <a href="#contact" class="nav-link" style="color:#C5A467 !important;">CONTACT</a>
+                </div>
+                
+                <!-- Mobile Menu Button -->
+                <button id="mobileMenuBtn" class="lg:hidden p-2" aria-label="Menu">
+                    <svg class="w-6 h-6 text-textDark" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M4 6h16M4 12h16M4 18h16"></path>
+                    </svg>
+                </button>
+            </div>
+        </div>
+        
+        <!-- Mobile Menu -->
+        <div id="mobileMenu" class="hidden lg:hidden bg-white border-t border-border">
+            <div class="px-6 py-4 space-y-4">
+                <a href="#home" class="block nav-link-mobile" style="color:#C5A467 !important;">HOME</a>
+                <a href="#about" class="block nav-link-mobile" style="color:#C5A467 !important;">ABOUT US</a>
+                <a href="#jewelry" class="block nav-link-mobile" style="color:#C5A467 !important;">JEWELRY</a>
+                <a href="#watch" class="block nav-link-mobile" style="color:#C5A467 !important;">WATCH</a>
+                <a href="#faq" class="block nav-link-mobile" style="color:#C5A467 !important;">FAQ'S</a>
+                <a href="#order" class="block nav-link-mobile" style="color:#C5A467 !important;">HOW TO ORDER</a>
+                <a href="#partners" class="block nav-link-mobile" style="color:#C5A467 !important;">PARTNER CASES</a>
+                <a href="#contact" class="block nav-link-mobile" style="color:#C5A467 !important;">CONTACT</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- ========== HOME SECTION ========== -->
+    <section id="home" class="relative">
+        <!-- Hero Area -->
+        <div class="relative h-screen flex items-center justify-center">
+            <div class="absolute inset-0">
+                <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920&q=80" 
+                     alt="Luxury Jewelry Collection" 
+                     class="w-full h-full object-cover">
+                <div class="absolute inset-0 bg-black/40"></div>
+            </div>
+            
+            <div class="relative z-10 text-center text-white px-6 animate-on-scroll">
+                
+                <h1 class="font-playfair text-4xl md:text-6xl lg:text-7xl mb-4 tracking-wider" data-cms="home.hero_title">I NEED A JEWELRY FOR</h1>
+                <p class="font-playfair italic text-2xl md:text-3xl text-gold mb-2" data-cms="home.hero_subtitle">My Mother • My Wife • My Girlfriend • Myself</p>
+                <div class="flex justify-center gap-4 mt-8">
+                    <span class="w-16 h-px bg-gold mt-3"></span>
+                    <span class="text-lg tracking-widest" style="color: #C5A467">VESPERA JEWELS</span>
+                    <span class="w-16 h-px bg-gold mt-3"></span>
+                </div>
+            </div>
+            
+            <div class="absolute bottom-20 left-1/2 transform -translate-x-1/2 animate-bounce z-20">
+                <svg class="w-6 h-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M19 14l-7 7m0 0l-7-7m7 7V3"></path>
+                </svg>
+            </div>
+        </div>
+
+        <!-- WhatsApp CTA Button - Floating at Hero Bottom -->
+        <div class="relative z-30 -mt-20 flex justify-center">
+            <a href="https://wa.me/1234567890" id="whatsappCtaBtn" style="background:#E2B94D !important; color:#1A1A1A !important; display:inline-flex; align-items:center; justify-content:center; gap:16px; padding:22px 52px; font-size:18px; font-weight:800; letter-spacing:0.15em; text-transform:uppercase; text-decoration:none; border-radius:60px; box-shadow:0 8px 32px rgba(226,185,77,0.6), 0 4px 16px rgba(0,0,0,0.25); border:none; transition:all 0.3s ease;" target="_blank" rel="noopener noreferrer">
+                <svg style="color:#1A1A1A; width:32px; height:32px; flex-shrink:0;" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                <span id="whatsappCtaText" style="color:#1A1A1A !important; font-weight:800; font-size:18px; letter-spacing:0.15em;">WHATSAPP US</span>
+            </a>
+        </div>
+
+        <!-- Featured Products -->
+        <div class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                <div class="text-center mb-12 animate-on-scroll">
+                    <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">COLLECTIONS</span>
+                    <h2 class="font-playfair text-3xl md:text-4xl mt-2" style="color: #C5A467" data-cms="home.featured_title">Featured Products</h2>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-6" id="featuredGrid">
+                    <div class="featured-card animate-on-scroll cursor-pointer" onclick="openProductModal('featured', 1)">
+                        <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=400&q=80" alt="Diamond Ring" class="w-full aspect-square object-cover">
+                        <div class="p-4 text-center">
+                            <h3 class="font-playfair text-sm " style="color: #C5A467">Diamond Ring</h3>
+                            <p class="text-gold text-sm mt-1">$2,850</p>
+                        </div>
+                    </div>
+                    <div class="featured-card animate-on-scroll cursor-pointer" onclick="openProductModal('featured', 2)">
+                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&q=80" alt="Pearl Necklace" class="w-full aspect-square object-cover">
+                        <div class="p-4 text-center">
+                            <h3 class="font-playfair text-sm " style="color: #C5A467">Pearl Necklace</h3>
+                            <p class="text-gold text-sm mt-1">$3,400</p>
+                        </div>
+                    </div>
+                    <div class="featured-card animate-on-scroll cursor-pointer" onclick="openProductModal('featured', 3)">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&q=80" alt="Luxury Watch" class="w-full aspect-square object-cover">
+                        <div class="p-4 text-center">
+                            <h3 class="font-playfair text-sm " style="color: #C5A467">Luxury Watch</h3>
+                            <p class="text-gold text-sm mt-1">$4,500</p>
+                        </div>
+                    </div>
+                    <div class="featured-card animate-on-scroll cursor-pointer" onclick="openProductModal('featured', 4)">
+                        <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=400&q=80" alt="Diamond Earrings" class="w-full aspect-square object-cover">
+                        <div class="p-4 text-center">
+                            <h3 class="font-playfair text-sm " style="color: #C5A467">Diamond Earrings</h3>
+                            <p class="text-gold text-sm mt-1">$2,600</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-10">
+                    <a href="#jewelry" class="outline-btn">View All Products</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Brand Promise -->
+        <div class="py-16 bg-cream">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+                    <div class="text-center animate-on-scroll">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-gold flex items-center justify-center">
+                            <span class="text-3xl" data-cms="home.promise.0.icon">✨</span>
+                        </div>
+                        <h3 class="font-playfair text-lg" style="color: #C5A467" data-cms="home.promise.0.title">100% Real 18K Gold</h3>
+                        <p class="text-textLight text-sm mt-2" data-cms="home.promise.0.description">Solid gold, not plated</p>
+                    </div>
+                    <div class="text-center animate-on-scroll">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-gold flex items-center justify-center">
+                            <span class="text-3xl" data-cms="home.promise.1.icon">💎</span>
+                        </div>
+                        <h3 class="font-playfair text-lg" style="color: #C5A467" data-cms="home.promise.1.title">Conflict-Free Diamonds</h3>
+                        <p class="text-textLight text-sm mt-2" data-cms="home.promise.1.description">Ethically sourced</p>
+                    </div>
+                    <div class="text-center animate-on-scroll">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-gold flex items-center justify-center">
+                            <span class="text-3xl" data-cms="home.promise.2.icon">📦</span>
+                        </div>
+                        <h3 class="font-playfair text-lg" style="color: #C5A467" data-cms="home.promise.2.title">Professional Packaging</h3>
+                        <p class="text-textLight text-sm mt-2" data-cms="home.promise.2.description">Brand box included</p>
+                    </div>
+                    <div class="text-center animate-on-scroll">
+                        <div class="w-20 h-20 mx-auto mb-4 rounded-full border-2 border-gold flex items-center justify-center">
+                            <span class="text-3xl" data-cms="home.promise.3.icon">🚚</span>
+                        </div>
+                        <h3 class="font-playfair text-lg" style="color: #C5A467" data-cms="home.promise.3.title">Worldwide Shipping</h3>
+                        <p class="text-textLight text-sm mt-2" data-cms="home.promise.3.description">Fast & insured</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Factory Images -->
+        <div class="py-20 bg-white">
+            <div class="max-w-7xl mx-auto px-6 lg:px-12">
+                <div class="text-center mb-12 animate-on-scroll">
+                    <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A" data-cms="home.craft_label">OUR CRAFT</span>
+                    <h2 class="font-playfair text-3xl md:text-4xl mt-2" style="color: #C5A467" data-cms="home.craft_title">Factory & Workshop</h2>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                    <div class="animate-on-scroll overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80" alt="Jewelry Crafting" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="animate-on-scroll overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80" alt="Diamond Setting" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                    <div class="animate-on-scroll overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&q=80" alt="Gold Working" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== ABOUT US SECTION ========== -->
+    <section id="about" class="py-24 md:py-32 bg-cream">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <!-- Brand Story -->
+            <div class="grid md:grid-cols-2 gap-12 md:gap-20 items-center mb-24">
+                <div class="animate-on-scroll">
+                    <img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800&q=80" 
+                         alt="Vespera Jewels Workshop" 
+                         class="w-full aspect-[4/5] object-cover">
+                </div>
+                <div class="animate-on-scroll">
+                    <div class="flex items-center gap-4 mb-6">
+                        <span class="w-12 h-px bg-gold"></span>
+                        <span class="text-sm tracking-[0.2em] text-textLight">OUR STORY</span>
+                    </div>
+                    <h2 class="font-playfair text-3xl md:text-4xl lg:text-5xl mb-6" style="color: #C5A467">
+                        Crafting Beauty<br>Since 1987
+                    </h2>
+                    <p class="text-textLight leading-relaxed mb-4">
+                        For over three decades, Vespera Jewels has been dedicated to creating exceptional jewelry pieces that celebrate life's most precious moments. Our master artisans combine traditional craftsmanship with modern techniques.
+                    </p>
+                    <p class="text-textLight leading-relaxed mb-4">
+                        We specialize in 100% solid 18K gold jewelry and conflict-free diamonds, ensuring every piece meets our exacting standards of quality and elegance.
+                    </p>
+                    <p class="text-textLight leading-relaxed">
+                        From engagement rings to luxury timepieces, each creation tells a story of passion, precision, and timeless beauty.
+                    </p>
+                </div>
+            </div>
+
+            <!-- Three Highlights -->
+            <div class="mb-24">
+                <div class="text-center mb-12 animate-on-scroll">
+                    <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">OUR EXPERTISE</span>
+                    <h2 class="font-playfair text-3xl md:text-4xl mt-2" style="color: #C5A467">What We Offer</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8">
+                    <div class="bg-white p-8 text-center animate-on-scroll border border-border">
+                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-cream flex items-center justify-center">
+                            <span class="text-5xl">💍</span>
+                        </div>
+                        <h3 class="font-playfair text-xl " style="color: #C5A467 mb-4">Diamond Jewelry</h3>
+                        <p class="text-textLight text-sm leading-relaxed">
+                            Exquisite diamond pieces certified for quality and brilliance. Each diamond is carefully selected for its exceptional cut, clarity, and carat.
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 text-center animate-on-scroll border border-border">
+                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-cream flex items-center justify-center">
+                            <span class="text-5xl">🥇</span>
+                        </div>
+                        <h3 class="font-playfair text-xl " style="color: #C5A467 mb-4">Solid 18K Gold</h3>
+                        <p class="text-textLight text-sm leading-relaxed">
+                            Real 18K solid gold, never plated. Our pieces are crafted to last generations, maintaining their beauty and value over time.
+                        </p>
+                    </div>
+                    <div class="bg-white p-8 text-center animate-on-scroll border border-border">
+                        <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-cream flex items-center justify-center">
+                            <span class="text-5xl">🔍</span>
+                        </div>
+                        <h3 class="font-playfair text-xl " style="color: #C5A467 mb-4">Mirror Quality</h3>
+                        <p class="text-textLight text-sm leading-relaxed">
+                            Every piece undergoes rigorous quality inspection. We guarantee mirror-finish surfaces and impeccable detailing on all our jewelry.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Jewelry Making Process -->
+            <div class="mb-24">
+                <div class="text-center mb-12 animate-on-scroll">
+                    <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">THE PROCESS</span>
+                    <h2 class="font-playfair text-3xl md:text-4xl mt-2" style="color: #C5A467">How We Create Your Jewelry</h2>
+                </div>
+                
+                <!-- Process Steps Container - Loaded dynamically -->
+                <div id="processStepsContainer" class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <!-- Default fallback content -->
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://s.coze.cn/image/CpKwiIkmZeg/" alt="1 Design" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">1 Design</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://s.coze.cn/image/dSJg0VBfymo/" alt="2 Select Materials" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">2 Select Materials</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://s.coze.cn/image/RgfsONBe-OE/" alt="3 Carve Wax" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">3 Carve Wax</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://s.coze.cn/image/IJgHawiH84w/" alt="4 Make Mold" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">4 Make Mold</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://s.coze.cn/image/S11fvRilCsI/" alt="5 Pour Gold" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">5 Pour Gold</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://s.coze.cn/image/ZEUAQ3QwTZE/" alt="6 Polish" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">6 Polish</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://s.coze.cn/image/LhqzFmGyuHc/" alt="7 Set Stone" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">7 Set Stone</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=400&h=300&fit=crop" alt="8 Solder" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">8 Solder</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://images.unsplash.com/photo-1515562141589-67f0d9200154?w=400&h=300&fit=crop" alt="9 Forming" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">9 Forming</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=300&fit=crop" alt="10 Filing" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">10 Filing</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&h=300&fit=crop" alt="11 Cleaning" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">11 Cleaning</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=400&h=300&fit=crop" alt="12 Electroplate" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">12 Electroplate</p>
+                    </div>
+                    <div class="process-card animate-on-scroll">
+                        <div class="process-card-image">
+                            <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=300&fit=crop" alt="13 Quality Check" loading="lazy">
+                        </div>
+                        <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">13 Quality Check</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Brand Promises -->
+            <div class="bg-white p-8 md:p-12 border border-border">
+                <div class="text-center mb-10 animate-on-scroll">
+                    <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">OUR COMMITMENT</span>
+                    <h2 class="font-playfair text-2xl md:text-3xl mt-2" style="color: #C5A467">The Vespera Jewels Promise</h2>
+                </div>
+                
+                <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="flex items-start gap-3 animate-on-scroll">
+                        <span class="text-gold text-xl">✓</span>
+                        <p class="text-textMedium">Wide selection of quality products</p>
+                    </div>
+                    <div class="flex items-start gap-3 animate-on-scroll">
+                        <span class="text-gold text-xl">✓</span>
+                        <p class="text-textMedium">Always competitive prices</p>
+                    </div>
+                    <div class="flex items-start gap-3 animate-on-scroll">
+                        <span class="text-gold text-xl">✓</span>
+                        <p class="text-textMedium">Knowledgeable product support</p>
+                    </div>
+                    <div class="flex items-start gap-3 animate-on-scroll">
+                        <span class="text-gold text-xl">✓</span>
+                        <p class="text-textMedium">Fast shipping with professional packaging</p>
+                    </div>
+                    <div class="flex items-start gap-3 animate-on-scroll">
+                        <span class="text-gold text-xl">✓</span>
+                        <p class="text-textMedium">Friendly customer service</p>
+                    </div>
+                    <div class="flex items-start gap-3 animate-on-scroll">
+                        <span class="text-gold text-xl">✓</span>
+                        <p class="text-textMedium">Respect for your privacy</p>
+                    </div>
+                    <div class="flex items-start gap-3 animate-on-scroll">
+                        <span class="text-gold text-xl">✓</span>
+                        <p class="text-textMedium">30-day return/exchange policy</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== JEWELRY SECTION ========== -->
+    <section id="jewelry" class="py-24 md:py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="text-center mb-12 animate-on-scroll">
+                <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">COLLECTION</span>
+                <h2 class="font-playfair text-3xl md:text-4xl lg:text-5xl mt-2" style="color: #C5A467">Fine Jewelry</h2>
+                <p class="text-textLight mt-4 max-w-2xl mx-auto">Explore our curated collection of rings, necklaces, earrings, and bracelets</p>
+            </div>
+            
+            <!-- Category Filters -->
+            <div class="flex flex-wrap justify-center gap-4 mb-12 animate-on-scroll">
+                <button class="filter-btn active" data-category="all">All</button>
+                <button class="filter-btn" data-category="rings">Rings</button>
+                <button class="filter-btn" data-category="necklaces">Necklaces</button>
+                <button class="filter-btn" data-category="earrings">Earrings</button>
+                <button class="filter-btn" data-category="bracelets">Bracelets</button>
+            </div>
+            
+            <!-- Product Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6" id="jewelryGrid">
+                <div class="product-card animate-on-scroll cursor-pointer" data-category="rings" onclick="openProductModal('jewelry', 1)">
+                    <div class="overflow-hidden aspect-square">
+                        <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=500&q=80" alt="Diamond Solitaire Ring" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-playfair text-sm " style="color: #C5A467">Diamond Solitaire Ring</h3>
+                        <p class="text-gold mt-1">$2,850</p>
+                    </div>
+                </div>
+                
+                <div class="product-card animate-on-scroll cursor-pointer" data-category="rings" onclick="openProductModal('jewelry', 2)">
+                    <div class="overflow-hidden aspect-square">
+                        <img src="https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=500&q=80" alt="Gold Band Ring" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-playfair text-sm " style="color: #C5A467">Gold Band Ring</h3>
+                        <p class="text-gold mt-1">$1,200</p>
+                    </div>
+                </div>
+                
+                <div class="product-card animate-on-scroll cursor-pointer" data-category="necklaces" onclick="openProductModal('jewelry', 3)">
+                    <div class="overflow-hidden aspect-square">
+                        <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500&q=80" alt="Pearl Strand Necklace" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-playfair text-sm " style="color: #C5A467">Pearl Strand Necklace</h3>
+                        <p class="text-gold mt-1">$3,400</p>
+                    </div>
+                </div>
+                
+                <div class="product-card animate-on-scroll cursor-pointer" data-category="necklaces" onclick="openProductModal('jewelry', 4)">
+                    <div class="overflow-hidden aspect-square">
+                        <img src="https://images.unsplash.com/photo-1611923134239-b9be5816e23c?w=500&q=80" alt="Diamond Pendant" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-playfair text-sm " style="color: #C5A467">Diamond Pendant</h3>
+                        <p class="text-gold mt-1">$4,200</p>
+                    </div>
+                </div>
+                
+                <div class="product-card animate-on-scroll cursor-pointer" data-category="earrings" onclick="openProductModal('jewelry', 5)">
+                    <div class="overflow-hidden aspect-square">
+                        <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=500&q=80" alt="Diamond Drop Earrings" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-playfair text-sm " style="color: #C5A467">Diamond Drop Earrings</h3>
+                        <p class="text-gold mt-1">$2,600</p>
+                    </div>
+                </div>
+                
+                <div class="product-card animate-on-scroll cursor-pointer" data-category="earrings" onclick="openProductModal('jewelry', 6)">
+                    <div class="overflow-hidden aspect-square">
+                        <img src="https://images.unsplash.com/photo-1630019852942-f89202989a59?w=500&q=80" alt="Gold Hoop Earrings" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-playfair text-sm " style="color: #C5A467">Gold Hoop Earrings</h3>
+                        <p class="text-gold mt-1">$890</p>
+                    </div>
+                </div>
+                
+                <div class="product-card animate-on-scroll cursor-pointer" data-category="bracelets" onclick="openProductModal('jewelry', 7)">
+                    <div class="overflow-hidden aspect-square">
+                        <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=500&q=80" alt="Diamond Tennis Bracelet" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-playfair text-sm " style="color: #C5A467">Diamond Tennis Bracelet</h3>
+                        <p class="text-gold mt-1">$5,800</p>
+                    </div>
+                </div>
+                
+                <div class="product-card animate-on-scroll cursor-pointer" data-category="bracelets" onclick="openProductModal('jewelry', 8)">
+                    <div class="overflow-hidden aspect-square">
+                        <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=500&q=80" alt="Gold Chain Bracelet" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110">
+                    </div>
+                    <div class="p-4 text-center">
+                        <h3 class="font-playfair text-sm " style="color: #C5A467">Gold Chain Bracelet</h3>
+                        <p class="text-gold mt-1">$1,450</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="flex justify-center gap-2 mt-12 animate-on-scroll">
+                <button class="w-10 h-10 flex items-center justify-center border border-gold text-gold">1</button>
+                <button class="w-10 h-10 flex items-center justify-center border border-border text-textLight hover:border-gold hover:text-gold">2</button>
+                <button class="w-10 h-10 flex items-center justify-center border border-border text-textLight hover:border-gold hover:text-gold">3</button>
+                <button class="w-10 h-10 flex items-center justify-center border border-border text-textLight hover:border-gold hover:text-gold">→</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== WATCH SECTION ========== -->
+    <section id="watch" class="py-24 md:py-32 bg-cream">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="text-center mb-12 animate-on-scroll">
+                <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">TIMEPIECES</span>
+                <h2 class="font-playfair text-3xl md:text-4xl lg:text-5xl mt-2" style="color: #C5A467">Luxury Watches</h2>
+                <p class="mt-4 max-w-2xl mx-auto" style="color: #8A8A8A">Precision engineering meets timeless elegance</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8" id="watchGrid">
+                <div class="watch-card animate-on-scroll cursor-pointer" onclick="openProductModal('watch', 1)">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80" alt="Classic Dress Watch" class="w-full aspect-square object-cover transition-transform duration-500 hover:scale-105">
+                        <span class="absolute top-4 left-4 bg-gold text-white text-xs px-3 py-1 tracking-wider">BESTSELLER</span>
+                    </div>
+                    <div class="p-6 bg-white">
+                        <h3 class="font-playfair text-xl " style="color: #C5A467">Classic Dress Watch</h3>
+                        <p class="text-textLight text-sm mt-2">Swiss Automatic Movement</p>
+                        <p class="text-gold text-lg mt-3">$4,500</p>
+                    </div>
+                </div>
+                
+                <div class="watch-card animate-on-scroll cursor-pointer" onclick="openProductModal('watch', 2)">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=600&q=80" alt="Gold Chronograph" class="w-full aspect-square object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-6 bg-white">
+                        <h3 class="font-playfair text-xl " style="color: #C5A467">Gold Chronograph</h3>
+                        <p class="text-textLight text-sm mt-2">18K Gold Case</p>
+                        <p class="text-gold text-lg mt-3">$12,800</p>
+                    </div>
+                </div>
+                
+                <div class="watch-card animate-on-scroll cursor-pointer" onclick="openProductModal('watch', 3)">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=600&q=80" alt="Diamond Encrusted" class="w-full aspect-square object-cover transition-transform duration-500 hover:scale-105">
+                        <span class="absolute top-4 left-4 bg-white" style="color: #C5A467 text-xs px-3 py-1 tracking-wider">NEW</span>
+                    </div>
+                    <div class="p-6 bg-white">
+                        <h3 class="font-playfair text-xl " style="color: #C5A467">Diamond Encrusted</h3>
+                        <p class="text-textLight text-sm mt-2">Limited Edition</p>
+                        <p class="text-gold text-lg mt-3">$28,500</p>
+                    </div>
+                </div>
+                
+                <div class="watch-card animate-on-scroll cursor-pointer" onclick="openProductModal('watch', 4)">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600&q=80" alt="Sport Chronograph" class="w-full aspect-square object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-6 bg-white">
+                        <h3 class="font-playfair text-xl " style="color: #C5A467">Sport Chronograph</h3>
+                        <p class="text-textLight text-sm mt-2">Titanium Case</p>
+                        <p class="text-gold text-lg mt-3">$6,200</p>
+                    </div>
+                </div>
+                
+                <div class="watch-card animate-on-scroll cursor-pointer" onclick="openProductModal('watch', 5)">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=600&q=80" alt="Ladies Collection" class="w-full aspect-square object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-6 bg-white">
+                        <h3 class="font-playfair text-xl " style="color: #C5A467">Ladies Collection</h3>
+                        <p class="text-textLight text-sm mt-2">Rose Gold & Diamonds</p>
+                        <p class="text-gold text-lg mt-3">$8,900</p>
+                    </div>
+                </div>
+                
+                <div class="watch-card animate-on-scroll cursor-pointer" onclick="openProductModal('watch', 6)">
+                    <div class="relative overflow-hidden">
+                        <img src="https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&q=80" alt="Skeleton Watch" class="w-full aspect-square object-cover transition-transform duration-500 hover:scale-105">
+                    </div>
+                    <div class="p-6 bg-white">
+                        <h3 class="font-playfair text-xl " style="color: #C5A467">Skeleton Watch</h3>
+                        <p class="text-textLight text-sm mt-2">Visible Movement</p>
+                        <p class="text-gold text-lg mt-3">$7,600</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pagination -->
+            <div class="flex justify-center gap-2 mt-12 animate-on-scroll">
+                <button class="w-10 h-10 flex items-center justify-center bg-gold text-white">1</button>
+                <button class="w-10 h-10 flex items-center justify-center border border-gray-600 text-gray-400 hover:border-gold hover:text-gold">2</button>
+                <button class="w-10 h-10 flex items-center justify-center border border-gray-600 text-gray-400 hover:border-gold hover:text-gold">→</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FAQ SECTION ========== -->
+    <section id="faq" class="py-24 md:py-32 bg-cream">
+        <div class="max-w-3xl mx-auto px-6 lg:px-12">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A" data-cms="faq.section_label">QUESTIONS</span>
+                <h2 class="font-playfair text-3xl md:text-4xl lg:text-5xl mt-2" style="color: #C5A467" data-cms="faq.section_title">Frequently Asked Questions</h2>
+            </div>
+            
+            <!-- FAQ Container - Dynamically loaded from CMS -->
+            <div id="faqContainer" class="space-y-4 animate-on-scroll">
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">How to pay?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">Please tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount. We accept Western Union, Money Gram, Wise (By Swift) and Bank Transfer. 50% deposit and 50% before shipping – we will make video and photos of the products to confirm with you before shipping. For small orders, you will need to pay in advance. For larger orders, the payment terms is negotiable. We will process and issue your order as soon as possible after payment.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">If the item is not in stock, what could I do?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">We will submit the order, and you will need to pay a 50% down payment. The production time is about 7 to 12 days. But some styles need more time. With diamonds, natural stones, or complex styles, it will take more than 12 days. Please give us more time, we will try our best to ensure the quality of the jewelry.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">How to know the price?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">Welcome to chat with us on WhatsApp, Message or Telegram. Send the picture directly and we will reply you ASAP. It is also OK for you to send us an Email. We are online 24h.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">Does it come with original brand box?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">Yes, we offer free original packaging and certificate, but need $100 for shipping cost.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">How to confirm the quality when you send?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">Before we prepare to send, we will take photos and video to confirm with you.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">Can I see more pictures of your work?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">Welcome to chat with our customer service and they will take more pictures for you.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">Do you sell jewelry for personal buyer or only for wholesaler?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">Many of our clients are private buyers. You can order high-quality brand jewelry for your family, friends and yourself. If you're a jewelry reseller, that's great. We will provide free delivery and free original brand boxes if you can order many items each time.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">Worldwide shipping?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">Yes, we will calculate the actual shipping cost according to your country.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">How long does delivery take?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">We offer free worldwide tracked shipping on all our jewelry and watches. Our courier of choice is FedEx & UPS. You can get your gorgeous jewelry about 3–5 days after sent.</div>
+                    </div>
+                </div>
+                <div class="faq-item border border-[#E8E4DE] rounded-lg overflow-hidden">
+                    <button class="faq-question w-full flex items-center justify-between p-5 text-left hover:bg-gray-50 transition-colors" onclick="toggleFaq(this)">
+                        <span style="color: #C5A467" class="font-playfair text-lg">What if I am not satisfied with the quality problem when I receive?</span>
+                        <svg class="faq-icon w-5 h-5 transform transition-transform" style="color: #C5A467" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/></svg>
+                    </button>
+                    <div class="faq-answer" style="max-height: 0; overflow: hidden; transition: max-height 0.3s ease;">
+                        <div class="p-5 pt-0 text-[#333333] leading-relaxed">In the three days you receive, if there is any quality problem, please contact our customer service, arrange return and re-order. We will be patient until the customer is satisfied.</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== HOW TO ORDER SECTION ========== -->
+    <section id="order" class="py-24 md:py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">PURCHASE</span>
+                <h2 class="font-playfair text-3xl md:text-4xl lg:text-5xl mt-2" style="color: #C5A467">How to Order</h2>
+                <p class="text-textLight mt-4 max-w-2xl mx-auto">Your journey to owning a piece of timeless elegance</p>
+            </div>
+            
+            <div class="grid md:grid-cols-2 lg:grid-cols-5 gap-8">
+                <div class="step-card animate-on-scroll">
+                    <div class="text-center">
+                        <div class="step-number mx-auto mb-4">1</div>
+                        <img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=300&q=80" alt="Send Styles" class="w-full aspect-square object-cover mb-4">
+                        <h3 class="font-playfair text-lg " style="color: #C5A467 mb-2">Send Us The Styles</h3>
+                        <p class="text-textLight text-sm">Browse our collection and contact us with your selections</p>
+                    </div>
+                </div>
+                
+                <div class="step-card animate-on-scroll">
+                    <div class="text-center">
+                        <div class="step-number mx-auto mb-4">2</div>
+                        <img src="https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&q=80" alt="Payment" class="w-full aspect-square object-cover mb-4">
+                        <h3 class="font-playfair text-lg " style="color: #C5A467 mb-2">Pay Deposit or Full</h3>
+                        <p class="text-textLight text-sm">50% deposit to start production or pay in full</p>
+                    </div>
+                </div>
+                
+                <div class="step-card animate-on-scroll">
+                    <div class="text-center">
+                        <div class="step-number mx-auto mb-4">3</div>
+                        <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=300&q=80" alt="Production" class="w-full aspect-square object-cover mb-4">
+                        <h3 class="font-playfair text-lg " style="color: #C5A467 mb-2">Wait For Production</h3>
+                        <p class="text-textLight text-sm">About 7 days for our artisans to create your piece</p>
+                    </div>
+                </div>
+                
+                <div class="step-card animate-on-scroll">
+                    <div class="text-center">
+                        <div class="step-number mx-auto mb-4">4</div>
+                        <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=300&q=80" alt="Confirmation" class="w-full aspect-square object-cover mb-4">
+                        <h3 class="font-playfair text-lg " style="color: #C5A467 mb-2">Confirm & Approve</h3>
+                        <p class="text-textLight text-sm">We send photos for your confirmation before shipping</p>
+                    </div>
+                </div>
+                
+                <div class="step-card animate-on-scroll">
+                    <div class="text-center">
+                        <div class="step-number mx-auto mb-4">5</div>
+                        <img src="https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=300&q=80" alt="Delivery" class="w-full aspect-square object-cover mb-4">
+                        <h3 class="font-playfair text-lg " style="color: #C5A467 mb-2">Receive Your Jewelry</h3>
+                        <p class="text-textLight text-sm">Beautifully packaged and shipped to your door</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Contact Options -->
+            <div class="mt-16 bg-cream p-8 md:p-12 text-center animate-on-scroll">
+                <h3 class="font-playfair text-2xl " style="color: #C5A467 mb-6">Ready to Order?</h3>
+                <p class="text-textLight mb-8">Contact us through any of these channels</p>
+                <div class="flex flex-wrap justify-center gap-4">
+                    <a href="https://wa.me/1234567890" target="_blank" class="gold-btn flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                        WhatsApp
+                    </a>
+                    <a href="mailto:concierge@vesperajewels.com" class="outline-btn flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                        Email Us
+                    </a>
+                    <a href="#contact" class="outline-btn flex items-center gap-2">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"></path></svg>
+                        Contact Form
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== PARTNER CASES SECTION ========== -->
+    <section id="partners" class="py-24 md:py-32 bg-white">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">OUR PARTNERS</span>
+                <h2 class="font-playfair text-3xl md:text-4xl lg:text-5xl mt-2" style="color: #C5A467">Partner Cases</h2>
+                <p class="text-textLight mt-4 max-w-2xl mx-auto">Discover our successful collaborations with prestigious brands worldwide</p>
+            </div>
+            
+            <!-- Partner Cases Container - Dynamically loaded -->
+            <div id="partnerCasesContainer" class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <!-- Default Case 1: Jewelry Brand -->
+                <div class="partner-case-card animate-on-scroll bg-cream rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div class="relative">
+                        <div class="partner-image-carousel" data-case="case1">
+                            <div class="carousel-track flex transition-transform duration-300">
+                                <img src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80" alt="Luxury Diamond Necklace" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=600&q=80" alt="Diamond Ring Collection" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=600&q=80" alt="Diamond Earrings" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=600&q=80" alt="Pearl Jewelry Set" class="w-full object-cover flex-shrink-0">
+                            </div>
+                            <button class="carousel-btn carousel-prev absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md hover:bg-white transition-colors" onclick="event.stopPropagation(); moveCarousel('case1', -1)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button class="carousel-btn carousel-next absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md hover:bg-white transition-colors" onclick="event.stopPropagation(); moveCarousel('case1', 1)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                            <div class="carousel-indicators absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                                <span class="indicator w-2 h-2 rounded-full bg-white/90" data-index="0"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="1"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="2"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="3"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-xl mb-2" style="color: #C5A467">Luxury Diamond Collection</h3>
+                        <p class="text-textMedium text-sm leading-relaxed">Exclusive partnership with a renowned jewelry house to create a limited edition diamond collection featuring custom-cut stones and bespoke 18K gold settings.</p>
+                    </div>
+                </div>
+                
+                <!-- Default Case 2: Watch Brand -->
+                <div class="partner-case-card animate-on-scroll bg-cream rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div class="relative">
+                        <div class="partner-image-carousel" data-case="case2">
+                            <div class="carousel-track flex transition-transform duration-300">
+                                <img src="https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80" alt="Luxury Watch" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=600&q=80" alt="Gold Chronograph" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=600&q=80" alt="Skeleton Watch" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=600&q=80" alt="Diamond Watch" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=600&q=80" alt="Sport Watch" class="w-full object-cover flex-shrink-0">
+                            </div>
+                            <button class="carousel-btn carousel-prev absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md hover:bg-white transition-colors" onclick="event.stopPropagation(); moveCarousel('case2', -1)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button class="carousel-btn carousel-next absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md hover:bg-white transition-colors" onclick="event.stopPropagation(); moveCarousel('case2', 1)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                            <div class="carousel-indicators absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                                <span class="indicator w-2 h-2 rounded-full bg-white/90" data-index="0"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="1"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="2"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="3"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="4"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-xl mb-2" style="color: #C5A467">Swiss Watch Collaboration</h3>
+                        <p class="text-textMedium text-sm leading-relaxed">Strategic partnership with a prestigious Swiss watchmaker to develop custom packaging solutions and display cases for their flagship boutique collections.</p>
+                    </div>
+                </div>
+                
+                <!-- Default Case 3: Custom Jewelry -->
+                <div class="partner-case-card animate-on-scroll bg-cream rounded-lg overflow-hidden shadow-sm hover:shadow-xl transition-all duration-300">
+                    <div class="relative">
+                        <div class="partner-image-carousel" data-case="case3">
+                            <div class="carousel-track flex transition-transform duration-300">
+                                <img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80" alt="Custom Ring Design" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80" alt="Diamond Setting Process" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&q=80" alt="Gold Working" class="w-full object-cover flex-shrink-0">
+                                <img src="https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=600&q=80" alt="Gold Band Ring" class="w-full object-cover flex-shrink-0">
+                            </div>
+                            <button class="carousel-btn carousel-prev absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md hover:bg-white transition-colors" onclick="event.stopPropagation(); moveCarousel('case3', -1)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+                            </button>
+                            <button class="carousel-btn carousel-next absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/90 rounded-full flex items-center justify-center shadow-md hover:bg-white transition-colors" onclick="event.stopPropagation(); moveCarousel('case3', 1)">
+                                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+                            </button>
+                            <div class="carousel-indicators absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-2">
+                                <span class="indicator w-2 h-2 rounded-full bg-white/90" data-index="0"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="1"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="2"></span>
+                                <span class="indicator w-2 h-2 rounded-full bg-white/50" data-index="3"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="p-6">
+                        <h3 class="font-playfair text-xl mb-2" style="color: #C5A467">Bespoke Collection Design</h3>
+                        <p class="text-textMedium text-sm leading-relaxed">End-to-end custom jewelry manufacturing for a high-profile client, from initial design sketches to final 18K gold pieces featuring conflict-free diamonds.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== CONTACT US SECTION ========== -->
+    <section id="contact" class="py-24 md:py-32 bg-cream">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="text-center mb-16 animate-on-scroll">
+                <span class="text-sm tracking-[0.3em]" style="color: #1A1A1A">GET IN TOUCH</span>
+                <h2 class="font-playfair text-3xl md:text-4xl lg:text-5xl mt-2" style="color: #C5A467">Contact Us</h2>
+            </div>
+            
+            <div class="grid lg:grid-cols-2 gap-16">
+                <!-- Social Links -->
+                <div class="animate-on-scroll">
+                    <p class="text-textLight mb-8 leading-relaxed">
+                        We'd love to hear from you. Whether you have a question about our collections, need styling advice, or want to discuss a custom piece, our team is here to help.
+                    </p>
+                    
+                    <div class="space-y-6 mb-10">
+                        <div class="flex items-start gap-4">
+                            <svg class="w-6 h-6 text-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"></path>
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                            </svg>
+                            <div>
+                                <h4 class="font-playfair text-lg " style="color: #C5A467">Visit Our Boutique</h4>
+                                <p class="text-textLight">123 Luxury Avenue, Suite 500<br>New York, NY 10001</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-4">
+                            <svg class="w-6 h-6 text-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"></path>
+                            </svg>
+                            <div>
+                                <h4 class="font-playfair text-lg " style="color: #C5A467">Call Us</h4>
+                                <p class="text-textLight">+1 (800) 123-4567</p>
+                            </div>
+                        </div>
+                        
+                        <div class="flex items-start gap-4">
+                            <svg class="w-6 h-6 text-gold mt-1 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path>
+                            </svg>
+                            <div>
+                                <h4 class="font-playfair text-lg " style="color: #C5A467">Email</h4>
+                                <p class="text-textLight">concierge@vesperajewels.com</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Social Media -->
+                    <div>
+                        <h4 class="font-playfair text-lg " style="color: #C5A467 mb-4">Follow Us</h4>
+                        <div class="flex gap-4">
+                            <a href="https://wa.me/1234567890" target="_blank" class="w-12 h-12 flex items-center justify-center border border-border hover:border-gold hover:text-gold transition-colors" aria-label="WhatsApp">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            </a>
+                            <a href="https://facebook.com/vesperajewels" target="_blank" class="w-12 h-12 flex items-center justify-center border border-border hover:border-gold hover:text-gold transition-colors" aria-label="Facebook">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+                            </a>
+                            <a href="https://instagram.com/vesperajewels" target="_blank" class="w-12 h-12 flex items-center justify-center border border-border hover:border-gold hover:text-gold transition-colors" aria-label="Instagram">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/></svg>
+                            </a>
+                            <a href="https://tiktok.com/@vesperajewels" target="_blank" class="w-12 h-12 flex items-center justify-center border border-border hover:border-gold hover:text-gold transition-colors" aria-label="TikTok">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>
+                            </a>
+                            <a href="mailto:concierge@vesperajewels.com" class="w-12 h-12 flex items-center justify-center border border-border hover:border-gold hover:text-gold transition-colors" aria-label="Email">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Contact Form -->
+                <div class="animate-on-scroll">
+                    <form id="contactForm" class="bg-white p-8 md:p-10 border border-border">
+                        <h3 class="font-playfair text-2xl " style="color: #C5A467 mb-6">Send Us a Message</h3>
+                        
+                        <div class="space-y-6">
+                            <div>
+                                <label for="name" class="block text-sm text-textLight mb-2">Your Name</label>
+                                <input type="text" id="name" name="name" required class="w-full px-4 py-3 border border-border focus:border-gold focus:outline-none transition-colors">
+                            </div>
+                            
+                            <div>
+                                <label for="email" class="block text-sm text-textLight mb-2">Email Address</label>
+                                <input type="email" id="email" name="email" required class="w-full px-4 py-3 border border-border focus:border-gold focus:outline-none transition-colors">
+                            </div>
+                            
+                            <div>
+                                <label for="message" class="block text-sm text-textLight mb-2">Your Message</label>
+                                <textarea id="message" name="message" rows="5" required class="w-full px-4 py-3 border border-border focus:border-gold focus:outline-none transition-colors resize-none"></textarea>
+                            </div>
+                            
+                            <button type="submit" class="gold-btn w-full">Send Message</button>
+                        </div>
+                    </form>
+                    
+                    <div id="formSuccess" class="hidden bg-white p-8 md:p-10 border border-border text-center">
+                        <svg class="w-16 h-16 text-gold mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        <h3 class="font-playfair text-2xl " style="color: #C5A467 mb-2">Message Sent!</h3>
+                        <p class="text-textLight">Thank you for reaching out. We'll get back to you within 24 hours.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ========== FOOTER ========== -->
+    <footer class="bg-darkBg py-16">
+        <div class="max-w-7xl mx-auto px-6 lg:px-12">
+            <div class="grid md:grid-cols-4 gap-10 mb-12 items-start">
+                <div class="md:col-span-2">
+                    <img src="logo-footer.png" alt="Vespera Jewels" class="footer-logo mb-6" style="height:180px;width:100%;object-fit:contain;display:block;">
+                    <p class="text-gray-400 max-w-md leading-relaxed">
+                        Crafting timeless elegance since 1987. Each piece tells a story of passion, precision, and enduring beauty.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 class="font-playfair text-lg text-white mb-4">Quick Links</h4>
+                    <ul class="space-y-2">
+                        <li><a href="#about" class="text-gray-400 hover:text-gold transition-colors">About Us</a></li>
+                        <li><a href="#jewelry" class="text-gray-400 hover:text-gold transition-colors">Jewelry</a></li>
+                        <li><a href="#watch" class="text-gray-400 hover:text-gold transition-colors">Watches</a></li>
+                        <li><a href="#faq" class="text-gray-400 hover:text-gold transition-colors">FAQ</a></li>
+                        <li><a href="#contact" class="text-gray-400 hover:text-gold transition-colors">Contact</a></li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 class="font-playfair text-lg text-white mb-4">Contact</h4>
+                    <ul class="space-y-2 text-gray-400">
+                        <li>123 Luxury Avenue</li>
+                        <li>New York, NY 10001</li>
+                        <li class="pt-2">+1 (800) 123-4567</li>
+                        <li>concierge@vesperajewels.com</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="border-t border-gray-700 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
+                <p class="text-gray-500 text-sm">© 2024 Vespera Jewels. All rights reserved.</p>
+                <div class="flex gap-6 text-sm">
+                    <a href="#" class="text-gray-500 hover:text-gold transition-colors">Privacy Policy</a>
+                    <a href="#" class="text-gray-500 hover:text-gold transition-colors">Terms of Service</a>
+                </div>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Product Modal -->
+    <div id="productModal" class="fixed inset-0 z-[100] hidden">
+        <div class="absolute inset-0 bg-black/70" onclick="closeProductModal()"></div>
+        <div class="absolute inset-4 md:inset-10 lg:inset-20 bg-white overflow-auto">
+            <button onclick="closeProductModal()" class="absolute top-4 right-4 z-10 w-10 h-10 flex items-center justify-center bg-gold text-white hover:bg-goldDark">
+                <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+            </button>
+            <div class="grid md:grid-cols-2 h-full">
+                <div class="bg-cream flex items-center justify-center p-8">
+                    <img id="modalImage" src="" alt="Product" class="max-w-full max-h-[70vh] object-contain">
+                </div>
+                <div class="p-8 md:p-12 flex flex-col justify-center">
+                    <span class="text-sm tracking-[0.2em] text-gold mb-2" id="modalCategory">CATEGORY</span>
+                    <h2 id="modalTitle" class="font-playfair text-3xl md:text-4xl " style="color: #C5A467 mb-4">Product Name</h2>
+                    <p id="modalPrice" class="text-2xl text-gold mb-6">$0</p>
+                    <p id="modalDescription" class="text-textLight leading-relaxed mb-8">
+                        Product description goes here. This is a detailed description of the product including materials, dimensions, and other relevant information.
+                    </p>
+                    <div class="space-y-3">
+                        <a href="https://wa.me/1234567890?text=I'm interested in this product" target="_blank" class="gold-btn w-full text-center block flex items-center justify-center gap-2">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                            Order via WhatsApp
+                        </a>
+                        <a href="#contact" onclick="closeProductModal()" class="outline-btn w-full text-center block">Contact Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Partner Cases Lightbox Modal -->
+    <div id="partnerLightbox" class="lightbox-modal" onclick="if(event.target === this) closeLightbox()">
+        <div class="lightbox-content">
+            <img id="lightboxImage" src="" alt="Partner Case Image">
+            <span id="lightboxCounter" class="lightbox-counter">1 / 1</span>
+            <button class="lightbox-nav lightbox-prev" onclick="navigateLightbox(-1)">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/></svg>
+            </button>
+            <button class="lightbox-nav lightbox-next" onclick="navigateLightbox(1)">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"/></svg>
+            </button>
+        </div>
+        <button class="lightbox-close" onclick="closeLightbox()">
+            <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+    </div>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
