@@ -813,6 +813,461 @@
         .file-input-hidden {
             display: none;
         }
+
+        /* Product Grid */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 24px;
+            padding: 10px 0;
+        }
+
+        .product-card {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .product-card:hover {
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .product-card-image {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            background: var(--bg);
+            overflow: hidden;
+        }
+
+        .product-card-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .product-card-image .placeholder {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: var(--text-secondary);
+        }
+
+        .product-card-image .placeholder svg {
+            width: 48px;
+            height: 48px;
+            stroke: var(--border);
+        }
+
+        .product-card-body {
+            padding: 16px;
+        }
+
+        .product-card-category {
+            font-size: 11px;
+            text-transform: uppercase;
+            color: var(--gold);
+            letter-spacing: 1px;
+            margin-bottom: 6px;
+        }
+
+        .product-card-name {
+            font-family: 'Playfair Display', serif;
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 6px;
+            line-height: 1.3;
+        }
+
+        .product-card-price {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 12px;
+        }
+
+        .product-card-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .product-status {
+            font-size: 11px;
+            padding: 4px 8px;
+            border-radius: 4px;
+        }
+
+        .product-status.published {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .product-status.draft {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .product-card-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .product-card-actions button {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .product-card-actions .btn-edit {
+            background: var(--gold);
+            color: var(--white);
+        }
+
+        .product-card-actions .btn-edit:hover {
+            background: var(--gold-dark);
+        }
+
+        .product-card-actions .btn-delete {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .product-card-actions .btn-delete:hover {
+            background: #FECACA;
+        }
+
+        /* Add Product Button */
+        .add-product-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 20px;
+            background: var(--gold);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .add-product-btn:hover {
+            background: var(--gold-dark);
+        }
+
+        .add-product-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        /* Product Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            padding: 40px 20px;
+            overflow-y: auto;
+        }
+
+        .product-modal {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 900px;
+            width: 100%;
+            max-height: calc(100vh - 80px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .product-modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--bg);
+        }
+
+        .product-modal-header h3 {
+            font-family: 'Playfair Display', serif;
+            font-size: 20px;
+            color: var(--gold);
+        }
+
+        .product-modal-close {
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            transition: all 0.2s;
+        }
+
+        .product-modal-close:hover {
+            background: var(--border);
+            color: var(--text);
+        }
+
+        .product-modal-body {
+            padding: 25px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .product-modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid var(--border);
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            background: var(--bg);
+        }
+
+        .product-modal-footer button {
+            padding: 12px 24px;
+            font-size: 14px;
+            font-weight: 500;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .product-modal-footer .btn-cancel {
+            background: var(--white);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .product-modal-footer .btn-cancel:hover {
+            background: var(--bg);
+        }
+
+        .product-modal-footer .btn-save {
+            background: var(--gold);
+            border: none;
+            color: var(--white);
+        }
+
+        .product-modal-footer .btn-save:hover {
+            background: var(--gold-dark);
+        }
+
+        /* Multi-Image Gallery */
+        .product-images-gallery {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+        }
+
+        .gallery-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .gallery-header h4 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .gallery-header span {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .gallery-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+        }
+
+        .gallery-item {
+            position: relative;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            aspect-ratio: 1;
+        }
+
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .gallery-item .empty-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .gallery-item .empty-slot:hover {
+            background: rgba(197, 164, 103, 0.05);
+            color: var(--gold);
+        }
+
+        .gallery-item .empty-slot svg {
+            width: 32px;
+            height: 32px;
+            margin-bottom: 6px;
+            stroke: currentColor;
+        }
+
+        .gallery-item .empty-slot span {
+            font-size: 11px;
+        }
+
+        .gallery-item-actions {
+            position: absolute;
+            top: 6px;
+            right: 6px;
+            display: flex;
+            gap: 4px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .gallery-item:hover .gallery-item-actions {
+            opacity: 1;
+        }
+
+        .gallery-item-actions button {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .gallery-item-actions .btn-move-up,
+        .gallery-item-actions .btn-move-down {
+            background: rgba(255, 255, 255, 0.9);
+            color: var(--text);
+        }
+
+        .gallery-item-actions .btn-move-up:hover,
+        .gallery-item-actions .btn-move-down:hover {
+            background: var(--gold);
+            color: var(--white);
+        }
+
+        .gallery-item-actions .btn-remove {
+            background: rgba(255, 255, 255, 0.9);
+            color: #991B1B;
+        }
+
+        .gallery-item-actions .btn-remove:hover {
+            background: #EF4444;
+            color: var(--white);
+        }
+
+        .gallery-item-actions svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .gallery-item-number {
+            position: absolute;
+            bottom: 6px;
+            left: 6px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            font-size: 10px;
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+
+        /* Toggle Switch */
+        .toggle-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 48px;
+            height: 26px;
+        }
+
+        .toggle-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: 0.3s;
+            border-radius: 26px;
+        }
+
+        .toggle-slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        .toggle-switch input:checked + .toggle-slider {
+            background-color: var(--gold);
+        }
+
+        .toggle-switch input:checked + .toggle-slider:before {
+            transform: translateX(22px);
+        }
+
+        .toggle-label {
+            font-size: 14px;
+            color: var(--text);
+        }
     </style>
 </head>
 <body>
@@ -1786,6 +2241,29 @@
             await loadSection(section);
         }
 
+        // Product state for image management
+        let currentProductImages = [];
+        let currentProductType = ''; // 'jewelry' or 'watch'
+        let editingProductPath = null;
+
+        // Load categories from settings
+        async function loadCategories(type) {
+            try {
+                const settingsPath = type === 'jewelry' ? 'content/jewelry/jewelry.md' : 'content/watches/watches.md';
+                const content = await fetchMarkdownFile(settingsPath);
+                if (content && content.data && content.data.categories) {
+                    return content.data.categories.map(cat => cat.id || cat.name);
+                }
+            } catch (e) {
+                console.log('Could not load categories', e);
+            }
+            // Default categories
+            return type === 'jewelry' 
+                ? ['rings', 'necklaces', 'earrings', 'bracelets']
+                : ['dress-watches', 'chronograph', 'luxury', 'sport', 'ladies', 'skeleton'];
+        }
+
+        // Load section content
         async function loadSection(section) {
             const sectionInfo = sections[section];
             const panelTabs = document.getElementById('panelTabs');
@@ -1798,7 +2276,10 @@
                 sectionData = {};
                 fileSha = {};
 
-                if (sectionInfo.loadFiles) {
+                if (section === 'jewelry-products' || section === 'watch-products') {
+                    // Special handling for product management
+                    await loadProductSection(section);
+                } else if (sectionInfo.loadFiles) {
                     // Load directory listing
                     const dirPath = sectionInfo.files[0].path;
                     const files = await fetchDirectory(dirPath);
@@ -1855,6 +2336,525 @@
                 `;
                 showToast('加载内容失败: ' + error.message, 'error');
             }
+        }
+
+        // Load product section with card grid view
+        async function loadProductSection(section) {
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+            const productType = section === 'jewelry-products' ? 'jewelry' : 'watch';
+            const productDir = `content/${productType}/products`;
+
+            // Update header with add button
+            const header = document.querySelector('.content-header');
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-product-btn';
+            addBtn.id = 'addProductBtn';
+            addBtn.onclick = () => openProductModal(null, productType);
+            addBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                添加产品
+            `;
+            // Remove existing add button if any
+            const existingBtn = header.querySelector('.add-product-btn');
+            if (existingBtn) existingBtn.remove();
+            header.appendChild(addBtn);
+
+            // Create tabs
+            panelTabs.innerHTML = '<div class="panel-tab active">产品列表</div>';
+            panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+
+            const container = document.getElementById('tab-0');
+
+            try {
+                const files = await fetchDirectory(productDir);
+                const mdFiles = files.filter(f => f.name.endsWith('.md'));
+
+                if (mdFiles.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                            <p>暂无产品</p>
+                            <p style="font-size:13px;margin-top:8px;">点击右上角"添加产品"开始创建</p>
+                        </div>
+                    `;
+                } else {
+                    // Load categories first
+                    const categories = await loadCategories(productType);
+                    const allCategories = [...new Set(categories)];
+                    
+                    // Filter buttons
+                    let filterHtml = '<div style="margin-bottom:20px;display:flex;gap:8px;flex-wrap:wrap;">';
+                    filterHtml += `<button class="filter-btn active" data-filter="all" onclick="filterProducts('all', '${productType}')">全部</button>`;
+                    allCategories.forEach(cat => {
+                        filterHtml += `<button class="filter-btn" data-filter="${cat}" onclick="filterProducts('${cat}', '${productType}')">${cat}</button>`;
+                    });
+                    filterHtml += '</div>';
+                    
+                    container.innerHTML = filterHtml + '<div class="product-grid" id="productGrid"></div>';
+                    const grid = document.getElementById('productGrid');
+
+                    for (const file of mdFiles) {
+                        const content = await fetchMarkdownFile(file.path);
+                        sectionData[file.path] = content;
+                        renderProductCard(grid, file, content, productType);
+                    }
+                }
+            } catch (error) {
+                console.error('加载产品错误:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>加载产品出错: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Filter products by category
+        window.filterProducts = function(category, productType) {
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === category);
+            });
+
+            // Show/hide product cards
+            document.querySelectorAll('.product-card').forEach(card => {
+                const cardCategory = card.dataset.category;
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        };
+
+        // Render product card
+        function renderProductCard(container, file, content, productType) {
+            const data = content.data || {};
+            const name = data.name || '未命名产品';
+            const price = data.price || '';
+            const category = data.category || '';
+            const images = data.images || (data.image ? [data.image] : []);
+            const firstImage = images[0] || '';
+            const published = data.published !== false;
+            const slug = file.name.replace('.md', '');
+
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.category = category;
+            card.dataset.path = file.path;
+
+            card.innerHTML = `
+                <div class="product-card-image">
+                    ${firstImage 
+                        ? `<img src="${firstImage}" alt="${name}" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'><svg viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1.5\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\' ry=\\'2\\'></rect><circle cx=\\'8.5\\' cy=\\'8.5\\' r=\\'1.5\\'></circle><polyline points=\\'21 15 16 10 5 21\\'></polyline></svg></div>'">`
+                        : `<div class="placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>`
+                    }
+                </div>
+                <div class="product-card-body">
+                    <div class="product-card-category">${category}</div>
+                    <div class="product-card-name">${name}</div>
+                    <div class="product-card-price">${price}</div>
+                    <div class="product-card-footer">
+                        <span class="product-status ${published ? 'published' : 'draft'}">${published ? '已发布' : '草稿'}</span>
+                        <div class="product-card-actions">
+                            <button class="btn-edit" onclick="openProductModal('${file.path}', '${productType}')">编辑</button>
+                            <button class="btn-delete" onclick="confirmDeleteProduct('${file.path}', '${productType}')">删除</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(card);
+        }
+
+        // Confirm delete product
+        window.confirmDeleteProduct = async function(path, productType) {
+            if (!confirm('确定要删除此产品吗？此操作无法撤销。')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/${path}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `删除产品: ${path.split('/').pop()}`,
+                        sha: fileSha[path],
+                        branch: BRANCH
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('删除失败');
+                }
+
+                showToast('删除成功！');
+                await loadSection(productType + '-products');
+            } catch (error) {
+                showToast('删除失败: ' + error.message, 'error');
+            }
+        };
+
+        // Open product modal for add/edit
+        window.openProductModal = async function(path, productType) {
+            currentProductType = productType;
+            editingProductPath = path;
+            currentProductImages = [];
+            
+            const categories = await loadCategories(productType);
+            const modalTitle = path ? '编辑产品' : '添加产品';
+            
+            let existingData = {
+                name: '',
+                price: '',
+                description: '',
+                category: categories[0] || '',
+                published: true,
+                order: 1,
+                images: []
+            };
+
+            // If editing, load existing data
+            if (path && sectionData[path]) {
+                const content = sectionData[path];
+                const data = content.data || {};
+                existingData = {
+                    name: data.name || '',
+                    price: data.price || '',
+                    description: data.description || '',
+                    category: data.category || categories[0] || '',
+                    published: data.published !== false,
+                    order: parseInt(data.order) || 1,
+                    images: data.images || (data.image ? [data.image] : [])
+                };
+                currentProductImages = [...existingData.images];
+            }
+
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.id = 'productModal';
+            modal.onclick = (e) => {
+                if (e.target === modal) closeProductModal();
+            };
+
+            modal.innerHTML = `
+                <div class="product-modal">
+                    <div class="product-modal-header">
+                        <h3>${modalTitle}</h3>
+                        <button class="product-modal-close" onclick="closeProductModal()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="product-modal-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>产品名称 *</label>
+                                <input type="text" id="productName" value="${existingData.name}" placeholder="输入产品名称" required>
+                            </div>
+                            <div class="form-group">
+                                <label>产品价格</label>
+                                <input type="text" id="productPrice" value="${existingData.price}" placeholder="如 $2,850">
+                            </div>
+                            <div class="form-group">
+                                <label>产品分类</label>
+                                <select id="productCategory">
+                                    ${categories.map(cat => `<option value="${cat}" ${existingData.category === cat ? 'selected' : ''}>${cat}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>排序</label>
+                                <input type="number" id="productOrder" value="${existingData.order}" min="1">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>产品描述</label>
+                                <textarea id="productDescription" rows="4" placeholder="输入产品详细描述">${existingData.description}</textarea>
+                            </div>
+                            <div class="form-group">
+                                <label>发布状态</label>
+                                <div class="toggle-wrapper">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="productPublished" ${existingData.published ? 'checked' : ''}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label" id="publishedLabel">${existingData.published ? '已发布' : '草稿'}</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-top:25px;">
+                            <label style="display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:12px;">
+                                产品图片 <span style="font-weight:400;color:var(--text-secondary);">(最多10张，建议600×600px)</span>
+                            </label>
+                            <div class="product-images-gallery">
+                                <div class="gallery-grid" id="galleryGrid"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-modal-footer">
+                        <button class="btn-cancel" onclick="closeProductModal()">取消</button>
+                        <button class="btn-save" onclick="saveProduct()">保存产品</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Add toggle listener
+            document.getElementById('productPublished').addEventListener('change', function() {
+                document.getElementById('publishedLabel').textContent = this.checked ? '已发布' : '草稿';
+            });
+
+            // Render gallery
+            renderImageGallery();
+        };
+
+        // Close product modal
+        window.closeProductModal = function() {
+            const modal = document.getElementById('productModal');
+            if (modal) modal.remove();
+        };
+
+        // Render image gallery
+        function renderImageGallery() {
+            const grid = document.getElementById('galleryGrid');
+            const maxImages = 10;
+            const uploadDir = currentProductType === 'jewelry' ? 'assets/uploads/jewelry/' : 'assets/uploads/watches/';
+
+            let html = '';
+            
+            // Render existing images
+            currentProductImages.forEach((img, index) => {
+                html += `
+                    <div class="gallery-item" data-index="${index}">
+                        <img src="${img}" alt="图片 ${index + 1}">
+                        <div class="gallery-item-actions">
+                            ${index > 0 ? `
+                                <button class="btn-move-up" onclick="moveImage(${index}, -1)" title="上移">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="18 15 12 9 6 15"></polyline>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                            ${index < currentProductImages.length - 1 ? `
+                                <button class="btn-move-down" onclick="moveImage(${index}, 1)" title="下移">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                            <button class="btn-remove" onclick="removeImage(${index})" title="删除">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="gallery-item-number">${index + 1}</div>
+                    </div>
+                `;
+            });
+
+            // Add empty slots if under limit
+            if (currentProductImages.length < maxImages) {
+                const emptySlots = Math.min(2, maxImages - currentProductImages.length);
+                for (let i = 0; i < emptySlots; i++) {
+                    const slotIndex = currentProductImages.length + i;
+                    html += `
+                        <div class="gallery-item">
+                            <input type="file" id="galleryUpload${slotIndex}" class="file-input-hidden" accept="image/*" onchange="handleGalleryUpload(event, ${slotIndex})">
+                            <div class="empty-slot" onclick="document.getElementById('galleryUpload${slotIndex}').click()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>上传图片</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            grid.innerHTML = html;
+        }
+
+        // Handle gallery image upload
+        async function handleGalleryUpload(event, index) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const uploadDir = currentProductType === 'jewelry' ? 'assets/uploads/jewelry/' : 'assets/uploads/watches/';
+            
+            try {
+                showToast('正在上传图片...');
+                const result = await uploadImageToGitHub(file, uploadDir, `product_${Date.now()}`, `${currentProductType}-products`);
+                
+                // Insert at correct position
+                if (index <= currentProductImages.length) {
+                    currentProductImages.splice(index, 0, result.path);
+                } else {
+                    currentProductImages.push(result.path);
+                }
+                
+                showToast('图片上传成功！');
+                renderImageGallery();
+            } catch (error) {
+                showToast('上传失败: ' + error.message, 'error');
+            }
+            
+            // Clear file input
+            event.target.value = '';
+        }
+
+        // Move image in gallery
+        window.moveImage = function(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= currentProductImages.length) return;
+            
+            const temp = currentProductImages[index];
+            currentProductImages[index] = currentProductImages[newIndex];
+            currentProductImages[newIndex] = temp;
+            
+            renderImageGallery();
+        };
+
+        // Remove image from gallery
+        window.removeImage = function(index) {
+            currentProductImages.splice(index, 1);
+            renderImageGallery();
+        };
+
+        // Save product
+        window.saveProduct = async function() {
+            const name = document.getElementById('productName').value.trim();
+            const price = document.getElementById('productPrice').value.trim();
+            const category = document.getElementById('productCategory').value;
+            const description = document.getElementById('productDescription').value.trim();
+            const order = parseInt(document.getElementById('productOrder').value) || 1;
+            const published = document.getElementById('productPublished').checked;
+
+            if (!name) {
+                showToast('请输入产品名称', 'error');
+                return;
+            }
+
+            // Generate slug from name
+            const slug = name.toLowerCase()
+                .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .substring(0, 50);
+            
+            const productDir = `content/${currentProductType}/products`;
+            const filename = `${slug}.md`;
+            const path = editingProductPath || `${productDir}/${filename}`;
+
+            // Build frontmatter
+            const frontmatter = {
+                name: name,
+                price: price,
+                category: category,
+                description: description,
+                images: currentProductImages,
+                order: order,
+                published: published
+            };
+
+            try {
+                await saveMarkdownFile(path, frontmatter, '', `保存产品: ${name}`);
+                showToast('保存成功！');
+                closeProductModal();
+                await loadSection(currentProductType + '-products');
+            } catch (error) {
+                showToast('保存失败: ' + error.message, 'error');
+            }
+        };
+
+        // Enhanced upload function for products
+        async function uploadImageToGitHub(file, uploadDir, fieldName, section) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const base64 = e.target.result.split(',')[1];
+                        const extension = file.name.split('.').pop().toLowerCase();
+                        
+                        // Generate filename with timestamp
+                        const cleanName = (typeof fieldName === 'string' ? fieldName : 'image').replace(/[^a-zA-Z0-9]/g, '_');
+                        const timestamp = Date.now();
+                        const filename = `${cleanName}_${timestamp}.${extension}`;
+                        const fullPath = uploadDir.endsWith('/') ? uploadDir + filename : uploadDir + '/' + filename;
+
+                        // Check if file exists and get sha
+                        let sha = null;
+                        try {
+                            const checkResponse = await fetch(`${API_BASE}/${fullPath}`, {
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Accept': 'application/vnd.github.v3+json'
+                                }
+                            });
+                            if (checkResponse.ok) {
+                                const existingFile = await checkResponse.json();
+                                sha = existingFile.sha;
+                            }
+                        } catch (err) {
+                            // File doesn't exist, that's fine
+                        }
+
+                        // Upload file
+                        const body = {
+                            message: `Upload image: ${filename}`,
+                            content: base64,
+                            branch: BRANCH
+                        };
+                        if (sha) {
+                            body.sha = sha;
+                        }
+
+                        const response = await fetch(`${API_BASE}/${fullPath}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/vnd.github.v3+json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(body)
+                        });
+
+                        if (!response.ok) {
+                            const err = await response.json();
+                            throw new Error(err.message || `上传失败: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        resolve({
+                            path: `/${data.content.path}`,
+                            filename: filename
+                        });
+                    };
+                    reader.onerror = () => reject(new Error('读取文件失败'));
+                    reader.readAsDataURL(file);
+                } catch (error) {
+                    reject(error);
+                }
+            });
         }
 
         function renderProductItem(container, file, content) {
@@ -1934,7 +2934,7 @@
             footer.style.cssText = 'padding:20px 25px;border-top:1px solid #E8E4DE;display:flex;justify-content:flex-end;gap:10px;';
             footer.innerHTML = `
                 <button onclick="this.closest('.modal-overlay').remove()" style="padding:12px 20px;border:1px solid #E8E4DE;background:#fff;border-radius:8px;cursor:pointer;">取消</button>
-                <button onclick="saveProduct('${path}')" style="padding:12px 20px;background:#C5A467;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">保存</button>
+                <button onclick="saveOtherItem('${path}')" style="padding:12px 20px;background:#C5A467;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">保存</button>
             `;
 
             modal.appendChild(header);
@@ -2043,7 +3043,7 @@
             `;
         }
 
-        async function saveProduct(path) {
+        async function saveOtherItem(path) {
             const container = document.getElementById('editFormContainer');
             const formData = new FormData();
             

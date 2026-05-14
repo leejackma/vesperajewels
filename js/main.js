@@ -166,6 +166,134 @@ document.addEventListener('DOMContentLoaded', function() {
     // ============================================
     const productModal = document.getElementById('productModal');
     
+    // Dynamic product data storage
+    let dynamicProducts = {
+        featured: [],
+        jewelry: [],
+        watch: []
+    };
+
+    // Load products from markdown files
+    async function loadProductsFromCMS() {
+        try {
+            // Load jewelry products
+            const jewelryResponse = await fetch('content/jewelry/products/');
+            if (jewelryResponse.ok) {
+                // Can't list directory via fetch, so we'll try common files
+                // For now, keep using static data if fetch fails
+            }
+        } catch (e) {
+            console.log('Using default product data');
+        }
+    }
+
+    // Simple frontmatter parser for markdown
+    function parseFrontmatter(text) {
+        const result = {};
+        const lines = text.split('\n');
+        let inFrontmatter = false;
+
+        for (const line of lines) {
+            if (line.trim() === '---') {
+                if (inFrontmatter) {
+                    break;
+                }
+                inFrontmatter = true;
+                continue;
+            }
+
+            if (inFrontmatter && line.includes(':')) {
+                const colonIndex = line.indexOf(':');
+                const key = line.substring(0, colonIndex).trim();
+                let value = line.substring(colonIndex + 1).trim();
+                
+                // Remove quotes if present
+                if ((value.startsWith('"') && value.endsWith('"')) ||
+                    (value.startsWith("'") && value.endsWith("'"))) {
+                    value = value.slice(1, -1);
+                }
+                
+                result[key] = value;
+            }
+        }
+
+        return result;
+    }
+
+    // Load products from content directory
+    async function loadProducts() {
+        try {
+            // Try to load jewelry products
+            const jewelryFiles = [
+                'diamond-solitaire-ring', 'gold-band-ring', 'pearl-necklace', 'diamond-pendant',
+                'diamond-drop-earrings', 'gold-hoop-earrings', 'tennis-bracelet', 'gold-chain-bracelet'
+            ];
+            
+            const jewelryProducts = [];
+            for (const file of jewelryFiles) {
+                try {
+                    const response = await fetch(`content/jewelry/products/${file}.md`);
+                    if (response.ok) {
+                        const text = await response.text();
+                        const fm = parseFrontmatter(text);
+                        jewelryProducts.push({
+                            name: fm.name || '',
+                            price: fm.price || '',
+                            desc: fm.description || '',
+                            category: fm.category ? fm.category.toUpperCase() : '',
+                            image: fm.image || (fm.images ? fm.images.split(',')[0].trim() : ''),
+                            images: fm.images ? fm.images.split(',').map(s => s.trim()) : (fm.image ? [fm.image] : [])
+                        });
+                    }
+                } catch (e) {}
+            }
+            if (jewelryProducts.length > 0) {
+                dynamicProducts.jewelry = jewelryProducts;
+            }
+
+            // Try to load watch products
+            const watchFiles = [
+                'classic-dress-watch', 'gold-chronograph', 'diamond-encrusted-watch',
+                'sport-chronograph', 'ladies-collection', 'skeleton-watch'
+            ];
+            
+            const watchProducts = [];
+            for (const file of watchFiles) {
+                try {
+                    const response = await fetch(`content/watches/products/${file}.md`);
+                    if (response.ok) {
+                        const text = await response.text();
+                        const fm = parseFrontmatter(text);
+                        watchProducts.push({
+                            name: fm.name || '',
+                            price: fm.price || '',
+                            desc: fm.description || '',
+                            category: fm.category ? fm.category.toUpperCase() : '',
+                            image: fm.image || (fm.images ? fm.images.split(',')[0].trim() : ''),
+                            images: fm.images ? fm.images.split(',').map(s => s.trim()) : (fm.image ? [fm.image] : [])
+                        });
+                    }
+                } catch (e) {}
+            }
+            if (watchProducts.length > 0) {
+                dynamicProducts.watch = watchProducts;
+            }
+
+            // Featured products = first of each category
+            if (dynamicProducts.jewelry.length > 0) {
+                dynamicProducts.featured = [
+                    dynamicProducts.jewelry[0],
+                    ...dynamicProducts.jewelry.slice(0, 2),
+                    ...dynamicProducts.watch.slice(0, 1)
+                ].slice(0, 4);
+            }
+
+            console.log('Products loaded from CMS:', dynamicProducts);
+        } catch (e) {
+            console.log('Using default product data');
+        }
+    }
+
     window.openProductModal = function(type, id) {
         const modal = document.getElementById('productModal');
         const modalImage = document.getElementById('modalImage');
@@ -174,8 +302,8 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalDescription = document.getElementById('modalDescription');
         const modalCategory = document.getElementById('modalCategory');
         
-        // Product data (in production, this would come from a database or CMS)
-        const products = {
+        // Use dynamic products if available, otherwise fallback to static
+        const products = dynamicProducts[type]?.length > 0 ? dynamicProducts : {
             featured: {
                 1: { name: 'Diamond Solitaire Ring', price: '$2,850', desc: 'Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.', category: 'RINGS', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80' },
                 2: { name: 'Pearl Strand Necklace', price: '$3,400', desc: 'Lustrous freshwater pearls strung on silk thread. Each pearl is carefully selected for its uniform size and radiant sheen.', category: 'NECKLACES', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80' },
@@ -202,7 +330,14 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         };
         
-        const product = products[type]?.[id];
+        // Get product - support both object and array formats
+        let product;
+        if (Array.isArray(products[type])) {
+            product = products[type][id - 1];
+        } else {
+            product = products[type]?.[id];
+        }
+        
         if (product) {
             modalImage.src = product.image;
             modalTitle.textContent = product.name;
@@ -239,6 +374,9 @@ document.addEventListener('DOMContentLoaded', function() {
             }
         });
     }, 100);
+
+    // Load products on page load
+    loadProducts();
 });
 
 // FAQ Accordion Toggle
