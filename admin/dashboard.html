@@ -2423,9 +2423,9 @@
 
             try {
                 const files = await fetchDirectory(productDir);
-                const mdFiles = files.filter(f => f.name.endsWith('.md'));
+                const productFiles = files.filter(f => f.name.endsWith('.json'));
 
-                if (mdFiles.length === 0) {
+                if (productFiles.length === 0) {
                     container.innerHTML = `
                         <div class="empty-state">
                             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
@@ -2451,8 +2451,8 @@
                     container.innerHTML = filterHtml + '<div class="product-grid" id="productGrid"></div>';
                     const grid = document.getElementById('productGrid');
 
-                    for (const file of mdFiles) {
-                        const content = await fetchMarkdownFile(file.path);
+                    for (const file of productFiles) {
+                        const content = await fetchJsonFile(file.path);
                         sectionData[file.path] = content;
                         renderProductCard(grid, file, content, productType);
                     }
@@ -2487,14 +2487,14 @@
 
         // Render product card
         function renderProductCard(container, file, content, productType) {
-            const data = content.data || {};
+            const data = content.data || content || {};
             const name = data.name || '未命名产品';
             const price = data.price || '';
             const category = data.category || '';
             const images = data.images || (data.image ? [data.image] : []);
             const firstImage = images[0] || '';
             const published = data.published !== false;
-            const slug = file.name.replace('.md', '');
+            const slug = file.name.replace(/\.(json|md)$/, '');
 
             const card = document.createElement('div');
             card.className = 'product-card';
@@ -2583,7 +2583,7 @@
             // If editing, load existing data
             if (path && sectionData[path]) {
                 const content = sectionData[path];
-                const data = content.data || {};
+                const data = content.data || content || {};
                 existingData = {
                     name: data.name || '',
                     price: data.price || '',
