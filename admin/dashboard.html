@@ -2252,12 +2252,13 @@
                     </div>
 
                     <div class="section-divider"><h3 class="section-title">联系方式</h3></div>
-                    ${createFormField('门店标题', 'contact_address_title', (data.contact_items && data.contact_items.find(c => c.type === 'address'))?.title || '')}
-                    ${createFormField('门店地址', 'contact_address_content', (data.contact_items && data.contact_items.find(c => c.type === 'address'))?.content || '')}
-                    ${createFormField('电话标题', 'contact_phone_title', (data.contact_items && data.contact_items.find(c => c.type === 'phone'))?.title || '')}
-                    ${createFormField('电话号码', 'contact_phone_content', (data.contact_items && data.contact_items.find(c => c.type === 'phone'))?.content || '')}
-                    ${createFormField('邮箱标题', 'contact_email_title', (data.contact_items && data.contact_items.find(c => c.type === 'email'))?.title || '')}
-                    ${createFormField('邮箱地址', 'contact_email_content', (data.contact_items && data.contact_items.find(c => c.type === 'email'))?.content || '')}
+                    ${(() => { const ci = Array.isArray(data.contact_items) ? data.contact_items : []; return ''; })()}
+                    ${createFormField('门店标题', 'contact_address_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'address'))?.title || '')}
+                    ${createFormField('门店地址', 'contact_address_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'address'))?.content || '')}
+                    ${createFormField('电话标题', 'contact_phone_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'phone'))?.title || '')}
+                    ${createFormField('电话号码', 'contact_phone_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'phone'))?.content || '')}
+                    ${createFormField('邮箱标题', 'contact_email_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'email'))?.title || '')}
+                    ${createFormField('邮箱地址', 'contact_email_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'email'))?.content || '')}
 
                     <div class="section-divider"><h3 class="section-title">社交链接</h3></div>
                     ${createFormField('社交链接标题', 'social_title', data.social_title || '')}
