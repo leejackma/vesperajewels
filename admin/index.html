@@ -16,24 +16,24 @@
         <p>Please wait while the admin panel loads.</p>
     </div>
     <script>
-    // localStorage bridge: detect auth token stored by OAuth callback
+    // Check if we're returning from OAuth with a token in the hash
     (function() {
-      function checkAuthBridge() {
-        try {
-          var authResult = localStorage.getItem('decap-cms-auth-result');
-          if (authResult) {
-            localStorage.removeItem('decap-cms-auth-result');
-            // Dispatch as message event for Decap CMS to pick up
-            window.dispatchEvent(new MessageEvent('message', { data: authResult, origin: window.location.origin }));
-          }
-        } catch(e) {}
+      var hash = window.location.hash;
+      if (hash && hash.indexOf('access_token=') !== -1) {
+        var token = hash.split('access_token=')[1].split('&')[0];
+        if (token) {
+          // Store auth data in Decap CMS expected format
+          var authData = {
+            token: token,
+            provider: 'github'
+          };
+          localStorage.setItem('decap-cms-user', JSON.stringify(authData));
+          // Clean the URL hash
+          history.replaceState(null, '', window.location.pathname);
+        }
       }
-      
-      // Check immediately and periodically
-      checkAuthBridge();
-      setInterval(checkAuthBridge, 500);
     })();
     </script>
-    <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js?v=20260514b"></script>
+    <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js?v=20260514c"></script>
 </body>
 </html>

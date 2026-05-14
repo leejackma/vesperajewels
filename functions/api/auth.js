@@ -26,45 +26,6 @@ export async function onRequestGet(context) {
     return new Response('OAuth Error: ' + data.error, { status: 400 });
   }
 
-  // Step 3: Store token in localStorage and notify opener via both postMessage and localStorage bridge
-  const token = data.access_token;
-  const html = `<!DOCTYPE html>
-<html>
-<body>
-<script>
-(function() {
-  var authData = JSON.stringify({type:'authorization',authorization:{token:'${token}',provider:'github'},code:'${code}'});
-  
-  // Try postMessage first
-  try {
-    if (window.opener && !window.opener.closed) {
-      window.opener.postMessage(authData, '*');
-    }
-  } catch(e) {}
-  
-  // Also store in localStorage as bridge (same origin)
-  try {
-    localStorage.setItem('decap-cms-auth-result', authData);
-    localStorage.setItem('decap-cms-user', JSON.stringify({token:'${token}',provider:'github'}));
-  } catch(e) {}
-  
-  // Try postMessage again after a delay
-  setTimeout(function() {
-    try {
-      if (window.opener && !window.opener.closed) {
-        window.opener.postMessage(authData, '*');
-      }
-    } catch(e) {}
-    window.close();
-  }, 1000);
-  
-  document.body.innerHTML = '<p style=\"text-align:center;padding-top:40px;font-family:sans-serif;color:#C5A467;\">Authorization successful! Closing...</p>';
-})();
-</script>
-</body>
-</html>`;
-
-  return new Response(html, {
-    headers: { 'Content-Type': 'text/html' },
-  });
+  // Step 3: Redirect back to admin page with token in URL hash
+  return Response.redirect(`https://vesperajewels.com/admin/#access_token=${data.access_token}`, 301);
 }
