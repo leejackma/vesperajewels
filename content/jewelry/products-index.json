@@ -2,11 +2,11 @@
   {
     "name": "Diamond Drop Earrings",
     "price": "$99999",
-    "category": "undefined",
+    "category": "earrings",
     "description": "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.",
     "images": [
-      "/assets/uploads/earring1.jpg",
-      "/assets/uploads/jewelry/product_1778778750954_1778778750957.jpg"
+      "/assets/uploads/jewelry/product_1778779576506_1778779576509.jpg",
+      "/assets/uploads/jewelry/product_1778779584920_1778779584922.jpg"
     ],
     "order": 1,
     "published": true,
@@ -17,12 +17,12 @@
     "name": "Diamond Pendant",
     "price": "$8888",
     "category": "necklaces",
-    "description": "Elegant diamond pendant on 18K gold chain. Features a sparkling center stone with pavÃ© details.",
+    "description": "Elegant diamond pendant on 18K gold chain. Features a sparkling center stone with pavÃÂÃÂ© details.",
     "images": [
-      "/assets/uploads/necklace2.jpg"
+      "/assets/uploads/jewelry/product_1778780094778_1778780094780.jpg"
     ],
-    "order": "1",
-    "published": "true",
+    "order": 1,
+    "published": true,
     "_slug": "diamond-pendant",
     "_path": "content/jewelry/products/diamond-pendant.json"
   },
@@ -32,10 +32,10 @@
     "category": "rings",
     "description": "Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.",
     "images": [
-      "/assets/uploads/ring1.jpg"
+      "/assets/uploads/jewelry/product_1778780053920_1778780053922.jpg"
     ],
-    "order": "1",
-    "published": "true",
+    "order": 1,
+    "published": true,
     "_slug": "diamond-solitaire-ring",
     "_path": "content/jewelry/products/diamond-solitaire-ring.json"
   },

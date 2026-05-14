@@ -318,51 +318,67 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update product cards on the page with dynamic data from JSON
     function updateProductCards() {
+        // Only update if we have valid product data with images
+        // Products without images will keep their original HTML (unsplash placeholders)
+
+        // Update Jewelry cards
+        const jewelryGrid = document.getElementById('jewelryGrid');
+        if (jewelryGrid && dynamicProducts.jewelry && dynamicProducts.jewelry.length > 0) {
+            const existingCards = jewelryGrid.querySelectorAll('.product-card');
+            dynamicProducts.jewelry.forEach((product, index) => {
+                if (index < existingCards.length) {
+                    const card = existingCards[index];
+                    // Update name
+                    const nameEl = card.querySelector('h3');
+                    if (nameEl && product.name) nameEl.textContent = product.name;
+                    // Update price
+                    const priceEl = card.querySelector('.text-gold');
+                    if (priceEl && product.price) priceEl.textContent = product.price;
+                    // Update image only if product has a valid image
+                    if (product.image) {
+                        const img = card.querySelector('img');
+                        if (img) img.src = product.image;
+                    }
+                }
+            });
+        }
+
+        // Update Watch cards
+        const watchGrid = document.getElementById('watchGrid');
+        if (watchGrid && dynamicProducts.watch && dynamicProducts.watch.length > 0) {
+            const existingCards = watchGrid.querySelectorAll('.watch-card');
+            dynamicProducts.watch.forEach((product, index) => {
+                if (index < existingCards.length) {
+                    const card = existingCards[index];
+                    const nameEl = card.querySelector('h3');
+                    if (nameEl && product.name) nameEl.textContent = product.name;
+                    const priceEl = card.querySelector('.text-gold');
+                    if (priceEl && product.price) priceEl.textContent = product.price;
+                    if (product.image) {
+                        const img = card.querySelector('img');
+                        if (img) img.src = product.image;
+                    }
+                }
+            });
+        }
+
         // Update Featured cards
         const featuredGrid = document.getElementById('featuredGrid');
         if (featuredGrid && dynamicProducts.featured && dynamicProducts.featured.length > 0) {
-            featuredGrid.innerHTML = dynamicProducts.featured.map((product, index) => `
-                <div class="featured-card animate-on-scroll cursor-pointer" onclick="openProductModal('featured', ${index + 1})">
-                    <img src="${product.image || ''}" alt="${product.name || ''}" class="w-full aspect-square object-cover" onerror="this.src='https://images.unsplash.com/photo-1515562141589-67f0d569b6c5?w=400&q=80'">
-                    <div class="p-4 text-center">
-                        <h3 class="font-playfair text-sm" style="color: #C5A467">${product.name || ''}</h3>
-                        <p class="text-gold text-sm mt-1">${product.price || ''}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Update Jewelry cards - rebuild from data
-        const jewelryGrid = document.getElementById('jewelryGrid');
-        if (jewelryGrid && dynamicProducts.jewelry && dynamicProducts.jewelry.length > 0) {
-            jewelryGrid.innerHTML = dynamicProducts.jewelry.map((product, index) => `
-                <div class="product-card animate-on-scroll cursor-pointer" data-category="${(product.category || '').toLowerCase()}" onclick="openProductModal('jewelry', ${index + 1})">
-                    <div class="overflow-hidden aspect-square">
-                        <img src="${product.image || ''}" alt="${product.name || ''}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1515562141589-67f0d569b6c5?w=400&q=80'">
-                    </div>
-                    <div class="p-4 text-center">
-                        <h3 class="font-playfair text-sm" style="color: #C5A467">${product.name || ''}</h3>
-                        <p class="text-gold text-sm mt-1">${product.price || ''}</p>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // Update Watch cards - rebuild from data
-        const watchGrid = document.getElementById('watchGrid');
-        if (watchGrid && dynamicProducts.watch && dynamicProducts.watch.length > 0) {
-            watchGrid.innerHTML = dynamicProducts.watch.map((product, index) => `
-                <div class="watch-card animate-on-scroll cursor-pointer" data-category="${(product.category || '').toLowerCase()}" onclick="openProductModal('watch', ${index + 1})">
-                    <div class="overflow-hidden aspect-square relative">
-                        ${product.badge ? `<span class="absolute top-4 left-4 bg-gold text-white text-xs px-3 py-1">${product.badge}</span>` : ''}
-                        <img src="${product.image || ''}" alt="${product.name || ''}" class="w-full h-full object-cover transition-transform duration-500 hover:scale-110" onerror="this.src='https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&q=80'">
-                    </div>
-                    <div class="p-4 text-center">
-                        <h3 class="font-playfair text-sm" style="color: #C5A467">${product.name || ''}</h3>
-                        <p class="text-gold text-sm mt-1">${product.price || ''}</p>
-                    </div>
-                </div>
-            `).join('');
+            const existingCards = featuredGrid.querySelectorAll('.featured-card');
+            dynamicProducts.featured.forEach((product, index) => {
+                if (index < existingCards.length) {
+                    const card = existingCards[index];
+                    const nameEl = card.querySelector('h3');
+                    if (nameEl && product.name) nameEl.textContent = product.name;
+                    const priceEl = card.querySelector('.text-gold');
+                    if (priceEl && product.price) priceEl.textContent = product.price;
+                    if (product.image) {
+                        const img = card.querySelector('img');
+                        if (img) img.src = product.image;
+                    }
+                }
+            });
         }
     }
 
