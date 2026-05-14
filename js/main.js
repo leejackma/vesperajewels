@@ -215,44 +215,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (jewelryResponse.ok) {
                     const jewelryData = await jewelryResponse.json();
                     if (Array.isArray(jewelryData)) {
-                        dynamicProducts.jewelry = jewelryData.map((item, index) => ({
-                            name: item.name || '',
-                            price: item.price || '',
-                            desc: item.description || '',
-                            category: item.category ? item.category.toUpperCase() : '',
-                            image: item.images?.[0] || item.image || '',
-                            images: item.images || (item.image ? [item.image] : []),
-                            badge: item.badge || ''
-                        }));
-                    }
-                }
-            } catch (e) {
-                console.log('Failed to load jewelry products from JSON, trying individual files');
-                // Fallback: try loading individual .json files
-                const jewelryFiles = [
-                    'diamond-solitaire-ring', 'gold-band-ring', 'pearl-necklace', 'diamond-pendant',
-                    'diamond-drop-earrings', 'gold-hoop-earrings', 'tennis-bracelet', 'gold-chain-bracelet'
-                ];
-                const jewelryProducts = [];
-                for (const file of jewelryFiles) {
-                    try {
-                        const response = await fetch(`content/jewelry/products/${file}.json`);
-                        if (response.ok) {
-                            const item = await response.json();
-                            jewelryProducts.push({
+                        // Filter out unpublished products and sort by order
+                        dynamicProducts.jewelry = jewelryData
+                            .filter(item => item.published !== false)
+                            .sort((a, b) => (a.order || 999) - (b.order || 999))
+                            .map((item, index) => ({
                                 name: item.name || '',
                                 price: item.price || '',
                                 desc: item.description || '',
-                                category: item.category ? item.category.toUpperCase() : '',
-                                image: item.images?.[0] || item.image || '',
-                                images: item.images || (item.image ? [item.image] : [])
-                            });
-                        }
-                    } catch (e2) {}
+                                category: item.category ? item.category.toLowerCase() : '',
+                                categoryDisplay: item.category ? item.category.toUpperCase() : '',
+                                image: convertImagePath(item.images?.[0] || item.image || ''),
+                                images: (item.images || (item.image ? [item.image] : [])).map(img => convertImagePath(img)),
+                                badge: item.badge || '',
+                                order: item.order || 999
+                            }));
+                    }
                 }
-                if (jewelryProducts.length > 0) {
-                    dynamicProducts.jewelry = jewelryProducts;
-                }
+            } catch (e) {
+                console.log('Failed to load jewelry products from JSON:', e.message);
+                dynamicProducts.jewelry = [];
             }
 
             // Load watch products from products-index.json
@@ -261,44 +243,24 @@ document.addEventListener('DOMContentLoaded', function() {
                 if (watchResponse.ok) {
                     const watchData = await watchResponse.json();
                     if (Array.isArray(watchData)) {
-                        dynamicProducts.watch = watchData.map((item) => ({
-                            name: item.name || '',
-                            price: item.price || '',
-                            desc: item.description || '',
-                            category: item.category || '',
-                            image: item.image || (item.images?.[0] || ''),
-                            images: item.images || (item.image ? [item.image] : []),
-                            badge: item.badge || ''
-                        }));
-                    }
-                }
-            } catch (e) {
-                console.log('Failed to load watch products from JSON, trying individual files');
-                // Fallback: try loading individual .json files
-                const watchFiles = [
-                    'classic-dress-watch', 'gold-chronograph', 'diamond-encrusted-watch',
-                    'sport-chronograph', 'ladies-collection', 'skeleton-watch'
-                ];
-                const watchProducts = [];
-                for (const file of watchFiles) {
-                    try {
-                        const response = await fetch(`content/watches/products/${file}.json`);
-                        if (response.ok) {
-                            const item = await response.json();
-                            watchProducts.push({
+                        // Filter out unpublished products and sort by order
+                        dynamicProducts.watch = watchData
+                            .filter(item => item.published !== false)
+                            .sort((a, b) => (a.order || 999) - (b.order || 999))
+                            .map((item) => ({
                                 name: item.name || '',
                                 price: item.price || '',
                                 desc: item.description || '',
                                 category: item.category || '',
-                                image: item.image || (item.images?.[0] || ''),
-                                images: item.images || (item.image ? [item.image] : [])
-                            });
-                        }
-                    } catch (e2) {}
+                                image: convertImagePath(item.image || (item.images?.[0] || '')),
+                                images: (item.images || (item.image ? [item.image] : [])).map(img => convertImagePath(img)),
+                                badge: item.badge || ''
+                            }));
+                    }
                 }
-                if (watchProducts.length > 0) {
-                    dynamicProducts.watch = watchProducts;
-                }
+            } catch (e) {
+                console.log('Failed to load watch products from JSON:', e.message);
+                dynamicProducts.watch = [];
             }
 
             // Featured products = first 4 from jewelry
@@ -316,70 +278,199 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     }
 
+    // Convert relative image paths to GitHub raw URLs
+    function convertImagePath(imagePath) {
+        if (!imagePath) return '';
+        
+        // If it's already an http URL, return as is
+        if (imagePath.startsWith('http://') || imagePath.startsWith('https://')) {
+            return imagePath;
+        }
+        
+        // If it's a relative path starting with /, convert to GitHub raw URL
+        if (imagePath.startsWith('/')) {
+            return `https://raw.githubusercontent.com/leejackma/vesperajewels/main${imagePath}`;
+        }
+        
+        return imagePath;
+    }
+
     // Update product cards on the page with dynamic data from JSON
     function updateProductCards() {
-        // Only update if we have valid product data with images
-        // Products without images will keep their original HTML (unsplash placeholders)
-
         // Update Jewelry cards
         const jewelryGrid = document.getElementById('jewelryGrid');
-        if (jewelryGrid && dynamicProducts.jewelry && dynamicProducts.jewelry.length > 0) {
-            const existingCards = jewelryGrid.querySelectorAll('.product-card');
-            dynamicProducts.jewelry.forEach((product, index) => {
-                if (index < existingCards.length) {
-                    const card = existingCards[index];
-                    // Update name
-                    const nameEl = card.querySelector('h3');
-                    if (nameEl && product.name) nameEl.textContent = product.name;
-                    // Update price
-                    const priceEl = card.querySelector('.text-gold');
-                    if (priceEl && product.price) priceEl.textContent = product.price;
-                    // Update image only if product has a valid image
-                    if (product.image) {
-                        const img = card.querySelector('img');
-                        if (img) img.src = product.image;
-                    }
-                }
-            });
+        if (jewelryGrid) {
+            if (dynamicProducts.jewelry && dynamicProducts.jewelry.length > 0) {
+                const placeholderImg = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80';
+                
+                let html = '';
+                dynamicProducts.jewelry.forEach((product, index) => {
+                    const imgSrc = product.image || placeholderImg;
+                    const categoryDisplay = product.categoryDisplay || (product.category ? product.category.toUpperCase() : '');
+                    
+                    html += `
+                        <div class="product-card animate-on-scroll cursor-pointer" data-category="${escapeHtml(product.category)}" onclick="openProductModal('jewelry', ${index})">
+                            <div class="relative overflow-hidden group">
+                                <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(product.name)}" class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105">
+                                ${categoryDisplay ? `<div class="absolute top-3 left-3">
+                                    <span class="bg-[#C5A467] text-white text-xs px-2 py-1">${escapeHtml(categoryDisplay)}</span>
+                                </div>` : ''}
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-playfair text-lg text-[#1a1a1a]">${escapeHtml(product.name)}</h3>
+                                <p class="text-sm text-gray-500 mt-1">${escapeHtml(product.desc)}</p>
+                                <p class="text-[#C5A467] font-semibold mt-2">${escapeHtml(product.price)}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                jewelryGrid.innerHTML = html;
+            } else {
+                jewelryGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No jewelry products available.</p>';
+            }
+            
+            // Re-observe new elements for animation
+            setTimeout(() => {
+                document.querySelectorAll('#jewelryGrid .animate-on-scroll').forEach(el => {
+                    observer.observe(el);
+                });
+            }, 100);
         }
 
         // Update Watch cards
         const watchGrid = document.getElementById('watchGrid');
-        if (watchGrid && dynamicProducts.watch && dynamicProducts.watch.length > 0) {
-            const existingCards = watchGrid.querySelectorAll('.watch-card');
-            dynamicProducts.watch.forEach((product, index) => {
-                if (index < existingCards.length) {
-                    const card = existingCards[index];
-                    const nameEl = card.querySelector('h3');
-                    if (nameEl && product.name) nameEl.textContent = product.name;
-                    const priceEl = card.querySelector('.text-gold');
-                    if (priceEl && product.price) priceEl.textContent = product.price;
-                    if (product.image) {
-                        const img = card.querySelector('img');
-                        if (img) img.src = product.image;
-                    }
-                }
-            });
+        if (watchGrid) {
+            if (dynamicProducts.watch && dynamicProducts.watch.length > 0) {
+                const placeholderImg = 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=600&q=80';
+                
+                let html = '';
+                dynamicProducts.watch.forEach((product, index) => {
+                    const imgSrc = product.image || placeholderImg;
+                    const badge = product.badge || product.category;
+                    
+                    html += `
+                        <div class="watch-card animate-on-scroll cursor-pointer" data-category="${escapeHtml(product.category)}" onclick="openProductModal('watch', ${index})">
+                            <div class="relative overflow-hidden group">
+                                <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(product.name)}" class="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105">
+                                ${badge ? `<div class="absolute top-3 left-3">
+                                    <span class="bg-[#1a1a1a] text-white text-xs px-2 py-1">${escapeHtml(badge)}</span>
+                                </div>` : ''}
+                            </div>
+                            <div class="p-4">
+                                <h3 class="font-playfair text-lg text-[#1a1a1a]">${escapeHtml(product.name)}</h3>
+                                <p class="text-sm text-gray-500 mt-1">${escapeHtml(product.desc)}</p>
+                                <p class="text-[#C5A467] font-semibold mt-2">${escapeHtml(product.price)}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                watchGrid.innerHTML = html;
+            } else {
+                watchGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No watch products available.</p>';
+            }
+            
+            // Re-observe new elements for animation
+            setTimeout(() => {
+                document.querySelectorAll('#watchGrid .animate-on-scroll').forEach(el => {
+                    observer.observe(el);
+                });
+            }, 100);
         }
 
         // Update Featured cards
         const featuredGrid = document.getElementById('featuredGrid');
-        if (featuredGrid && dynamicProducts.featured && dynamicProducts.featured.length > 0) {
-            const existingCards = featuredGrid.querySelectorAll('.featured-card');
-            dynamicProducts.featured.forEach((product, index) => {
-                if (index < existingCards.length) {
-                    const card = existingCards[index];
-                    const nameEl = card.querySelector('h3');
-                    if (nameEl && product.name) nameEl.textContent = product.name;
-                    const priceEl = card.querySelector('.text-gold');
-                    if (priceEl && product.price) priceEl.textContent = product.price;
-                    if (product.image) {
-                        const img = card.querySelector('img');
-                        if (img) img.src = product.image;
-                    }
+        if (featuredGrid) {
+            if (dynamicProducts.featured && dynamicProducts.featured.length > 0) {
+                let html = '';
+                dynamicProducts.featured.forEach((product, index) => {
+                    const imgSrc = product.image || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=400&q=80';
+                    
+                    html += `
+                        <div class="featured-card animate-on-scroll cursor-pointer" onclick="openProductModal('featured', ${index})">
+                            <div class="relative overflow-hidden group">
+                                <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(product.name)}" class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105">
+                            </div>
+                            <div class="p-3 text-center">
+                                <h3 class="font-playfair text-sm text-[#1a1a1a]">${escapeHtml(product.name)}</h3>
+                                <p class="text-[#C5A467] text-sm font-semibold">${escapeHtml(product.price)}</p>
+                            </div>
+                        </div>
+                    `;
+                });
+                featuredGrid.innerHTML = html;
+            } else {
+                featuredGrid.innerHTML = '';
+            }
+            
+            // Re-observe new elements for animation
+            setTimeout(() => {
+                document.querySelectorAll('#featuredGrid .animate-on-scroll').forEach(el => {
+                    observer.observe(el);
+                });
+            }, 100);
+        }
+
+        // Update jewelry category filters
+        updateJewelryFilters();
+        
+        // Re-attach filter event listeners
+        attachFilterListeners();
+    }
+
+    // Dynamically generate jewelry category filters
+    function updateJewelryFilters() {
+        const filtersContainer = document.getElementById('jewelryFilters');
+        if (!filtersContainer) return;
+        
+        // Collect unique categories from jewelry products
+        const categories = new Set();
+        if (dynamicProducts.jewelry) {
+            dynamicProducts.jewelry.forEach(product => {
+                if (product.category) {
+                    categories.add(product.category);
                 }
             });
         }
+        
+        let html = '<button class="filter-btn active" data-category="all">All</button>';
+        
+        // Sort categories alphabetically
+        const sortedCategories = Array.from(categories).sort();
+        sortedCategories.forEach(category => {
+            const displayName = category.charAt(0).toUpperCase() + category.slice(1);
+            html += `<button class="filter-btn" data-category="${escapeHtml(category)}">${escapeHtml(displayName)}</button>`;
+        });
+        
+        filtersContainer.innerHTML = html;
+    }
+
+    // Attach filter event listeners for dynamically generated buttons
+    function attachFilterListeners() {
+        const filterBtns = document.querySelectorAll('.filter-btn');
+        const productCards = document.querySelectorAll('.product-card');
+        
+        filterBtns.forEach(btn => {
+            // Remove existing listeners by cloning
+            const newBtn = btn.cloneNode(true);
+            btn.parentNode.replaceChild(newBtn, btn);
+            
+            newBtn.addEventListener('click', function() {
+                document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                const category = this.dataset.category;
+                
+                document.querySelectorAll('.product-card').forEach(card => {
+                    if (category === 'all' || card.dataset.category === category) {
+                        card.classList.remove('hidden-category');
+                        card.style.display = '';
+                    } else {
+                        card.classList.add('hidden-category');
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
     }
 
     window.openProductModal = function(type, id) {
@@ -390,48 +481,25 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalDescription = document.getElementById('modalDescription');
         const modalCategory = document.getElementById('modalCategory');
         
-        // Use dynamic products if available, otherwise fallback to static
-        const products = dynamicProducts[type]?.length > 0 ? dynamicProducts : {
-            featured: {
-                1: { name: 'Diamond Solitaire Ring', price: '$2,850', desc: 'Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.', category: 'RINGS', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80' },
-                2: { name: 'Pearl Strand Necklace', price: '$3,400', desc: 'Lustrous freshwater pearls strung on silk thread. Each pearl is carefully selected for its uniform size and radiant sheen.', category: 'NECKLACES', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80' },
-                3: { name: 'Classic Dress Watch', price: '$4,500', desc: 'Swiss automatic movement with sapphire crystal. This elegant timepiece combines timeless design with precision engineering.', category: 'WATCHES', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80' },
-                4: { name: 'Diamond Drop Earrings', price: '$2,600', desc: 'Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.', category: 'EARRINGS', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80' }
-            },
-            jewelry: {
-                1: { name: 'Diamond Solitaire Ring', price: '$2,850', desc: 'Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.', category: 'RINGS', image: 'https://images.unsplash.com/photo-1605100804763-247f67b3557e?w=800&q=80' },
-                2: { name: 'Gold Band Ring', price: '$1,200', desc: 'Classic solid 18K gold band. Comfortable fit with polished finish suitable for everyday wear.', category: 'RINGS', image: 'https://images.unsplash.com/photo-1603561591411-07134e71a2a9?w=800&q=80' },
-                3: { name: 'Pearl Strand Necklace', price: '$3,400', desc: 'Lustrous freshwater pearls strung on silk thread. Each pearl is carefully selected for its uniform size and radiant sheen.', category: 'NECKLACES', image: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=800&q=80' },
-                4: { name: 'Diamond Pendant', price: '$4,200', desc: 'Elegant diamond pendant on 18K gold chain. Features a sparkling center stone with pavé details.', category: 'NECKLACES', image: 'https://images.unsplash.com/photo-1611923134239-b9be5816e23c?w=800&q=80' },
-                5: { name: 'Diamond Drop Earrings', price: '$2,600', desc: 'Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.', category: 'EARRINGS', image: 'https://images.unsplash.com/photo-1535632066927-ab7c9ab60908?w=800&q=80' },
-                6: { name: 'Gold Hoop Earrings', price: '$890', desc: 'Classic gold hoop earrings in solid 18K gold. Lightweight and comfortable for all-day wear.', category: 'EARRINGS', image: 'https://images.unsplash.com/photo-1630019852942-f89202989a59?w=800&q=80' },
-                7: { name: 'Diamond Tennis Bracelet', price: '$5,800', desc: 'Luxurious tennis bracelet featuring brilliant diamonds set in platinum. A statement piece for any occasion.', category: 'BRACELETS', image: 'https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=800&q=80' },
-                8: { name: 'Gold Chain Bracelet', price: '$1,450', desc: 'Elegant solid gold chain bracelet with lobster clasp. Perfect for stacking or wearing alone.', category: 'BRACELETS', image: 'https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=800&q=80' }
-            },
-            watch: {
-                1: { name: 'Classic Dress Watch', price: '$4,500', desc: 'Swiss automatic movement with sapphire crystal. This elegant timepiece combines timeless design with precision engineering.', category: 'DRESS WATCHES', image: 'https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=800&q=80' },
-                2: { name: 'Gold Chronograph', price: '$12,800', desc: '18K gold case chronograph with tachymeter. A luxurious sports watch for the distinguished gentleman.', category: 'CHRONOGRAPH', image: 'https://images.unsplash.com/photo-1587836374828-4dbafa94cf0e?w=800&q=80' },
-                3: { name: 'Diamond Encrusted', price: '$28,500', desc: 'Limited edition timepiece encrusted with diamonds. A masterpiece of watchmaking and gem setting.', category: 'LUXURY', image: 'https://images.unsplash.com/photo-1522312346375-d1a52e2b99b3?w=800&q=80' },
-                4: { name: 'Sport Chronograph', price: '$6,200', desc: 'Titanium case sport watch with water resistance. Built for performance without compromising on style.', category: 'SPORT', image: 'https://images.unsplash.com/photo-1546868871-7041f2a55e12?w=800&q=80' },
-                5: { name: 'Ladies Collection', price: '$8,900', desc: 'Rose gold ladies watch with diamond bezel. Elegant proportions with a feminine aesthetic.', category: 'LADIES', image: 'https://images.unsplash.com/photo-1508685096489-7aacd43bd3b1?w=800&q=80' },
-                6: { name: 'Skeleton Watch', price: '$7,600', desc: 'Visible automatic movement through sapphire caseback. A window into fine Swiss watchmaking.', category: 'SKELETON', image: 'https://images.unsplash.com/photo-1533139502658-0198f920d8e8?w=800&q=80' }
-            }
-        };
+        // Use dynamic products
+        const products = dynamicProducts[type];
         
-        // Get product - support both object and array formats
-        let product;
-        if (Array.isArray(products[type])) {
-            product = products[type][id - 1];
+        if (products && products.length > 0 && id < products.length) {
+            const product = products[id];
+            modalImage.src = product.image || '';
+            modalTitle.textContent = product.name || 'Product';
+            modalPrice.textContent = product.price || '';
+            modalDescription.textContent = product.desc || '';
+            modalCategory.textContent = product.categoryDisplay || product.category || '';
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
         } else {
-            product = products[type]?.[id];
-        }
-        
-        if (product) {
-            modalImage.src = product.image;
-            modalTitle.textContent = product.name;
-            modalPrice.textContent = product.price;
-            modalDescription.textContent = product.desc;
-            modalCategory.textContent = product.category;
+            // Show "no product" message
+            modalImage.src = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80';
+            modalTitle.textContent = '暂无产品信息';
+            modalPrice.textContent = '';
+            modalDescription.textContent = '';
+            modalCategory.textContent = '';
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
