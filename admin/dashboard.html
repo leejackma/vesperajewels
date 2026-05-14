@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard - Vespera Jewels Admin</title>
+    <title>管理后台 - Vespera Jewels Admin</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -664,8 +664,8 @@
 
         <div class="user-info">
             <div class="user-avatar" id="userAvatar">?</div>
-            <span class="user-name" id="userName">Loading...</span>
-            <button class="logout-btn" onclick="logout()" title="Logout">
+            <span class="user-name" id="userName">加载中...</span>
+            <button class="logout-btn" onclick="logout()" title="退出登录">
                 <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                     <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
                     <polyline points="16 17 21 12 16 7"></polyline>
@@ -676,7 +676,7 @@
 
         <nav class="nav-menu">
             <div class="nav-section">
-                <div class="nav-section-title">Content</div>
+                <div class="nav-section-title">内容管理</div>
                 <div class="nav-item active" data-section="home" onclick="switchSection('home')">
                     <span class="nav-icon">
                         <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
@@ -698,7 +698,7 @@
             </div>
 
             <div class="nav-section">
-                <div class="nav-section-title">Products</div>
+                <div class="nav-section-title">产品管理</div>
                 <div class="nav-item" data-section="jewelry" onclick="switchSection('jewelry')">
                     <span class="nav-icon">
                         <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
@@ -726,7 +726,7 @@
             </div>
 
             <div class="nav-section">
-                <div class="nav-section-title">Info Pages</div>
+                <div class="nav-section-title">信息页面</div>
                 <div class="nav-item" data-section="faq" onclick="switchSection('faq')">
                     <span class="nav-icon">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
@@ -760,7 +760,7 @@
             </div>
 
             <div class="nav-section">
-                <div class="nav-section-title">Settings</div>
+                <div class="nav-section-title">设置</div>
                 <div class="nav-item" data-section="theme" onclick="switchSection('theme')">
                     <span class="nav-icon">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
@@ -777,7 +777,7 @@
                     <polyline points="17 21 17 13 7 13 7 21"></polyline>
                     <polyline points="7 3 7 8 15 8"></polyline>
                 </svg>
-                Save Changes
+                保存更改
             </button>
         </div>
     </aside>
@@ -787,7 +787,7 @@
         <div class="content-header">
             <div>
                 <h2 id="sectionTitle">Home</h2>
-                <p id="sectionDesc">Edit homepage content</p>
+                <p id="sectionDesc">编辑首页内容</p>
             </div>
         </div>
 
@@ -869,7 +869,7 @@
 
             if (!response.ok) {
                 if (response.status === 404) return null;
-                throw new Error(`API Error: ${response.status}`);
+                throw new Error(`API 错误: ${response.status}`);
             }
 
             const data = await response.json();
@@ -891,7 +891,7 @@
 
             if (!response.ok) {
                 if (response.status === 404) return null;
-                throw new Error(`API Error: ${response.status}`);
+                throw new Error(`API 错误: ${response.status}`);
             }
 
             const data = await response.json();
@@ -991,7 +991,7 @@
 
             if (!response.ok) {
                 if (response.status === 404) return [];
-                throw new Error(`API Error: ${response.status}`);
+                throw new Error(`API 错误: ${response.status}`);
             }
 
             return response.json();
@@ -1001,7 +1001,7 @@
             const encoded = btoa(unescape(encodeURIComponent(content)));
             
             const body = {
-                message: message || `Update ${path}`,
+                message: message || `更新 ${path}`,
                 content: encoded,
                 branch: BRANCH
             };
@@ -1022,7 +1022,7 @@
 
             if (!response.ok) {
                 const err = await response.json();
-                throw new Error(err.message || `API Error: ${response.status}`);
+                throw new Error(err.message || `API 错误: ${response.status}`);
             }
 
             const data = await response.json();
@@ -1081,75 +1081,75 @@
         const sections = {
             home: {
                 title: 'Home',
-                desc: 'Edit homepage content',
+                desc: '编辑首页内容',
                 files: [{ path: 'content/home/home.md', type: 'markdown' }]
             },
             about: {
                 title: 'About Us',
-                desc: 'Edit about page content',
+                desc: '编辑关于我们页面',
                 files: [{ path: 'content/about/about.md', type: 'markdown' }]
             },
             contact: {
                 title: 'Contact',
-                desc: 'Edit contact information',
+                desc: '编辑联系方式',
                 files: [{ path: 'content/contact/contact.md', type: 'markdown' }]
             },
             jewelry: {
                 title: 'Jewelry Settings',
-                desc: 'Edit jewelry collection settings',
+                desc: '编辑珠宝系列设置',
                 files: [{ path: 'content/jewelry/jewelry.md', type: 'markdown' }]
             },
             'jewelry-products': {
                 title: 'Jewelry Products',
-                desc: 'Manage jewelry products',
+                desc: '管理珠宝产品',
                 files: [{ path: 'content/jewelry/products', type: 'directory' }],
                 loadFiles: true
             },
             watches: {
                 title: 'Watch Settings',
-                desc: 'Edit watch collection settings',
+                desc: '编辑腕表系列设置',
                 files: [{ path: 'content/watches/watches.md', type: 'markdown' }]
             },
             'watch-products': {
                 title: 'Watch Products',
-                desc: 'Manage watch products',
+                desc: '管理腕表产品',
                 files: [{ path: 'content/watches/products', type: 'directory' }],
                 loadFiles: true
             },
             faq: {
                 title: 'FAQ Settings',
-                desc: 'Edit FAQ page settings',
+                desc: '编辑常见问题页面设置',
                 files: [{ path: 'content/faq/items/faq.md', type: 'markdown' }]
             },
             'faq-items': {
                 title: 'FAQ Items',
-                desc: 'Manage FAQ questions',
+                desc: '管理常见问题',
                 files: [{ path: 'content/faq/items', type: 'directory' }],
                 loadFiles: true,
                 filter: (f) => f.name !== 'faq.md'
             },
             process: {
                 title: 'Process Steps',
-                desc: 'Manage process steps',
+                desc: '管理流程步骤',
                 files: [{ path: 'content/process', type: 'directory' }],
                 loadFiles: true,
                 filter: (f) => !f.name.includes('settings')
             },
             order: {
                 title: 'How to Order',
-                desc: 'Edit order process',
+                desc: '编辑订购流程',
                 files: [{ path: 'content/order/how-to-order.md', type: 'markdown' }]
             },
             partner: {
                 title: 'Partner Cases',
-                desc: 'Manage partner case studies',
+                desc: '管理合作伙伴案例',
                 files: [{ path: 'content/partner-cases', type: 'directory' }],
                 loadFiles: true,
                 filter: (f) => f.name.startsWith('case-')
             },
             theme: {
                 title: 'Theme Settings',
-                desc: 'Edit site theme and colors',
+                desc: '编辑网站主题和颜色',
                 files: [{ path: 'content/settings/theme.json', type: 'json' }]
             }
         };
@@ -1184,7 +1184,7 @@
             const panelContent = document.getElementById('panelContent');
 
             panelTabs.innerHTML = '';
-            panelContent.innerHTML = '<div class="loading-spinner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg><p>Loading content...</p></div>';
+            panelContent.innerHTML = '<div class="loading-spinner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg><p>加载内容中...</p></div>';
 
             try {
                 sectionData = {};
@@ -1199,7 +1199,7 @@
                         : files.filter(f => f.type === 'file');
 
                     // Create tabs
-                    panelTabs.innerHTML = '<div class="panel-tab active">All Items</div>';
+                    panelTabs.innerHTML = '<div class="panel-tab active">全部项目</div>';
                     panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
 
                     const container = document.getElementById('tab-0');
@@ -1211,7 +1211,7 @@
                                     <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                                     <polyline points="14 2 14 8 20 8"></polyline>
                                 </svg>
-                                <p>No items yet</p>
+                                <p>暂无数据</p>
                             </div>
                         `;
                     } else {
@@ -1239,13 +1239,13 @@
                     }
                 }
             } catch (error) {
-                console.error('Load error:', error);
+                console.error('加载错误:', error);
                 panelContent.innerHTML = `
                     <div class="empty-state">
-                        <p>Error loading content: ${error.message}</p>
+                        <p>加载内容出错: ${error.message}</p>
                     </div>
                 `;
-                showToast('Failed to load content: ' + error.message, 'error');
+                showToast('加载内容失败: ' + error.message, 'error');
             }
         }
 
@@ -1260,8 +1260,8 @@
                 <div class="list-item-header">
                     <span class="list-item-title">${title}</span>
                     <div class="list-item-actions">
-                        <button class="btn-small btn-edit" onclick="editProduct('${file.path}')">Edit</button>
-                        <button class="btn-small btn-remove" onclick="deleteProduct('${file.path}')">Delete</button>
+                        <button class="btn-small btn-edit" onclick="editProduct('${file.path}')">编辑</button>
+                        <button class="btn-small btn-remove" onclick="deleteProduct('${file.path}')">删除</button>
                     </div>
                 </div>
                 <div class="item-preview" id="preview-${file.path.replace(/\//g, '-')}"></div>
@@ -1279,9 +1279,9 @@
             for (const [key, value] of Object.entries(data)) {
                 if (key === 'title') continue;
                 if (Array.isArray(value)) {
-                    fields.push(`<span><strong>${key}:</strong> ${value.length} items</span>`);
+                    fields.push(`<span><strong>${key}:</strong> ${value.length} 个项目</span>`);
                 } else if (typeof value === 'object' && value !== null) {
-                    fields.push(`<span><strong>${key}:</strong> (${Object.keys(value).length} fields)</span>`);
+                    fields.push(`<span><strong>${key}:</strong> (${Object.keys(value).length} 个字段)</span>`);
                 } else {
                     const display = String(value).substring(0, 60) + (String(value).length > 60 ? '...' : '');
                     fields.push(`<span><strong>${key}:</strong> ${display}</span>`);
@@ -1309,7 +1309,7 @@
             const header = document.createElement('div');
             header.style.cssText = 'padding:20px 25px;border-bottom:1px solid #E8E4DE;display:flex;align-items:center;justify-content:space-between;';
             header.innerHTML = `
-                <h3 style="font-family:Playfair Display,serif;font-size:20px;color:#C5A467;">Edit Item</h3>
+                <h3 style="font-family:Playfair Display,serif;font-size:20px;color:#C5A467;">编辑项目</h3>
                 <button onclick="this.closest('.modal-overlay').remove()" style="background:none;border:none;cursor:pointer;padding:5px;">
                     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8A8A8A" stroke-width="2">
                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1325,8 +1325,8 @@
             const footer = document.createElement('div');
             footer.style.cssText = 'padding:20px 25px;border-top:1px solid #E8E4DE;display:flex;justify-content:flex-end;gap:10px;';
             footer.innerHTML = `
-                <button onclick="this.closest('.modal-overlay').remove()" style="padding:12px 20px;border:1px solid #E8E4DE;background:#fff;border-radius:8px;cursor:pointer;">Cancel</button>
-                <button onclick="saveProduct('${path}')" style="padding:12px 20px;background:#C5A467;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">Save</button>
+                <button onclick="this.closest('.modal-overlay').remove()" style="padding:12px 20px;border:1px solid #E8E4DE;background:#fff;border-radius:8px;cursor:pointer;">取消</button>
+                <button onclick="saveProduct('${path}')" style="padding:12px 20px;background:#C5A467;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">保存</button>
             `;
 
             modal.appendChild(header);
@@ -1352,38 +1352,38 @@
 
             // Common fields
             if (isFaq) {
-                html += createFormField('Question', 'question', data.question || '');
-                html += createFormField('Answer', 'answer', data.answer || '', 'textarea');
-                html += createFormField('Order', 'order', data.order || 1, 'number');
+                html += createFormField('问题', 'question', data.question || '');
+                html += createFormField('答案', 'answer', data.answer || '', 'textarea');
+                html += createFormField('排序', 'order', data.order || 1, 'number');
             } else if (isProcess) {
-                html += createFormField('Title', 'title', data.title || '');
-                html += createFormField('Image URL', 'image', data.image || '');
-                html += createFormField('Order', 'order', data.order || 1, 'number');
+                html += createFormField('标题', 'title', data.title || '');
+                html += createFormField('图片链接', 'image', data.image || '');
+                html += createFormField('排序', 'order', data.order || 1, 'number');
             } else if (isPartner) {
-                html += createFormField('Title', 'title', data.title || '');
-                html += createFormField('Description', 'description', data.description || '', 'textarea');
-                html += createFormField('Order', 'order', data.order || 1, 'number');
+                html += createFormField('标题', 'title', data.title || '');
+                html += createFormField('描述', 'description', data.description || '', 'textarea');
+                html += createFormField('排序', 'order', data.order || 1, 'number');
             } else {
                 // Jewelry/Watch product
-                html += createFormField('Name', 'name', data.name || '');
-                html += createFormField('Category', 'category', data.category || '', 'select', ['rings','necklaces','earrings','bracelets','watches']);
-                html += createFormField('Price', 'price', data.price || '');
-                html += createFormField('Main Image URL', 'image', data.image || '');
-                html += createFormField('Badge', 'badge', data.badge || '');
-                html += createFormField('Description', 'description', data.description || '', 'textarea');
+                html += createFormField('名称', 'name', data.name || '');
+                html += createFormField('分类', 'category', data.category || '', 'select', ['rings','necklaces','earrings','bracelets','watches']);
+                html += createFormField('价格', 'price', data.price || '');
+                html += createFormField('主图链接', 'image', data.image || '');
+                html += createFormField('标签', 'badge', data.badge || '');
+                html += createFormField('描述', 'description', data.description || '', 'textarea');
                 html += `
                     <div class="form-group">
-                        <label>Featured</label>
+                        <label>推荐</label>
                         <select name="featured">
-                            <option value="true" ${data.featured ? 'selected' : ''}>Yes</option>
-                            <option value="false" ${!data.featured ? 'selected' : ''}>No</option>
+                            <option value="true" ${data.featured ? 'selected' : ''}>是</option>
+                            <option value="false" ${!data.featured ? 'selected' : ''}>否</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label>Published</label>
+                        <label>已发布</label>
                         <select name="published">
-                            <option value="true" ${data.published !== false ? 'selected' : ''}>Yes</option>
-                            <option value="false" ${data.published === false ? 'selected' : ''}>No</option>
+                            <option value="true" ${data.published !== false ? 'selected' : ''}>是</option>
+                            <option value="false" ${data.published === false ? 'selected' : ''}>否</option>
                         </select>
                     </div>
                 `;
@@ -1391,9 +1391,9 @@
 
             // Images array for partner cases
             if (isPartner && data.images) {
-                html += `<div class="form-group full-width"><label>Images</label>`;
+                html += `<div class="form-group full-width"><label>图片</label>`;
                 for (let i = 0; i < data.images.length; i++) {
-                    html += `<input type="text" name="image_${i}" value="${data.images[i]}" placeholder="Image URL" style="margin-bottom:8px;">`;
+                    html += `<input type="text" name="image_${i}" value="${data.images[i]}" placeholder="图片链接" style="margin-bottom:8px;">`;
                 }
                 html += `</div>`;
             }
@@ -1495,17 +1495,17 @@
             const body = sectionData[path]?.body || '';
             
             try {
-                await saveMarkdownFile(path, frontmatter, body, `Update ${sections[currentSection].title} - ${frontmatter.title || path.split('/').pop()}`);
-                showToast('Saved successfully! Cloudflare Pages will rebuild shortly.');
+                await saveMarkdownFile(path, frontmatter, body, `更新 ${sections[currentSection].title} - ${frontmatter.title || path.split('/').pop()}`);
+                showToast('保存成功！Cloudflare Pages 将很快重新构建。');
                 document.querySelector('.modal-overlay').remove();
                 await loadSection(currentSection);
             } catch (error) {
-                showToast('Save failed: ' + error.message, 'error');
+                showToast('保存失败: ' + error.message, 'error');
             }
         }
 
         async function deleteProduct(path) {
-            if (!confirm('Are you sure you want to delete this item? This cannot be undone.')) return;
+            if (!confirm('确定要删除此项目吗？此操作无法撤销。')) return;
 
             try {
                 const response = await fetch(`${API_BASE}/${path}`, {
@@ -1516,20 +1516,20 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        message: `Delete ${path}`,
+                        message: `删除 ${path}`,
                         sha: fileSha[path],
                         branch: BRANCH
                     })
                 });
 
                 if (!response.ok) {
-                    throw new Error('Delete failed');
+                    throw new Error('删除失败');
                 }
 
-                showToast('Deleted successfully!');
+                showToast('删除成功！');
                 await loadSection(currentSection);
             } catch (error) {
-                showToast('Delete failed: ' + error.message, 'error');
+                showToast('删除失败: ' + error.message, 'error');
             }
         }
 
@@ -1538,7 +1538,7 @@
             const panelContent = document.getElementById('panelContent');
             const data = content.data;
 
-            panelTabs.innerHTML = '<div class="panel-tab active">Content Fields</div>';
+            panelTabs.innerHTML = '<div class="panel-tab active">内容字段</div>';
             panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
 
             const container = document.getElementById('tab-0');
@@ -1564,22 +1564,22 @@
         function renderHomeEditor(container, data) {
             container.innerHTML = `
                 <div class="form-grid">
-                    <div class="section-divider"><h3 class="section-title">Hero Section</h3></div>
-                    ${createFormField('Hero Title', 'hero_title', data.hero_title || '')}
-                    ${createFormField('Hero Subtitle', 'hero_subtitle', data.hero_subtitle || '')}
-                    ${createFormField('Hero Description', 'hero_description', data.hero_description || '', 'textarea')}
-                    ${createFormField('Hero CTA Button', 'hero_cta', data.hero_cta || '')}
-                    ${createFormField('Hero Image URL', 'hero_image', data.hero_image || '')}
-                    ${createFormField('Featured Title', 'featured_title', data.featured_title || '')}
-                    ${createFormField('Featured Subtitle', 'featured_subtitle', data.featured_subtitle || '')}
+                    <div class="section-divider"><h3 class="section-title">Hero 区域</h3></div>
+                    ${createFormField('主标题', 'hero_title', data.hero_title || '')}
+                    ${createFormField('副标题', 'hero_subtitle', data.hero_subtitle || '')}
+                    ${createFormField('描述', 'hero_description', data.hero_description || '', 'textarea')}
+                    ${createFormField('行动按钮', 'hero_cta', data.hero_cta || '')}
+                    ${createFormField('背景图片链接', 'hero_image', data.hero_image || '')}
+                    ${createFormField('推荐标题', 'featured_title', data.featured_title || '')}
+                    ${createFormField('推荐副标题', 'featured_subtitle', data.featured_subtitle || '')}
 
-                    <div class="section-divider"><h3 class="section-title">Craft Section</h3></div>
-                    ${createFormField('Craft Label', 'craft_label', data.craft_label || '')}
-                    ${createFormField('Craft Title', 'craft_title', data.craft_title || '')}
+                    <div class="section-divider"><h3 class="section-title">工艺区域</h3></div>
+                    ${createFormField('工艺标签', 'craft_label', data.craft_label || '')}
+                    ${createFormField('工艺标题', 'craft_title', data.craft_title || '')}
 
-                    <div class="section-divider"><h3 class="section-title">Brand Promises</h3></div>
+                    <div class="section-divider"><h3 class="section-title">品牌承诺</h3></div>
                     <div class="form-group full-width">
-                        <label>Promises (JSON-like format)</label>
+                        <label>品牌承诺（JSON 格式）</label>
                         <textarea id="brand_promises" rows="10" style="font-family:monospace;font-size:13px;">${data.brand_promises ? JSON.stringify(data.brand_promises, null, 2) : '[]'}</textarea>
                     </div>
                 </div>
@@ -1589,38 +1589,38 @@
         function renderAboutEditor(container, data) {
             container.innerHTML = `
                 <div class="form-grid">
-                    <div class="section-divider"><h3 class="section-title">Section Info</h3></div>
-                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
-                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+                    <div class="section-divider"><h3 class="section-title">板块信息</h3></div>
+                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
+                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
 
-                    <div class="section-divider"><h3 class="section-title">Story</h3></div>
-                    ${createFormField('Story Image URL', 'story_image', data.story_image || '')}
+                    <div class="section-divider"><h3 class="section-title">品牌故事</h3></div>
+                    ${createFormField('故事图片链接', 'story_image', data.story_image || '')}
                     <div class="form-group full-width">
-                        <label>Story Paragraphs (JSON array)</label>
+                        <label>故事段落（JSON 数组）</label>
                         <textarea id="story_paragraphs" rows="6" style="font-family:monospace;font-size:13px;">${data.story_paragraphs ? JSON.stringify(data.story_paragraphs, null, 2) : '[]'}</textarea>
                     </div>
 
-                    <div class="section-divider"><h3 class="section-title">Highlights</h3></div>
-                    ${createFormField('Highlights Label', 'highlights_label', data.highlights_label || '')}
-                    ${createFormField('Highlights Title', 'highlights_title', data.highlights_title || '')}
+                    <div class="section-divider"><h3 class="section-title">亮点</h3></div>
+                    ${createFormField('亮点标签', 'highlights_label', data.highlights_label || '')}
+                    ${createFormField('亮点标题', 'highlights_title', data.highlights_title || '')}
                     <div class="form-group full-width">
-                        <label>Highlights Items (JSON array)</label>
+                        <label>亮点项目（JSON 数组）</label>
                         <textarea id="highlights" rows="8" style="font-family:monospace;font-size:13px;">${data.highlights ? JSON.stringify(data.highlights, null, 2) : '[]'}</textarea>
                     </div>
 
-                    <div class="section-divider"><h3 class="section-title">Process Steps</h3></div>
-                    ${createFormField('Process Label', 'process_label', data.process_label || '')}
-                    ${createFormField('Process Title', 'process_title', data.process_title || '')}
+                    <div class="section-divider"><h3 class="section-title">流程步骤</h3></div>
+                    ${createFormField('流程标签', 'process_label', data.process_label || '')}
+                    ${createFormField('流程标题', 'process_title', data.process_title || '')}
                     <div class="form-group full-width">
-                        <label>Process Steps (JSON array)</label>
+                        <label>流程步骤（JSON 数组）</label>
                         <textarea id="process_steps" rows="8" style="font-family:monospace;font-size:13px;">${data.process_steps ? JSON.stringify(data.process_steps, null, 2) : '[]'}</textarea>
                     </div>
 
-                    <div class="section-divider"><h3 class="section-title">Promises</h3></div>
-                    ${createFormField('Promises Label', 'promises_label', data.promises_label || '')}
-                    ${createFormField('Promises Title', 'promises_title', data.promises_title || '')}
+                    <div class="section-divider"><h3 class="section-title">承诺</h3></div>
+                    ${createFormField('承诺标签', 'promises_label', data.promises_label || '')}
+                    ${createFormField('承诺标题', 'promises_title', data.promises_title || '')}
                     <div class="form-group full-width">
-                        <label>Promises List (JSON array of strings)</label>
+                        <label>承诺列表（JSON 字符串数组）</label>
                         <textarea id="promises" rows="8" style="font-family:monospace;font-size:13px;">${data.promises ? JSON.stringify(data.promises, null, 2) : '[]'}</textarea>
                     </div>
                 </div>
@@ -1630,33 +1630,33 @@
         function renderContactEditor(container, data) {
             container.innerHTML = `
                 <div class="form-grid">
-                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
-                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
+                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
                     
-                    <div class="section-divider"><h3 class="section-title">Introduction</h3></div>
+                    <div class="section-divider"><h3 class="section-title">简介</h3></div>
                     <div class="form-group full-width">
-                        <label>Intro Text</label>
+                        <label>简介文字</label>
                         <textarea name="intro" rows="3">${data.intro || ''}</textarea>
                     </div>
 
-                    <div class="section-divider"><h3 class="section-title">Contact Items</h3></div>
+                    <div class="section-divider"><h3 class="section-title">联系方式</h3></div>
                     <div class="form-group full-width">
-                        <label>Contact Items (JSON array)</label>
+                        <label>联系方式（JSON 数组）</label>
                         <textarea id="contact_items" rows="10" style="font-family:monospace;font-size:13px;">${data.contact_items ? JSON.stringify(data.contact_items, null, 2) : '[]'}</textarea>
                     </div>
 
-                    <div class="section-divider"><h3 class="section-title">Social Links</h3></div>
-                    ${createFormField('Social Links Title', 'social_title', data.social_title || '')}
+                    <div class="section-divider"><h3 class="section-title">社交链接</h3></div>
+                    ${createFormField('社交链接标题', 'social_title', data.social_title || '')}
                     <div class="form-group full-width">
-                        <label>Social Links (JSON array)</label>
+                        <label>社交链接（JSON 数组）</label>
                         <textarea id="social_links" rows="8" style="font-family:monospace;font-size:13px;">${data.social_links ? JSON.stringify(data.social_links, null, 2) : '[]'}</textarea>
                     </div>
 
-                    <div class="section-divider"><h3 class="section-title">Form</h3></div>
-                    ${createFormField('Form Title', 'form_title', data.form_title || '')}
-                    ${createFormField('Success Title', 'form_success_title', data.form_success_title || '')}
+                    <div class="section-divider"><h3 class="section-title">表单</h3></div>
+                    ${createFormField('表单标题', 'form_title', data.form_title || '')}
+                    ${createFormField('成功标题', 'form_success_title', data.form_success_title || '')}
                     <div class="form-group full-width">
-                        <label>Success Message</label>
+                        <label>成功消息</label>
                         <textarea name="form_success_message" rows="2">${data.form_success_message || ''}</textarea>
                     </div>
                 </div>
@@ -1666,22 +1666,22 @@
         function renderOrderEditor(container, data) {
             container.innerHTML = `
                 <div class="form-grid">
-                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
-                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
-                    ${createFormField('Section Subtitle', 'section_subtitle', data.section_subtitle || '')}
+                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
+                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
+                    ${createFormField('板块副标题', 'section_subtitle', data.section_subtitle || '')}
 
-                    <div class="section-divider"><h3 class="section-title">Order Steps</h3></div>
+                    <div class="section-divider"><h3 class="section-title">订购步骤</h3></div>
                     <div class="form-group full-width">
-                        <label>Steps (JSON array)</label>
+                        <label>步骤（JSON 数组）</label>
                         <textarea id="steps" rows="12" style="font-family:monospace;font-size:13px;">${data.steps ? JSON.stringify(data.steps, null, 2) : '[]'}</textarea>
                     </div>
 
-                    <div class="section-divider"><h3 class="section-title">CTA Section</h3></div>
-                    ${createFormField('CTA Title', 'cta_title', data.cta_title || '')}
-                    ${createFormField('CTA Subtitle', 'cta_subtitle', data.cta_subtitle || '')}
-                    ${createFormField('WhatsApp Button', 'cta_whatsapp', data.cta_whatsapp || '')}
-                    ${createFormField('Email Button', 'cta_email', data.cta_email || '')}
-                    ${createFormField('Form Button', 'cta_form', data.cta_form || '')}
+                    <div class="section-divider"><h3 class="section-title">行动号召区域</h3></div>
+                    ${createFormField('行动号召标题', 'cta_title', data.cta_title || '')}
+                    ${createFormField('行动号召副标题', 'cta_subtitle', data.cta_subtitle || '')}
+                    ${createFormField('WhatsApp按钮文字', 'cta_whatsapp', data.cta_whatsapp || '')}
+                    ${createFormField('邮箱按钮文字', 'cta_email', data.cta_email || '')}
+                    ${createFormField('表单按钮文字', 'cta_form', data.cta_form || '')}
                 </div>
             `;
         }
@@ -1689,8 +1689,8 @@
         function renderFaqSettingsEditor(container, data) {
             container.innerHTML = `
                 <div class="form-grid">
-                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
-                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
+                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
                 </div>
             `;
         }
@@ -1698,11 +1698,11 @@
         function renderJewelrySettingsEditor(container, data) {
             container.innerHTML = `
                 <div class="form-grid">
-                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
-                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
-                    ${createFormField('Section Subtitle', 'section_subtitle', data.section_subtitle || '')}
+                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
+                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
+                    ${createFormField('板块副标题', 'section_subtitle', data.section_subtitle || '')}
                     <div class="form-group full-width">
-                        <label>Categories (JSON array)</label>
+                        <label>分类（JSON 数组）</label>
                         <textarea id="categories" rows="8" style="font-family:monospace;font-size:13px;">${data.categories ? JSON.stringify(data.categories, null, 2) : '[]'}</textarea>
                     </div>
                 </div>
@@ -1712,9 +1712,9 @@
         function renderWatchSettingsEditor(container, data) {
             container.innerHTML = `
                 <div class="form-grid">
-                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
-                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
-                    ${createFormField('Section Subtitle', 'section_subtitle', data.section_subtitle || '')}
+                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
+                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
+                    ${createFormField('板块副标题', 'section_subtitle', data.section_subtitle || '')}
                 </div>
             `;
         }
@@ -1723,81 +1723,81 @@
             const panelTabs = document.getElementById('panelTabs');
             const panelContent = document.getElementById('panelContent');
 
-            panelTabs.innerHTML = '<div class="panel-tab active">Theme Settings</div>';
+            panelTabs.innerHTML = '<div class="panel-tab active">主题设置</div>';
             panelContent.innerHTML = `
                 <div class="tab-panel active" id="tab-0">
                     <div class="form-grid">
-                        <div class="section-divider"><h3 class="section-title">Color Scheme</h3></div>
+                        <div class="section-divider"><h3 class="section-title">颜色方案</h3></div>
                         <div class="form-group">
-                            <label>Primary Background</label>
+                            <label>主背景色</label>
                             <input type="color" name="colors.primary_bg" value="${data.colors?.primary_bg || '#FAFAF8'}">
                         </div>
                         <div class="form-group">
-                            <label>White Background</label>
+                            <label>白色背景</label>
                             <input type="color" name="colors.white_bg" value="${data.colors?.white_bg || '#FFFFFF'}">
                         </div>
                         <div class="form-group">
-                            <label>Dark Background</label>
+                            <label>深色背景</label>
                             <input type="color" name="colors.dark_bg" value="${data.colors?.dark_bg || '#0F0F0F'}">
                         </div>
                         <div class="form-group">
-                            <label>Accent Gold</label>
+                            <label>金色强调</label>
                             <input type="color" name="colors.accent_gold" value="${data.colors?.accent_gold || '#C5A467'}">
                         </div>
                         <div class="form-group">
-                            <label>Accent Gold Dark</label>
+                            <label>深金色</label>
                             <input type="color" name="colors.accent_gold_dark" value="${data.colors?.accent_gold_dark || '#B8924A'}">
                         </div>
                         <div class="form-group">
-                            <label>Nav & Heading Color</label>
+                            <label>导航标题色</label>
                             <input type="color" name="colors.nav_heading_color" value="${data.colors?.nav_heading_color || '#C5A467'}">
                         </div>
                         <div class="form-group">
-                            <label>Primary Text</label>
+                            <label>主要文字色</label>
                             <input type="color" name="colors.text_primary" value="${data.colors?.text_primary || '#1A1A1A'}">
                         </div>
                         <div class="form-group">
-                            <label>Medium Text</label>
+                            <label>中等文字色</label>
                             <input type="color" name="colors.text_medium" value="${data.colors?.text_medium || '#333333'}">
                         </div>
                         <div class="form-group">
-                            <label>Secondary Text</label>
+                            <label>次要文字色</label>
                             <input type="color" name="colors.text_secondary" value="${data.colors?.text_secondary || '#8A8A8A'}">
                         </div>
                         <div class="form-group">
-                            <label>Border Color</label>
+                            <label>边框色</label>
                             <input type="color" name="colors.border_color" value="${data.colors?.border_color || '#E8E4DE'}">
                         </div>
 
-                        <div class="section-divider"><h3 class="section-title">Hero Section</h3></div>
+                        <div class="section-divider"><h3 class="section-title">Hero 区域</h3></div>
                         <div class="form-group">
-                            <label>Background Color</label>
+                            <label>背景颜色</label>
                             <input type="color" name="hero.bg_color" value="${data.hero?.bg_color || '#000000'}">
                         </div>
                         <div class="form-group">
-                            <label>Overlay Opacity (0-1)</label>
+                            <label>遮罩透明度 (0-1)</label>
                             <input type="number" name="hero.overlay_opacity" value="${data.hero?.overlay_opacity || 0.4}" step="0.1" min="0" max="1">
                         </div>
                         <div class="form-group">
-                            <label>Text Color</label>
+                            <label>文字颜色</label>
                             <input type="color" name="hero.text_color" value="${data.hero?.text_color || '#FFFFFF'}">
                         </div>
 
-                        <div class="section-divider"><h3 class="section-title">WhatsApp CTA</h3></div>
+                        <div class="section-divider"><h3 class="section-title">WhatsApp 按钮</h3></div>
                         <div class="form-group">
-                            <label>WhatsApp Link</label>
+                            <label>WhatsApp 链接</label>
                             <input type="text" name="whatsapp_cta.link" value="${data.whatsapp_cta?.link || ''}">
                         </div>
                         <div class="form-group">
-                            <label>Button Text</label>
+                            <label>按钮文字</label>
                             <input type="text" name="whatsapp_cta.text" value="${data.whatsapp_cta?.text || ''}">
                         </div>
                         <div class="form-group">
-                            <label>Button Color</label>
+                            <label>按钮颜色</label>
                             <input type="color" name="whatsapp_cta.button_color" value="${data.whatsapp_cta?.button_color || '#E2B94D'}">
                         </div>
                         <div class="form-group">
-                            <label>Text Color</label>
+                            <label>文字颜色</label>
                             <input type="color" name="whatsapp_cta.text_color" value="${data.whatsapp_cta?.text_color || '#1A1A1A'}">
                         </div>
                     </div>
@@ -1824,9 +1824,9 @@
                             newData[parts[0]][parts[1]] = input.type === 'number' ? parseFloat(input.value) : input.value;
                         }
                     });
-                    await saveJsonFile('content/settings/theme.json', newData, 'Update Theme Settings');
+                    await saveJsonFile('content/settings/theme.json', newData, '更新主题设置');
                 } else if (sectionInfo.loadFiles) {
-                    showToast('Products must be saved individually using the Edit button.', 'error');
+                    showToast('产品需要使用编辑按钮单独保存。', 'error');
                     return;
                 } else {
                     // Save markdown
@@ -1846,20 +1846,20 @@
                             try {
                                 newData[name] = JSON.parse(input.value);
                             } catch (e) {
-                                console.error('JSON parse error for', name);
+                                console.error('JSON 解析错误', name);
                             }
                         } else {
                             newData[name] = input.value;
                         }
                     });
 
-                    await saveMarkdownFile(file.path, newData, content.body, `Update ${sectionInfo.title}`);
+                    await saveMarkdownFile(file.path, newData, content.body, `更新 ${sectionInfo.title}`);
                 }
 
-                showToast('Saved successfully! Cloudflare Pages will rebuild shortly.');
+                showToast('保存成功！Cloudflare Pages 将很快重新构建。');
             } catch (error) {
-                console.error('Save error:', error);
-                showToast('Save failed: ' + error.message, 'error');
+                console.error('保存错误:', error);
+                showToast('保存失败: ' + error.message, 'error');
             } finally {
                 btn.disabled = false;
                 btn.classList.remove('saving');

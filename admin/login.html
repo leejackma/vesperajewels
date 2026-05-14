@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login - Vespera Jewels Admin</title>
+    <title>登录 - Vespera Jewels 管理后台</title>
     <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
     <style>
         * {
@@ -251,14 +251,14 @@
         
         <div class="divider"></div>
         
-        <h2>Welcome Back</h2>
-        <p class="subtitle">Sign in with your GitHub Personal Access Token</p>
+        <h2>欢迎回来</h2>
+        <p class="subtitle">使用您的 GitHub 个人访问令牌登录</p>
 
         <div id="message" class="message"></div>
 
         <form id="loginForm">
             <div class="form-group">
-                <label for="token">GitHub Personal Access Token</label>
+                <label for="token">GitHub 个人访问令牌</label>
                 <input 
                     type="password" 
                     id="token" 
@@ -269,26 +269,26 @@
             </div>
 
             <button type="submit" class="btn" id="loginBtn">
-                Sign In
+                登录
             </button>
         </form>
 
         <div class="help-text">
-            <h4>How to get a Personal Access Token:</h4>
+            <h4>如何获取个人访问令牌：</h4>
             <p>
-                1. Go to <a href="https://github.com/settings/tokens" target="_blank">GitHub Settings → Personal Access Tokens</a><br>
-                2. Click "Generate new token (classic)"<br>
-                3. Select scopes: <strong>repo</strong> (full control)<br>
-                4. Copy and paste the token above
+                1. 进入 <a href="https://github.com/settings/tokens" target="_blank">GitHub 设置 → Personal Access Tokens</a><br>
+                2. 点击 "Generate new token (classic)"<br>
+                3. 选择权限范围：<strong>repo</strong>（完全控制）<br>
+                4. 复制并粘贴上方的令牌
             </p>
             <div class="features">
                 <span class="feature">
                     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    Secure
+                    安全
                 </span>
                 <span class="feature">
                     <svg viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                    No OAuth
+                    无需 OAuth
                 </span>
             </div>
         </div>
@@ -330,17 +330,17 @@
                 });
 
                 if (response.status === 401) {
-                    return { valid: false, error: 'Invalid token. Please check and try again.' };
+                    return { valid: false, error: '令牌无效，请检查后重试。' };
                 }
 
                 if (!response.ok) {
-                    return { valid: false, error: `API Error: ${response.status}` };
+                    return { valid: false, error: `API 错误: ${response.status}` };
                 }
 
                 const user = await response.json();
                 return { valid: true, user };
             } catch (error) {
-                return { valid: false, error: 'Network error. Please check your connection.' };
+                return { valid: false, error: '网络错误，请检查您的网络连接。' };
             }
         }
 
@@ -350,12 +350,12 @@
 
             const token = tokenInput.value.trim();
             if (!token) {
-                showMessage('Please enter your GitHub token.', 'error');
+                showMessage('请输入您的 GitHub 令牌。', 'error');
                 return;
             }
 
             if (!token.startsWith('ghp_') && !token.startsWith('github_pat_')) {
-                showMessage('Token should start with "ghp_" or "github_pat_".', 'error');
+                showMessage('令牌应以 "ghp_" 或 "github_pat_" 开头。', 'error');
                 return;
             }
 
@@ -372,7 +372,7 @@
                     localStorage.setItem('gh_pat', token);
                     localStorage.setItem('gh_user', JSON.stringify(result.user));
                     
-                    showMessage('Login successful! Redirecting...', 'success');
+                    showMessage('登录成功！正在跳转...', 'success');
                     setTimeout(() => {
                         window.location.href = 'dashboard.html';
                     }, 500);
@@ -380,13 +380,13 @@
                     showMessage(result.error, 'error');
                     loginBtn.disabled = false;
                     loginBtn.classList.remove('loading');
-                    loginBtn.textContent = 'Sign In';
+                    loginBtn.textContent = '登录';
                 }
             } catch (error) {
-                showMessage('An unexpected error occurred.', 'error');
+                showMessage('发生未知错误。', 'error');
                 loginBtn.disabled = false;
                 loginBtn.classList.remove('loading');
-                loginBtn.textContent = 'Sign In';
+                loginBtn.textContent = '登录';
             }
         });
     </script>
