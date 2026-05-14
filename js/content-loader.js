@@ -196,6 +196,11 @@ class ContentLoader {
             if (btn && theme.whatsapp_cta.link) btn.href = theme.whatsapp_cta.link;
             const text = document.getElementById('whatsappCtaText');
             if (text && theme.whatsapp_cta.text) text.textContent = theme.whatsapp_cta.text;
+            // Update product modal WhatsApp button
+            const productBtn = document.getElementById('productWhatsappBtn');
+            if (productBtn && theme.whatsapp_cta.link) {
+                productBtn.href = theme.whatsapp_cta.link + '?text=' + encodeURIComponent("I'm interested in this product");
+            }
         }
     }
 
