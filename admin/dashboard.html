@@ -3970,10 +3970,15 @@
         function renderFaqItemsEditor(path, data) {
             const panelTabs = document.getElementById('panelTabs');
             const panelContent = document.getElementById('panelContent');
-            const panelContainer = panelContent.querySelector('.tab-panel.active') || panelContent;
+
+            // Clear loading state and set up tabs
+            panelTabs.innerHTML = '<div class="panel-tab active">FAQ项目</div>';
+            panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
             
             faqItemsPath = path;
             faqItemsData = Array.isArray(data) ? data : [];
+            
+            const container = document.getElementById('tab-0');
             
             // Update header with add button
             const header = document.querySelector('.content-header');
@@ -3990,10 +3995,12 @@
             `;
             const existingBtn = header.querySelector('.add-product-btn');
             if (existingBtn) existingBtn.remove();
+            const existingManageBtn = header.querySelector('.manage-categories-btn');
+            if (existingManageBtn) existingManageBtn.remove();
             header.appendChild(addBtn);
 
             // Render FAQ items list
-            panelContainer.innerHTML = '<div id="faqItemsList"></div>';
+            container.innerHTML = '<div id="faqItemsList"></div>';
             const listContainer = document.getElementById('faqItemsList');
             
             if (faqItemsData.length === 0) {
