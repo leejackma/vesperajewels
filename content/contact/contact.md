@@ -3,9 +3,12 @@ title: "Contact Us"
 section_label: "GET IN TOUCH"
 section_title: "Contact Us"
 intro: "We'd love to hear from you. Whether you have a question about our collections, need styling advice, or want to discuss a custom piece, our team is here to help."
-contact_items: []
+contact_items: "[]"
 social_title: "Follow Us"
-social_links: ""
+social_links:
+  -
+    type: "whatsapp"
+    url: "https://wa.me/85284193445"
 form_title: "Send Us a Message"
 form_success_title: "Message Sent!"
 form_success_message: "Thank you for reaching out. We'll get back to you within 24 hours."
