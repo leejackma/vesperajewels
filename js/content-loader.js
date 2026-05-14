@@ -149,7 +149,7 @@ class ContentLoader {
 
         // Hero background image
         if (home.hero_image) {
-            const heroImg = document.querySelector('#home .absolute.inset-0 img');
+            const heroImg = document.getElementById('heroBgImg') || document.querySelector('#home .absolute.inset-0 img');
             if (heroImg) {
                 // If it's a relative path (uploaded image), prepend site base or use as-is
                 // Relative paths like /assets/uploads/... will resolve against the site domain
