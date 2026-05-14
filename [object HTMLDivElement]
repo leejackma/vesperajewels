@@ -1,0 +1,42 @@
+{
+  "section_label": "PURCHASE",
+  "section_title": "How to Order",
+  "section_subtitle": "Your journey to owning a piece of timeless elegance",
+  "steps": [
+    {
+      "number": "1",
+      "title": "Send Us The Styles",
+      "description": "Browse our collection and contact us with your selections",
+      "image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=300&q=80"
+    },
+    {
+      "number": "2",
+      "title": "Pay Deposit or Full",
+      "description": "50% deposit to start production or pay in full",
+      "image": "https://images.unsplash.com/photo-1556742049-0cfed4f6a45d?w=300&q=80"
+    },
+    {
+      "number": "3",
+      "title": "Wait For Production",
+      "description": "About 7 days for our artisans to create your piece",
+      "image": "https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=300&q=80"
+    },
+    {
+      "number": "4",
+      "title": "Confirm & Approve",
+      "description": "We send photos for your confirmation before shipping",
+      "image": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=300&q=80"
+    },
+    {
+      "number": "5",
+      "title": "Receive Your Jewelry",
+      "description": "Beautifully packaged and shipped to your door",
+      "image": "https://images.unsplash.com/photo-1565514020179-026b92b84bb6?w=300&q=80"
+    }
+  ],
+  "cta_title": "Ready to Order?",
+  "cta_subtitle": "Contact us through any of these channels",
+  "cta_whatsapp": "WhatsApp",
+  "cta_email": "Email Us",
+  "cta_form": "Contact Form"
+}
