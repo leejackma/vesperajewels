@@ -2493,7 +2493,7 @@
             const category = data.category || '';
             const images = data.images || (data.image ? [data.image] : []);
             const firstImage = images[0] || '';
-            const imgSrc = firstImage.startsWith('http') ? firstImage : (firstImage.startsWith('/') ? 'https://vesperajewels.com' + firstImage : firstImage);
+            const imgSrc = firstImage.startsWith('http') ? firstImage : `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${firstImage.startsWith('/') ? firstImage.substring(1) : firstImage}`;
             const published = data.published !== false;
             const slug = file.name.replace(/\.(json|md)$/, '');
 
@@ -2691,7 +2691,6 @@
             const grid = document.getElementById('galleryGrid');
             const maxImages = 10;
             const uploadDir = currentProductType === 'jewelry' ? 'assets/uploads/jewelry/' : 'assets/uploads/watches/';
-            const baseUrl = 'https://vesperajewels.com';
 
             console.log('renderImageGallery called, images:', currentProductImages);
 
@@ -2699,8 +2698,14 @@
             
             // Render existing images
             currentProductImages.forEach((img, index) => {
-                // Build full URL for image preview
-                const imgSrc = img.startsWith('http') ? img : (img.startsWith('/') ? baseUrl + img : baseUrl + '/' + img);
+                // Use GitHub raw URL for reliable preview (bypasses Cloudflare WAF)
+                let imgSrc;
+                if (img.startsWith('http')) {
+                    imgSrc = img;
+                } else {
+                    const cleanPath = img.startsWith('/') ? img.substring(1) : img;
+                    imgSrc = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${cleanPath}`;
+                }
                 console.log(`Image ${index}: raw=${img}, src=${imgSrc}`);
                 html += `
                     <div class="gallery-item" data-index="${index}">
