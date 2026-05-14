@@ -1,6 +1,6 @@
 ---
 name: "Diamond Drop Earrings"
-price: "$8888"
+price: "$9999"
 category: "earrings"
 description: "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions."
 images:
