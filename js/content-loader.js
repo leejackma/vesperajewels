@@ -383,7 +383,14 @@ class ContentLoader {
     }
     
     renderSocialLinks(socialLinks) {
-        if (!socialLinks || !Array.isArray(socialLinks)) return;
+        if (!socialLinks || !Array.isArray(socialLinks)) {
+            // Show all default icons if no CMS data
+            ['socialWhatsApp','socialFacebook','socialInstagram','socialTiktok','socialEmail'].forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.style.display = 'flex';
+            });
+            return;
+        }
         
         const socialIcons = {
             whatsapp: document.getElementById('socialWhatsApp'),
@@ -393,13 +400,23 @@ class ContentLoader {
             email: document.getElementById('socialEmail')
         };
         
+        // Show icons that have links configured
+        const configuredTypes = new Set();
         socialLinks.forEach(link => {
             if (link.type && link.url && socialIcons[link.type]) {
                 const icon = socialIcons[link.type];
                 icon.href = link.type === 'email' ? `mailto:${link.url}` : link.url;
                 icon.style.display = 'flex';
+                configuredTypes.add(link.type);
             }
         });
+        
+        // Hide icons that don't have links
+        for (const [type, icon] of Object.entries(socialIcons)) {
+            if (!configuredTypes.has(type)) {
+                icon.style.display = 'none';
+            }
+        }
         
         // Also update WhatsApp CTA button from theme if not set
         if (this.contentCache.theme?.whatsapp_cta?.link) {
