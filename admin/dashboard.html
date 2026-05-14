@@ -2252,10 +2252,12 @@
                     </div>
 
                     <div class="section-divider"><h3 class="section-title">联系方式</h3></div>
-                    <div class="form-group full-width">
-                        <label>联系方式（JSON 数组）</label>
-                        <textarea id="contact_items" rows="10" style="font-family:monospace;font-size:13px;">${data.contact_items ? JSON.stringify(data.contact_items, null, 2) : '[]'}</textarea>
-                    </div>
+                    ${createFormField('门店标题', 'contact_address_title', (data.contact_items && data.contact_items.find(c => c.type === 'address'))?.title || '')}
+                    ${createFormField('门店地址', 'contact_address_content', (data.contact_items && data.contact_items.find(c => c.type === 'address'))?.content || '')}
+                    ${createFormField('电话标题', 'contact_phone_title', (data.contact_items && data.contact_items.find(c => c.type === 'phone'))?.title || '')}
+                    ${createFormField('电话号码', 'contact_phone_content', (data.contact_items && data.contact_items.find(c => c.type === 'phone'))?.content || '')}
+                    ${createFormField('邮箱标题', 'contact_email_title', (data.contact_items && data.contact_items.find(c => c.type === 'email'))?.title || '')}
+                    ${createFormField('邮箱地址', 'contact_email_content', (data.contact_items && data.contact_items.find(c => c.type === 'email'))?.content || '')}
 
                     <div class="section-divider"><h3 class="section-title">社交链接</h3></div>
                     ${createFormField('社交链接标题', 'social_title', data.social_title || '')}
@@ -2449,7 +2451,7 @@
                     // Collect form values
                     const inputs = document.querySelectorAll('#tab-0 input, #tab-0 textarea');
                     
-                    // For contact section, build social_links from individual inputs
+                    // For contact section, build social_links and contact_items from individual inputs
                     if (currentSection === 'contact') {
                         const socialLinks = [];
                         socialPlatforms.forEach(platform => {
@@ -2462,14 +2464,33 @@
                             }
                         });
                         newData.social_links = socialLinks;
+
+                        // Build contact_items from individual inputs
+                        const contactItems = [];
+                        const addressTitle = document.querySelector('input[name="contact_address_title"]');
+                        const addressContent = document.querySelector('input[name="contact_address_content"]');
+                        const phoneTitle = document.querySelector('input[name="contact_phone_title"]');
+                        const phoneContent = document.querySelector('input[name="contact_phone_content"]');
+                        const emailTitle = document.querySelector('input[name="contact_email_title"]');
+                        const emailContent = document.querySelector('input[name="contact_email_content"]');
+                        if (addressTitle && addressContent && (addressTitle.value.trim() || addressContent.value.trim())) {
+                            contactItems.push({ type: 'address', icon: 'location', title: addressTitle.value.trim(), content: addressContent.value.trim() });
+                        }
+                        if (phoneTitle && phoneContent && (phoneTitle.value.trim() || phoneContent.value.trim())) {
+                            contactItems.push({ type: 'phone', icon: 'phone', title: phoneTitle.value.trim(), content: phoneContent.value.trim() });
+                        }
+                        if (emailTitle && emailContent && (emailTitle.value.trim() || emailContent.value.trim())) {
+                            contactItems.push({ type: 'email', icon: 'email', title: emailTitle.value.trim(), content: emailContent.value.trim() });
+                        }
+                        newData.contact_items = contactItems;
                     }
                     
                     inputs.forEach(input => {
                         const name = input.name || input.id;
                         if (!name) return;
                         
-                        // Skip social_* inputs - handled above for contact section
-                        if (name.startsWith('social_')) return;
+                        // Skip social_* and contact_* inputs - handled above for contact section
+                        if (name.startsWith('social_') || name.startsWith('contact_')) return;
                         
                         // Handle JSON fields (but skip social_links which is handled above)
                         if (['brand_promises', 'story_paragraphs', 'highlights', 'process_steps', 'promises', 
