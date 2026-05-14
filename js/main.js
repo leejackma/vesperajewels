@@ -468,6 +468,33 @@ document.addEventListener('DOMContentLoaded', function() {
         const container = document.getElementById('orderStepsGrid');
         if (!container) return;
         
+        // Adaptive grid columns based on step count for symmetric layout
+        const count = steps.length;
+        let cols;
+        if (count <= 5) {
+            cols = count; // 1-5 steps: single row
+        } else if (count <= 6) {
+            cols = 3; // 6 steps: 3x2
+        } else if (count <= 8) {
+            cols = 4; // 7-8 steps: 4 per row
+        } else if (count <= 10) {
+            cols = 5; // 9-10 steps: 5 per row
+        } else {
+            cols = 4; // 11+: 4 per row
+        }
+        
+        // Set responsive grid classes
+        container.className = `grid gap-8`;
+        if (cols <= 2) {
+            container.className += ' md:grid-cols-2';
+        } else if (cols === 3) {
+            container.className += ' md:grid-cols-2 lg:grid-cols-3';
+        } else if (cols === 4) {
+            container.className += ' md:grid-cols-2 lg:grid-cols-4';
+        } else {
+            container.className += ' md:grid-cols-3 lg:grid-cols-5';
+        }
+        
         let html = '';
         steps.forEach((step, index) => {
             const imageSrc = convertImagePath(step.image) || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&q=80';
