@@ -1,6 +1,0 @@
----
-title: Brand Box Package
-question: Do You Provide Brand Box & Package?
-answer: "Yes! Every Vespera Jewels piece comes in a premium brand box with elegant packaging, perfect for gifting."
-order: 4
----

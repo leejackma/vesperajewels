@@ -2414,9 +2414,7 @@
             'faq-items': {
                 title: 'FAQ Items',
                 desc: '管理常见问题',
-                files: [{ path: 'content/faq', type: 'faq-directory' }],
-                loadFiles: true,
-                filter: (f) => f.name !== 'faq.json'
+                files: [{ path: 'content/faq/faq.json', type: 'faq-items-json' }]
             },
             process: {
                 title: 'Process Steps',
@@ -2555,32 +2553,15 @@
                         const content = await fetchJsonFile(file.path);
                         sectionData[file.path] = content;
                         renderJsonEditorFromData(file.path, content);
-                    } else if (file.type === 'faq-json') {
+                    } else if (file.type === 'faq-items-json') {
                         // FAQ items as a combined JSON array
                         const content = await fetchJsonFile(file.path);
                         sectionData[file.path] = content;
-                        renderFaqSettingsEditorFromData(file.path, content);
+                        renderFaqItemsEditor(file.path, content);
                     } else if (file.type === 'markdown') {
                         const content = await fetchMarkdownFile(file.path);
                         sectionData[file.path] = content;
                         renderMarkdownEditor(file.path, content);
-                    } else if (file.type === 'faq-directory') {
-                        // FAQ items directory - load as JSON files
-                        const files = await fetchDirectory(file.path);
-                        const faqFiles = files.filter(f => f.name.endsWith('.json') && f.name !== 'faq.json');
-                        
-                        panelTabs.innerHTML = '<div class="panel-tab active">FAQ项目</div>';
-                        panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
-                        
-                        const container = document.getElementById('tab-0');
-                        container.innerHTML = '<div class="list-editor" id="productList"></div>';
-                        const listContainer = document.getElementById('productList');
-                        
-                        for (const faqFile of faqFiles) {
-                            const content = await fetchJsonFile(faqFile.path);
-                            sectionData[faqFile.path] = content;
-                            renderProductItem(listContainer, faqFile, content);
-                        }
                     }
                 }
             } catch (error) {
@@ -3970,17 +3951,228 @@
         }
 
         function renderFaqSettingsEditorFromData(container, data) {
-            // For JSON FAQ file - data is an array of FAQ items
-            // Just show a simple message that items are managed separately
+            // FAQ Settings section - shows page-level settings if any
             container.innerHTML = `
                 <div class="form-grid">
                     <div class="form-group full-width">
                         <p style="color: var(--text-secondary); font-size: 14px;">
-                            FAQ项目在"FAQ Items"菜单中单独管理。每个FAQ都是一个单独的JSON文件。
+                            FAQ页面设置。如需管理FAQ项目，请使用左侧菜单的"FAQ Items"。
                         </p>
                     </div>
                 </div>
             `;
+        }
+
+        // ===== FAQ Items Editor (combined JSON array) =====
+        let faqItemsPath = '';
+        let faqItemsData = [];
+
+        function renderFaqItemsEditor(path, data) {
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+            const panelContainer = panelContent.querySelector('.tab-panel.active') || panelContent;
+            
+            faqItemsPath = path;
+            faqItemsData = Array.isArray(data) ? data : [];
+            
+            // Update header with add button
+            const header = document.querySelector('.content-header');
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-product-btn';
+            addBtn.id = 'addFaqBtn';
+            addBtn.onclick = () => addFaqItem();
+            addBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                添加问题
+            `;
+            const existingBtn = header.querySelector('.add-product-btn');
+            if (existingBtn) existingBtn.remove();
+            header.appendChild(addBtn);
+
+            // Render FAQ items list
+            panelContainer.innerHTML = '<div id="faqItemsList"></div>';
+            const listContainer = document.getElementById('faqItemsList');
+            
+            if (faqItemsData.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <p>暂无常见问题</p>
+                        <p style="font-size:13px;margin-top:8px;">点击右上角"添加问题"开始创建</p>
+                    </div>
+                `;
+            } else {
+                // Sort by order
+                const sortedItems = [...faqItemsData].sort((a, b) => {
+                    const orderA = parseInt(a.order) || 999;
+                    const orderB = parseInt(b.order) || 999;
+                    return orderA - orderB;
+                });
+                
+                sortedItems.forEach((item, sortedIndex) => {
+                    const originalIndex = faqItemsData.findIndex(i => i === item);
+                    const answerPreview = (item.answer || '').substring(0, 80) + ((item.answer || '').length > 80 ? '...' : '');
+                    const isPublished = item.published === true || item.published === 'true';
+                    
+                    const html = `
+                        <div class="faq-item-editor" style="background:#fff;border:1px solid #E8E4DE;border-radius:12px;padding:16px 20px;margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:start;">
+                                <div style="flex:1;">
+                                    <div style="font-weight:500;color:#1a1a1a;margin-bottom:4px;">
+                                        ${item.question || item.title || 'Untitled'}
+                                        ${isPublished ? '<span style="color:#C5A467;font-size:11px;margin-left:8px;">● 已发布</span>' : '<span style="color:#8A8A8A;font-size:11px;margin-left:8px;">○ 未发布</span>'}
+                                    </div>
+                                    <div style="font-size:13px;color:#8A8A8A;max-height:40px;overflow:hidden;line-height:1.5;">${answerPreview}</div>
+                                    <div style="font-size:12px;color:#C5A467;margin-top:6px;">排序: ${item.order || '0'}</div>
+                                </div>
+                                <div style="display:flex;gap:8px;flex-shrink:0;margin-left:12px;">
+                                    <button class="btn-small btn-edit" onclick="editFaqItem(${originalIndex})">编辑</button>
+                                    <button class="btn-small btn-remove" onclick="deleteFaqItem(${originalIndex})">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                    listContainer.innerHTML += html;
+                });
+            }
+        }
+
+        function addFaqItem() {
+            editFaqItem(-1);
+        }
+
+        function editFaqItem(index) {
+            const isNew = index === -1;
+            const item = isNew ? { question: '', answer: '', order: (faqItemsData.length + 1).toString(), published: true, _file: '' } : { ...faqItemsData[index] };
+            
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'faqEditModal';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;';
+            
+            overlay.innerHTML = `
+                <div style="background:#FAFAF8;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;">
+                    <div style="padding:20px 25px;border-bottom:1px solid #E8E4DE;display:flex;align-items:center;justify-content:space-between;">
+                        <h3 style="font-family:Playfair Display,serif;font-size:20px;color:#C5A467;">${isNew ? '添加问题' : '编辑问题'}</h3>
+                        <button onclick="closeFaqModal()" style="background:none;border:none;cursor:pointer;padding:5px;">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8A8A8A" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div style="padding:25px;overflow-y:auto;flex:1;">
+                        <div style="margin-bottom:20px;">
+                            <label style="display:block;font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:8px;">问题标题</label>
+                            <input type="text" id="faqQuestion" value="${escapeHtml(item.question || '')}" placeholder="例如: 如何支付？" style="width:100%;padding:12px 16px;border:1px solid #E8E4DE;border-radius:8px;font-size:14px;box-sizing:border-box;" />
+                        </div>
+                        <div style="margin-bottom:20px;">
+                            <label style="display:block;font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:8px;">问题内容（Question）</label>
+                            <input type="text" id="faqQuestionAlt" value="${escapeHtml(item.question || '')}" placeholder="简短的问题描述" style="width:100%;padding:12px 16px;border:1px solid #E8E4DE;border-radius:8px;font-size:14px;box-sizing:border-box;" />
+                        </div>
+                        <div style="margin-bottom:20px;">
+                            <label style="display:block;font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:8px;">答案</label>
+                            <textarea id="faqAnswer" rows="6" placeholder="详细的问题答案..." style="width:100%;padding:12px 16px;border:1px solid #E8E4DE;border-radius:8px;font-size:14px;box-sizing:border-box;resize:vertical;min-height:120px;">${escapeHtml(item.answer || '')}</textarea>
+                        </div>
+                        <div style="margin-bottom:20px;">
+                            <label style="display:block;font-size:14px;font-weight:500;color:#1a1a1a;margin-bottom:8px;">排序（数字越小越靠前）</label>
+                            <input type="number" id="faqOrder" value="${item.order || '0'}" min="0" style="width:100%;padding:12px 16px;border:1px solid #E8E4DE;border-radius:8px;font-size:14px;box-sizing:border-box;" />
+                        </div>
+                        <div style="margin-bottom:20px;">
+                            <label style="display:flex;align-items:center;cursor:pointer;">
+                                <input type="checkbox" id="faqPublished" ${(item.published === true || item.published === 'true') ? 'checked' : ''} style="width:18px;height:18px;margin-right:10px;accent-color:#C5A467;" />
+                                <span style="font-size:14px;color:#1a1a1a;">发布此问题</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div style="padding:20px 25px;border-top:1px solid #E8E4DE;display:flex;justify-content:flex-end;gap:10px;">
+                        <button onclick="closeFaqModal()" style="padding:10px 20px;border:1px solid #E8E4DE;background:#fff;border-radius:8px;cursor:pointer;font-size:14px;color:#8A8A8A;">取消</button>
+                        <button onclick="saveFaqItem(${index})" style="padding:10px 20px;border:none;background:#C5A467;color:#fff;border-radius:8px;cursor:pointer;font-size:14px;">保存</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+        }
+
+        function closeFaqModal() {
+            const modal = document.getElementById('faqEditModal');
+            if (modal) modal.remove();
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+
+        async function saveFaqItem(index) {
+            const question = document.getElementById('faqQuestion').value.trim();
+            const questionAlt = document.getElementById('faqQuestionAlt').value.trim();
+            const answer = document.getElementById('faqAnswer').value.trim();
+            const order = parseInt(document.getElementById('faqOrder').value) || 0;
+            const published = document.getElementById('faqPublished').checked;
+            
+            if (!question) {
+                showToast('请输入问题标题', 'error');
+                return;
+            }
+            
+            const faqItem = {
+                title: question,
+                question: questionAlt || question,
+                answer: answer,
+                order: order,
+                published: published,
+                _file: `faq-${Date.now()}`
+            };
+            
+            if (index === -1) {
+                // Add new
+                faqItemsData.push(faqItem);
+            } else {
+                // Update existing
+                faqItemsData[index] = faqItem;
+            }
+            
+            closeFaqModal();
+            
+            try {
+                await saveJsonFile(faqItemsPath, faqItemsData, '更新FAQ');
+                showToast('FAQ保存成功', 'success');
+                // Reload the section
+                await loadSection('faq-items');
+            } catch (error) {
+                console.error('保存FAQ失败:', error);
+                showToast('保存失败: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteFaqItem(index) {
+            const item = faqItemsData[index];
+            if (!confirm(`确定要删除问题"${item.question || item.title || '此项目'}"吗？`)) {
+                return;
+            }
+            
+            faqItemsData.splice(index, 1);
+            
+            try {
+                await saveJsonFile(faqItemsPath, faqItemsData, '删除FAQ');
+                showToast('FAQ删除成功', 'success');
+                // Reload the section
+                await loadSection('faq-items');
+            } catch (error) {
+                console.error('删除FAQ失败:', error);
+                showToast('删除失败: ' + error.message, 'error');
+            }
         }
 
         function renderJewelrySettingsEditor(container, data) {
