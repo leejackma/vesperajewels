@@ -2,8 +2,11 @@
 # Access admin at /admin/index.html
 
 backend:
-  name: git-gateway
+  name: github
+  repo: leejackma/vesperajewels
   branch: main
+  base_url: https://vesperajewels-auth.leejackma.workers.dev
+  auth_endpoint: /auth
 
 # Enable editorial workflow for draft/review/publish
 publish_mode: editorial_workflow
