@@ -1,25 +1,25 @@
 {
   "colors": {
-    "primary_bg": "#FAFAF8",
-    "white_bg": "#FFFFFF",
-    "dark_bg": "#0F0F0F",
-    "accent_gold": "#C5A467",
-    "accent_gold_dark": "#B8924A",
-    "nav_heading_color": "#C5A467",
-    "text_primary": "#1A1A1A",
+    "primary_bg": "#fafaf8",
+    "white_bg": "#ffffff",
+    "dark_bg": "#0f0f0f",
+    "accent_gold": "#c5a467",
+    "accent_gold_dark": "#b8924a",
+    "nav_heading_color": "#c5a467",
+    "text_primary": "#1a1a1a",
     "text_medium": "#333333",
-    "text_secondary": "#8A8A8A",
-    "border_color": "#E8E4DE"
+    "text_secondary": "#8a8a8a",
+    "border_color": "#e8e4de"
   },
   "hero": {
     "bg_color": "#000000",
     "overlay_opacity": 0.4,
-    "text_color": "#FFFFFF"
+    "text_color": "#ffffff"
   },
   "whatsapp_cta": {
-    "link": "https://wa.me/1234567890",
+    "link": "https://wa.me/85284193445",
     "text": "WHATSAPP US",
-    "button_color": "#E2B94D",
-    "text_color": "#1A1A1A"
+    "button_color": "#e2b94d",
+    "text_color": "#1a1a1a"
   }
 }
