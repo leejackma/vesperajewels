@@ -108,13 +108,47 @@ class ContentLoader {
         const match = text.match(/^---\n([\s\S]*?)\n---/);
         if (!match) return {};
         
+        try {
+            // Use js-yaml if available
+            if (window.jsyaml) {
+                return window.jsyaml.load(match[1]) || {};
+            }
+        } catch(e) {
+            console.warn('js-yaml parse failed, falling back', e);
+        }
+        
+        // Fallback: simple parser
         const yaml = match[1];
         const result = {};
         const lines = yaml.split('\n');
         let currentArray = null;
+        let currentObj = null;
+        let currentObjKey = null;
         
-        for (const line of lines) {
-            // List item with object
+        for (let i = 0; i < lines.length; i++) {
+            const line = lines[i];
+            
+            // Skip empty lines
+            if (line.trim() === '') continue;
+            
+            // Nested object property (4+ spaces indent)
+            const nestedMatch = line.match(/^(\s{4,})(\w+):\s*"?(.*?)"?\s*$/);
+            if (nestedMatch && currentArray && result[currentArray]) {
+                const lastItem = result[currentArray][result[currentArray].length - 1];
+                if (lastItem && typeof lastItem === 'object') {
+                    lastItem[nestedMatch[2]] = nestedMatch[3].replace(/^["']|["']$/g, '');
+                }
+                continue;
+            }
+            
+            // List item with dash (  -)
+            const dashMatch = line.match(/^(\s{2})-\s*$/);
+            if (dashMatch && currentArray) {
+                result[currentArray].push({});
+                continue;
+            }
+            
+            // List item with inline object {key: value}
             const listObjMatch = line.match(/^\s+-\s+\{(.+)\}$/);
             if (listObjMatch) {
                 const obj = {};
@@ -142,20 +176,18 @@ class ContentLoader {
                 const key = kvMatch[1];
                 let value = kvMatch[2].trim();
                 
+                // Handle empty array shorthand
+                if (value === '[]') {
+                    result[key] = [];
+                    continue;
+                }
+                
                 if ((value.startsWith('"') && value.endsWith('"')) ||
                     (value.startsWith("'") && value.endsWith("'"))) {
                     value = value.slice(1, -1);
                 }
                 
                 result[key] = value;
-            } else if (line.trim() === '|') {
-                // Multi-line text follows - collect remaining lines until ---
-                const rest = text.slice(text.indexOf(line) + line.length).split('---')[0].trim();
-                if (currentArray) {
-                    result[currentArray].push(rest);
-                } else {
-                    result[key] = rest;
-                }
             }
         }
         
