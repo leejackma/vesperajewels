@@ -3,44 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Content Manager - Vespera Jewels</title>
+    <title>Vespera Jewels Admin - Redirecting...</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; background: #FAFAF8; color: #333; }
-        .loading { text-align: center; }
-        .loading h2 { color: #C5A467; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin: 0;
+            background: #FAFAF8;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+        }
+        h1 {
+            color: #C5A467;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        p {
+            color: #8A8A8A;
+            margin-bottom: 30px;
+        }
+        a {
+            display: inline-block;
+            padding: 14px 30px;
+            background: #C5A467;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 500;
+            transition: background 0.3s;
+        }
+        a:hover {
+            background: #B8924A;
+        }
     </style>
+    <script>
+        // Redirect to dashboard after a brief delay
+        setTimeout(function() {
+            window.location.href = 'login.html';
+        }, 1500);
+    </script>
 </head>
 <body>
-    <div class="loading" id="loading">
-        <h2>Loading CMS...</h2>
-        <p>Please wait while the admin panel loads.</p>
+    <div class="container">
+        <h1>Vespera Jewels Admin</h1>
+        <p>Redirecting to the new admin panel...</p>
+        <a href="login.html">Go to Admin Login</a>
     </div>
-    <script>
-    // Poll localStorage for OAuth result (same-origin bridge)
-    (function() {
-      var pollInterval = setInterval(function() {
-        try {
-          var result = localStorage.getItem('decap_cms_oauth_result');
-          if (result) {
-            localStorage.removeItem('decap_cms_oauth_result');
-            clearInterval(pollInterval);
-            // Dispatch message event for Decap CMS
-            window.dispatchEvent(new MessageEvent('message', { data: result, origin: window.location.origin }));
-          }
-        } catch(e) {}
-      }, 300);
-      
-      // Also listen for direct postMessage
-      window.addEventListener('message', function(e) {
-        try {
-          var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
-          if (data && data.type === 'authorization' && data.authorization) {
-            clearInterval(pollInterval);
-          }
-        } catch(err) {}
-      });
-    })();
-    </script>
-    <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js?v=20260514d"></script>
 </body>
 </html>

@@ -1,0 +1,1875 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard - Vespera Jewels Admin</title>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --gold: #C5A467;
+            --gold-dark: #B8924A;
+            --bg: #FAFAF8;
+            --white: #FFFFFF;
+            --dark: #0F0F0F;
+            --text: #1A1A1A;
+            --text-secondary: #8A8A8A;
+            --border: #E8E4DE;
+            --sidebar-width: 280px;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--white);
+            border-right: 1px solid var(--border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+            transition: transform 0.3s ease;
+        }
+
+        .sidebar-header {
+            padding: 25px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .sidebar-header h1 {
+            font-family: 'Playfair Display', serif;
+            font-size: 22px;
+            color: var(--gold);
+            letter-spacing: 3px;
+            margin-bottom: 5px;
+        }
+
+        .sidebar-header p {
+            font-size: 11px;
+            color: var(--text-secondary);
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+
+        .user-info {
+            padding: 15px 25px;
+            background: var(--bg);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 13px;
+        }
+
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--gold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .user-name {
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .logout-btn {
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            color: #EF4444;
+            background: #FEE2E2;
+        }
+
+        .nav-menu {
+            flex: 1;
+            overflow-y: auto;
+            padding: 15px 0;
+        }
+
+        .nav-section {
+            margin-bottom: 5px;
+        }
+
+        .nav-section-title {
+            padding: 10px 25px 5px;
+            font-size: 10px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+        }
+
+        .nav-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 25px;
+            color: var(--text);
+            text-decoration: none;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-left: 3px solid transparent;
+            gap: 12px;
+        }
+
+        .nav-item:hover {
+            background: var(--bg);
+            color: var(--gold);
+        }
+
+        .nav-item.active {
+            background: rgba(197, 164, 103, 0.08);
+            color: var(--gold);
+            border-left-color: var(--gold);
+            font-weight: 500;
+        }
+
+        .nav-icon {
+            width: 20px;
+            height: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .nav-icon svg {
+            width: 18px;
+            height: 18px;
+            stroke: currentColor;
+            fill: none;
+            stroke-width: 1.5;
+        }
+
+        .sidebar-footer {
+            padding: 20px 25px;
+            border-top: 1px solid var(--border);
+        }
+
+        .save-btn {
+            width: 100%;
+            padding: 14px;
+            background: var(--gold);
+            color: var(--white);
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .save-btn:hover:not(:disabled) {
+            background: var(--gold-dark);
+        }
+
+        .save-btn:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        .save-btn.saving {
+            position: relative;
+            color: transparent;
+        }
+
+        .save-btn.saving::after {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border: 2px solid var(--white);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Main Content */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            min-height: 100vh;
+            padding: 30px;
+        }
+
+        .content-header {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .content-header h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 28px;
+            color: var(--text);
+        }
+
+        .content-header p {
+            color: var(--text-secondary);
+            margin-top: 5px;
+            font-size: 14px;
+        }
+
+        /* Editor Panel */
+        .editor-panel {
+            background: var(--white);
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04);
+            overflow: hidden;
+        }
+
+        .panel-tabs {
+            display: flex;
+            border-bottom: 1px solid var(--border);
+            background: var(--bg);
+        }
+
+        .panel-tab {
+            padding: 15px 25px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .panel-tab:hover {
+            color: var(--text);
+        }
+
+        .panel-tab.active {
+            color: var(--gold);
+            border-bottom-color: var(--gold);
+            background: var(--white);
+        }
+
+        .panel-content {
+            padding: 30px;
+        }
+
+        .tab-panel {
+            display: none;
+        }
+
+        .tab-panel.active {
+            display: block;
+        }
+
+        /* Form Styles */
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        label .hint {
+            font-weight: 400;
+            color: var(--text-secondary);
+            font-size: 12px;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        input[type="url"],
+        input[type="color"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            font-size: 14px;
+            font-family: 'Inter', sans-serif;
+            background: var(--bg);
+            transition: all 0.2s;
+        }
+
+        input:focus,
+        textarea:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--gold);
+            box-shadow: 0 0 0 3px rgba(197, 164, 103, 0.1);
+        }
+
+        textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        input[type="color"] {
+            height: 44px;
+            padding: 4px;
+            cursor: pointer;
+        }
+
+        /* List Editor */
+        .list-editor {
+            background: var(--bg);
+            border-radius: 8px;
+            padding: 15px;
+        }
+
+        .list-item {
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+        }
+
+        .list-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .list-item-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 15px;
+        }
+
+        .list-item-title {
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .list-item-actions {
+            display: flex;
+            gap: 8px;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 12px;
+            border-radius: 6px;
+            border: none;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-add {
+            background: var(--gold);
+            color: var(--white);
+        }
+
+        .btn-add:hover {
+            background: var(--gold-dark);
+        }
+
+        .btn-remove {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .btn-remove:hover {
+            background: #FECACA;
+        }
+
+        .btn-edit {
+            background: var(--bg);
+            color: var(--text);
+            border: 1px solid var(--border);
+        }
+
+        .btn-edit:hover {
+            background: var(--border);
+        }
+
+        .nested-fields {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 12px;
+        }
+
+        .nested-fields .form-group {
+            margin-bottom: 0;
+        }
+
+        /* Image Preview */
+        .image-preview {
+            margin-top: 10px;
+            max-width: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            border: 1px solid var(--border);
+        }
+
+        .image-preview img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        /* Toast Notification */
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            padding: 16px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .toast.success {
+            background: #D1FAE5;
+            color: #065F46;
+            border: 1px solid #A7F3D0;
+        }
+
+        .toast.error {
+            background: #FEE2E2;
+            color: #991B1B;
+            border: 1px solid #FECACA;
+        }
+
+        .toast-icon {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* Section Divider */
+        .section-divider {
+            grid-column: 1 / -1;
+            padding: 20px 0;
+            margin: 10px 0;
+            border-top: 1px solid var(--border);
+        }
+
+        .section-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 18px;
+            color: var(--gold);
+            margin-bottom: 15px;
+        }
+
+        /* Mobile Menu Toggle */
+        .mobile-toggle {
+            display: none;
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 200;
+            width: 44px;
+            height: 44px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            cursor: pointer;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .mobile-toggle svg {
+            width: 20px;
+            height: 20px;
+            stroke: var(--text);
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.3);
+            z-index: 99;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-secondary);
+        }
+
+        .empty-state svg {
+            width: 60px;
+            height: 60px;
+            stroke: var(--border);
+            margin-bottom: 20px;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
+        }
+
+        /* Responsive */
+        @media (max-width: 900px) {
+            .mobile-toggle {
+                display: flex;
+            }
+
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.open {
+                transform: translateX(0);
+            }
+
+            .overlay.open {
+                display: block;
+            }
+
+            .main-content {
+                margin-left: 0;
+                padding: 80px 20px 20px;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Loading State */
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(250, 250, 248, 0.9);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 500;
+        }
+
+        .loading-spinner {
+            text-align: center;
+        }
+
+        .loading-spinner svg {
+            width: 50px;
+            height: 50px;
+            stroke: var(--gold);
+            animation: rotate 2s linear infinite;
+        }
+
+        .loading-spinner p {
+            margin-top: 15px;
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        .hidden {
+            display: none !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Mobile Toggle -->
+    <button class="mobile-toggle" onclick="toggleSidebar()">
+        <svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+            <line x1="3" y1="6" x2="21" y2="6"></line>
+            <line x1="3" y1="12" x2="21" y2="12"></line>
+            <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+    </button>
+
+    <!-- Overlay -->
+    <div class="overlay" onclick="toggleSidebar()"></div>
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+        <div class="sidebar-header">
+            <h1>VESPERA</h1>
+            <p>Jewels Admin</p>
+        </div>
+
+        <div class="user-info">
+            <div class="user-avatar" id="userAvatar">?</div>
+            <span class="user-name" id="userName">Loading...</span>
+            <button class="logout-btn" onclick="logout()" title="Logout">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                </svg>
+            </button>
+        </div>
+
+        <nav class="nav-menu">
+            <div class="nav-section">
+                <div class="nav-section-title">Content</div>
+                <div class="nav-item active" data-section="home" onclick="switchSection('home')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg>
+                    </span>
+                    Home
+                </div>
+                <div class="nav-item" data-section="about" onclick="switchSection('about')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="16" x2="12" y2="12"></line><line x1="12" y1="8" x2="12.01" y2="8"></line></svg>
+                    </span>
+                    About Us
+                </div>
+                <div class="nav-item" data-section="contact" onclick="switchSection('contact')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"></path></svg>
+                    </span>
+                    Contact
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Products</div>
+                <div class="nav-item" data-section="jewelry" onclick="switchSection('jewelry')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+                    </span>
+                    Jewelry Settings
+                </div>
+                <div class="nav-item" data-section="jewelry-products" onclick="switchSection('jewelry-products')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"></circle><path d="M12 1v4M12 19v4M4.22 4.22l2.83 2.83M16.95 16.95l2.83 2.83M1 12h4M19 12h4M4.22 19.78l2.83-2.83M16.95 7.05l2.83-2.83"></path></svg>
+                    </span>
+                    Jewelry Products
+                </div>
+                <div class="nav-item" data-section="watches" onclick="switchSection('watches')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    </span>
+                    Watch Settings
+                </div>
+                <div class="nav-item" data-section="watch-products" onclick="switchSection('watch-products')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    </span>
+                    Watch Products
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Info Pages</div>
+                <div class="nav-item" data-section="faq" onclick="switchSection('faq')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
+                    </span>
+                    FAQ Settings
+                </div>
+                <div class="nav-item" data-section="faq-items" onclick="switchSection('faq-items')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
+                    </span>
+                    FAQ Items
+                </div>
+                <div class="nav-item" data-section="process" onclick="switchSection('process')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><polyline points="16 3 21 3 21 8"></polyline><line x1="4" y1="20" x2="21" y2="3"></line><polyline points="21 16 21 21 16 21"></polyline><line x1="15" y1="15" x2="21" y2="21"></line><line x1="4" y1="4" x2="9" y2="9"></line></svg>
+                    </span>
+                    Process Steps
+                </div>
+                <div class="nav-item" data-section="order" onclick="switchSection('order')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                    </span>
+                    How to Order
+                </div>
+                <div class="nav-item" data-section="partner" onclick="switchSection('partner')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    </span>
+                    Partner Cases
+                </div>
+            </div>
+
+            <div class="nav-section">
+                <div class="nav-section-title">Settings</div>
+                <div class="nav-item" data-section="theme" onclick="switchSection('theme')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+                    </span>
+                    Theme Settings
+                </div>
+            </div>
+        </nav>
+
+        <div class="sidebar-footer">
+            <button class="save-btn" id="saveBtn" onclick="saveCurrentSection()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                    <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                    <polyline points="7 3 7 8 15 8"></polyline>
+                </svg>
+                Save Changes
+            </button>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <div class="content-header">
+            <div>
+                <h2 id="sectionTitle">Home</h2>
+                <p id="sectionDesc">Edit homepage content</p>
+            </div>
+        </div>
+
+        <div class="editor-panel">
+            <div class="panel-tabs" id="panelTabs"></div>
+            <div class="panel-content" id="panelContent"></div>
+        </div>
+    </main>
+
+    <!-- Toast -->
+    <div class="toast" id="toast">
+        <span class="toast-icon"></span>
+        <span class="toast-message"></span>
+    </div>
+
+    <script>
+        // Config
+        const REPO_OWNER = 'leejackma';
+        const REPO_NAME = 'vesperajewels';
+        const BRANCH = 'main';
+        const API_BASE = `https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents`;
+
+        // State
+        let currentSection = 'home';
+        let token = localStorage.getItem('gh_pat');
+        let user = null;
+        let sectionData = {};
+        let fileSha = {};
+
+        // Check auth
+        function checkAuth() {
+            if (!token) {
+                window.location.href = 'login.html';
+                return false;
+            }
+            try {
+                user = JSON.parse(localStorage.getItem('gh_user'));
+                if (user) {
+                    document.getElementById('userName').textContent = user.login;
+                    document.getElementById('userAvatar').textContent = user.login.charAt(0).toUpperCase();
+                }
+            } catch (e) {
+                window.location.href = 'login.html';
+            }
+            return true;
+        }
+
+        function logout() {
+            localStorage.removeItem('gh_pat');
+            localStorage.removeItem('gh_user');
+            window.location.href = 'login.html';
+        }
+
+        function toggleSidebar() {
+            document.querySelector('.sidebar').classList.toggle('open');
+            document.querySelector('.overlay').classList.toggle('open');
+        }
+
+        // Toast notification
+        function showToast(message, type = 'success') {
+            const toast = document.getElementById('toast');
+            toast.className = `toast ${type}`;
+            toast.querySelector('.toast-message').textContent = message;
+            toast.querySelector('.toast-icon').innerHTML = type === 'success' 
+                ? '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>'
+                : '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>';
+            toast.classList.add('show');
+            setTimeout(() => toast.classList.remove('show'), 3000);
+        }
+
+        // GitHub API helpers
+        async function fetchFile(path) {
+            const response = await fetch(`${API_BASE}/${path}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) return null;
+                throw new Error(`API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            fileSha[path] = data.sha;
+            
+            if (data.encoding === 'base64') {
+                return JSON.parse(atob(data.content));
+            }
+            return data;
+        }
+
+        async function fetchMarkdownFile(path) {
+            const response = await fetch(`${API_BASE}/${path}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) return null;
+                throw new Error(`API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            fileSha[path] = data.sha;
+            
+            if (data.encoding === 'base64') {
+                const content = atob(data.content);
+                const frontmatter = parseFrontmatter(content);
+                return frontmatter;
+            }
+            return { data: {} };
+        }
+
+        function parseFrontmatter(content) {
+            const match = content.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+            if (!match) return { data: {}, body: content };
+
+            const yamlStr = match[1];
+            const body = match[2] || '';
+            const data = {};
+
+            // Simple YAML parser for our format
+            const lines = yamlStr.split('\n');
+            let currentKey = null;
+            let inArray = false;
+            let arrayItems = [];
+            let arrayKey = null;
+
+            for (const line of lines) {
+                if (line.match(/^(\w+):\s*$/)) {
+                    if (inArray && arrayKey) {
+                        data[arrayKey] = arrayItems;
+                        arrayItems = [];
+                        inArray = false;
+                        arrayKey = null;
+                    }
+                    currentKey = line.match(/^(\w+):\s*$/)[1];
+                    data[currentKey] = '';
+                } else if (line.match(/^\s+-\s+(.+)/) && inArray) {
+                    arrayItems.push(extractValue(line.match(/^\s+-\s+(.+)/)[1]));
+                } else if (line.match(/^(\w+):\s*$/)) {
+                    if (inArray && arrayKey) {
+                        data[arrayKey] = arrayItems;
+                        arrayItems = [];
+                    }
+                    currentKey = line.match(/^(\w+):\s*$/)[1];
+                    data[currentKey] = '';
+                } else if (line.match(/^\s+(\w+):\s*$/)) {
+                    if (inArray && arrayKey) {
+                        data[arrayKey] = arrayItems;
+                        arrayItems = [];
+                    }
+                    inArray = false;
+                    arrayKey = line.match(/^\s+(\w+):\s*$/)[1];
+                    data[arrayKey] = '';
+                } else if (line.match(/^\s+-\s*$/)) {
+                    if (currentKey) {
+                        inArray = true;
+                        arrayKey = currentKey;
+                        arrayItems = [];
+                    }
+                } else if (line.match(/^(\w+):\s*(.+)/)) {
+                    const [, key, value] = line.match(/^(\w+):\s*(.+)/);
+                    if (inArray && arrayKey) {
+                        data[arrayKey] = arrayItems;
+                        arrayItems = [];
+                        inArray = false;
+                        arrayKey = null;
+                    }
+                    data[key] = extractValue(value);
+                }
+            }
+
+            if (inArray && arrayKey) {
+                data[arrayKey] = arrayItems;
+            }
+
+            return { data, body };
+        }
+
+        function extractValue(str) {
+            str = str.trim();
+            if ((str.startsWith('"') && str.endsWith('"')) || 
+                (str.startsWith("'") && str.endsWith("'"))) {
+                return str.slice(1, -1);
+            }
+            return str;
+        }
+
+        async function fetchDirectory(path) {
+            const response = await fetch(`${API_BASE}/${path}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) return [];
+                throw new Error(`API Error: ${response.status}`);
+            }
+
+            return response.json();
+        }
+
+        async function saveFile(path, content, message) {
+            const encoded = btoa(unescape(encodeURIComponent(content)));
+            
+            const body = {
+                message: message || `Update ${path}`,
+                content: encoded,
+                branch: BRANCH
+            };
+
+            if (fileSha[path]) {
+                body.sha = fileSha[path];
+            }
+
+            const response = await fetch(`${API_BASE}/${path}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.message || `API Error: ${response.status}`);
+            }
+
+            const data = await response.json();
+            fileSha[path] = data.content.sha;
+            return data;
+        }
+
+        async function saveJsonFile(path, data, message) {
+            return saveFile(path, JSON.stringify(data, null, 2), message);
+        }
+
+        async function saveMarkdownFile(path, frontmatter, body, message) {
+            let content = '---\n';
+            for (const [key, value] of Object.entries(frontmatter)) {
+                content += formatYamlValue(key, value);
+            }
+            content += '---\n';
+            if (body) {
+                content += '\n' + body;
+            }
+            return saveFile(path, content, message);
+        }
+
+        function formatYamlValue(key, value, indent = '') {
+            if (Array.isArray(value)) {
+                if (value.length === 0) return `${indent}${key}: []\n`;
+                let str = `${indent}${key}:\n`;
+                for (const item of value) {
+                    if (typeof item === 'object' && item !== null) {
+                        str += `${indent}  -\n`;
+                        for (const [k, v] of Object.entries(item)) {
+                            str += `${indent}    ${k}: "${escapeYaml(v)}"\n`;
+                        }
+                    } else {
+                        str += `${indent}  - "${escapeYaml(item)}"\n`;
+                    }
+                }
+                return str;
+            } else if (typeof value === 'object' && value !== null) {
+                let str = `${indent}${key}:\n`;
+                for (const [k, v] of Object.entries(value)) {
+                    str += `${indent}  ${k}: "${escapeYaml(v)}"\n`;
+                }
+                return str;
+            } else {
+                return `${indent}${key}: "${escapeYaml(value)}"\n`;
+            }
+        }
+
+        function escapeYaml(value) {
+            if (value === null || value === undefined) return '';
+            return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+        }
+
+        // Section definitions
+        const sections = {
+            home: {
+                title: 'Home',
+                desc: 'Edit homepage content',
+                files: [{ path: 'content/home/home.md', type: 'markdown' }]
+            },
+            about: {
+                title: 'About Us',
+                desc: 'Edit about page content',
+                files: [{ path: 'content/about/about.md', type: 'markdown' }]
+            },
+            contact: {
+                title: 'Contact',
+                desc: 'Edit contact information',
+                files: [{ path: 'content/contact/contact.md', type: 'markdown' }]
+            },
+            jewelry: {
+                title: 'Jewelry Settings',
+                desc: 'Edit jewelry collection settings',
+                files: [{ path: 'content/jewelry/jewelry.md', type: 'markdown' }]
+            },
+            'jewelry-products': {
+                title: 'Jewelry Products',
+                desc: 'Manage jewelry products',
+                files: [{ path: 'content/jewelry/products', type: 'directory' }],
+                loadFiles: true
+            },
+            watches: {
+                title: 'Watch Settings',
+                desc: 'Edit watch collection settings',
+                files: [{ path: 'content/watches/watches.md', type: 'markdown' }]
+            },
+            'watch-products': {
+                title: 'Watch Products',
+                desc: 'Manage watch products',
+                files: [{ path: 'content/watches/products', type: 'directory' }],
+                loadFiles: true
+            },
+            faq: {
+                title: 'FAQ Settings',
+                desc: 'Edit FAQ page settings',
+                files: [{ path: 'content/faq/items/faq.md', type: 'markdown' }]
+            },
+            'faq-items': {
+                title: 'FAQ Items',
+                desc: 'Manage FAQ questions',
+                files: [{ path: 'content/faq/items', type: 'directory' }],
+                loadFiles: true,
+                filter: (f) => f.name !== 'faq.md'
+            },
+            process: {
+                title: 'Process Steps',
+                desc: 'Manage process steps',
+                files: [{ path: 'content/process', type: 'directory' }],
+                loadFiles: true,
+                filter: (f) => !f.name.includes('settings')
+            },
+            order: {
+                title: 'How to Order',
+                desc: 'Edit order process',
+                files: [{ path: 'content/order/how-to-order.md', type: 'markdown' }]
+            },
+            partner: {
+                title: 'Partner Cases',
+                desc: 'Manage partner case studies',
+                files: [{ path: 'content/partner-cases', type: 'directory' }],
+                loadFiles: true,
+                filter: (f) => f.name.startsWith('case-')
+            },
+            theme: {
+                title: 'Theme Settings',
+                desc: 'Edit site theme and colors',
+                files: [{ path: 'content/settings/theme.json', type: 'json' }]
+            }
+        };
+
+        // Switch section
+        async function switchSection(section) {
+            currentSection = section;
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.section === section);
+            });
+
+            // Update header
+            const sectionInfo = sections[section];
+            document.getElementById('sectionTitle').textContent = sectionInfo.title;
+            document.getElementById('sectionDesc').textContent = sectionInfo.desc;
+
+            // Mobile: close sidebar
+            if (window.innerWidth <= 900) {
+                document.querySelector('.sidebar').classList.remove('open');
+                document.querySelector('.overlay').classList.remove('open');
+            }
+
+            // Load section content
+            await loadSection(section);
+        }
+
+        async function loadSection(section) {
+            const sectionInfo = sections[section];
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+
+            panelTabs.innerHTML = '';
+            panelContent.innerHTML = '<div class="loading-spinner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg><p>Loading content...</p></div>';
+
+            try {
+                sectionData = {};
+                fileSha = {};
+
+                if (sectionInfo.loadFiles) {
+                    // Load directory listing
+                    const dirPath = sectionInfo.files[0].path;
+                    const files = await fetchDirectory(dirPath);
+                    const filteredFiles = sectionInfo.filter 
+                        ? files.filter(sectionInfo.filter) 
+                        : files.filter(f => f.type === 'file');
+
+                    // Create tabs
+                    panelTabs.innerHTML = '<div class="panel-tab active">All Items</div>';
+                    panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+
+                    const container = document.getElementById('tab-0');
+                    
+                    if (filteredFiles.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <p>No items yet</p>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = '<div class="list-editor" id="productList"></div>';
+                        const listContainer = document.getElementById('productList');
+
+                        for (const file of filteredFiles) {
+                            const content = await fetchMarkdownFile(file.path);
+                            sectionData[file.path] = content;
+                            renderProductItem(listContainer, file, content);
+                        }
+                    }
+                } else {
+                    // Single file sections
+                    const file = sectionInfo.files[0];
+                    
+                    if (file.type === 'markdown') {
+                        const content = await fetchMarkdownFile(file.path);
+                        sectionData[file.path] = content;
+                        renderMarkdownEditor(file.path, content);
+                    } else if (file.type === 'json') {
+                        const content = await fetchFile(file.path);
+                        sectionData[file.path] = content;
+                        renderJsonEditor(file.path, content);
+                    }
+                }
+            } catch (error) {
+                console.error('Load error:', error);
+                panelContent.innerHTML = `
+                    <div class="empty-state">
+                        <p>Error loading content: ${error.message}</p>
+                    </div>
+                `;
+                showToast('Failed to load content: ' + error.message, 'error');
+            }
+        }
+
+        function renderProductItem(container, file, content) {
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            item.dataset.path = file.path;
+            
+            const title = content.data.title || content.data.name || content.data.question || file.name.replace('.md', '');
+            
+            item.innerHTML = `
+                <div class="list-item-header">
+                    <span class="list-item-title">${title}</span>
+                    <div class="list-item-actions">
+                        <button class="btn-small btn-edit" onclick="editProduct('${file.path}')">Edit</button>
+                        <button class="btn-small btn-remove" onclick="deleteProduct('${file.path}')">Delete</button>
+                    </div>
+                </div>
+                <div class="item-preview" id="preview-${file.path.replace(/\//g, '-')}"></div>
+            `;
+            container.appendChild(item);
+
+            // Render preview fields
+            const preview = document.getElementById(`preview-${file.path.replace(/\//g, '-')}`);
+            renderItemPreview(preview, content.data);
+        }
+
+        function renderItemPreview(container, data) {
+            const fields = [];
+            
+            for (const [key, value] of Object.entries(data)) {
+                if (key === 'title') continue;
+                if (Array.isArray(value)) {
+                    fields.push(`<span><strong>${key}:</strong> ${value.length} items</span>`);
+                } else if (typeof value === 'object' && value !== null) {
+                    fields.push(`<span><strong>${key}:</strong> (${Object.keys(value).length} fields)</span>`);
+                } else {
+                    const display = String(value).substring(0, 60) + (String(value).length > 60 ? '...' : '');
+                    fields.push(`<span><strong>${key}:</strong> ${display}</span>`);
+                }
+            }
+            
+            container.innerHTML = `<div class="nested-fields" style="margin-top:10px;">${fields.map(f => `<span style="font-size:12px;color:#8A8A8A;">${f}</span>`).join('')}</div>`;
+        }
+
+        function editProduct(path) {
+            const content = sectionData[path];
+            const modal = createEditModal(path, content);
+            document.body.appendChild(modal);
+        }
+
+        function createEditModal(path, content) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;';
+            
+            const modal = document.createElement('div');
+            modal.className = 'edit-modal';
+            modal.style.cssText = 'background:#FAFAF8;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;';
+
+            const header = document.createElement('div');
+            header.style.cssText = 'padding:20px 25px;border-bottom:1px solid #E8E4DE;display:flex;align-items:center;justify-content:space-between;';
+            header.innerHTML = `
+                <h3 style="font-family:Playfair Display,serif;font-size:20px;color:#C5A467;">Edit Item</h3>
+                <button onclick="this.closest('.modal-overlay').remove()" style="background:none;border:none;cursor:pointer;padding:5px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8A8A8A" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            `;
+
+            const formContainer = document.createElement('div');
+            formContainer.style.cssText = 'padding:25px;overflow-y:auto;flex:1;';
+            formContainer.id = 'editFormContainer';
+
+            const footer = document.createElement('div');
+            footer.style.cssText = 'padding:20px 25px;border-top:1px solid #E8E4DE;display:flex;justify-content:flex-end;gap:10px;';
+            footer.innerHTML = `
+                <button onclick="this.closest('.modal-overlay').remove()" style="padding:12px 20px;border:1px solid #E8E4DE;background:#fff;border-radius:8px;cursor:pointer;">Cancel</button>
+                <button onclick="saveProduct('${path}')" style="padding:12px 20px;background:#C5A467;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">Save</button>
+            `;
+
+            modal.appendChild(header);
+            modal.appendChild(formContainer);
+            modal.appendChild(footer);
+            overlay.appendChild(modal);
+
+            // Render form after modal is in DOM
+            setTimeout(() => {
+                renderProductForm(formContainer, path, content);
+            }, 50);
+
+            return overlay;
+        }
+
+        function renderProductForm(container, path, content) {
+            const data = content.data;
+            const isFaq = path.includes('/faq/');
+            const isProcess = path.includes('/process/');
+            const isPartner = path.includes('/partner-cases/');
+
+            let html = '<div class="form-grid">';
+
+            // Common fields
+            if (isFaq) {
+                html += createFormField('Question', 'question', data.question || '');
+                html += createFormField('Answer', 'answer', data.answer || '', 'textarea');
+                html += createFormField('Order', 'order', data.order || 1, 'number');
+            } else if (isProcess) {
+                html += createFormField('Title', 'title', data.title || '');
+                html += createFormField('Image URL', 'image', data.image || '');
+                html += createFormField('Order', 'order', data.order || 1, 'number');
+            } else if (isPartner) {
+                html += createFormField('Title', 'title', data.title || '');
+                html += createFormField('Description', 'description', data.description || '', 'textarea');
+                html += createFormField('Order', 'order', data.order || 1, 'number');
+            } else {
+                // Jewelry/Watch product
+                html += createFormField('Name', 'name', data.name || '');
+                html += createFormField('Category', 'category', data.category || '', 'select', ['rings','necklaces','earrings','bracelets','watches']);
+                html += createFormField('Price', 'price', data.price || '');
+                html += createFormField('Main Image URL', 'image', data.image || '');
+                html += createFormField('Badge', 'badge', data.badge || '');
+                html += createFormField('Description', 'description', data.description || '', 'textarea');
+                html += `
+                    <div class="form-group">
+                        <label>Featured</label>
+                        <select name="featured">
+                            <option value="true" ${data.featured ? 'selected' : ''}>Yes</option>
+                            <option value="false" ${!data.featured ? 'selected' : ''}>No</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Published</label>
+                        <select name="published">
+                            <option value="true" ${data.published !== false ? 'selected' : ''}>Yes</option>
+                            <option value="false" ${data.published === false ? 'selected' : ''}>No</option>
+                        </select>
+                    </div>
+                `;
+            }
+
+            // Images array for partner cases
+            if (isPartner && data.images) {
+                html += `<div class="form-group full-width"><label>Images</label>`;
+                for (let i = 0; i < data.images.length; i++) {
+                    html += `<input type="text" name="image_${i}" value="${data.images[i]}" placeholder="Image URL" style="margin-bottom:8px;">`;
+                }
+                html += `</div>`;
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function createFormField(label, name, value, type = 'text', options = null) {
+            if (type === 'textarea') {
+                return `
+                    <div class="form-group full-width">
+                        <label>${label}</label>
+                        <textarea name="${name}">${value || ''}</textarea>
+                    </div>
+                `;
+            } else if (type === 'select' && options) {
+                const opts = options.map(opt => `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`).join('');
+                return `
+                    <div class="form-group">
+                        <label>${label}</label>
+                        <select name="${name}">${opts}</select>
+                    </div>
+                `;
+            } else if (type === 'number') {
+                return `
+                    <div class="form-group">
+                        <label>${label}</label>
+                        <input type="number" name="${name}" value="${value || 0}">
+                    </div>
+                `;
+            }
+            return `
+                <div class="form-group">
+                    <label>${label}</label>
+                    <input type="text" name="${name}" value="${value || ''}">
+                </div>
+            `;
+        }
+
+        async function saveProduct(path) {
+            const container = document.getElementById('editFormContainer');
+            const formData = new FormData();
+            
+            container.querySelectorAll('input, textarea, select').forEach(el => {
+                formData.append(el.name, el.value);
+            });
+
+            // Build frontmatter
+            const isFaq = path.includes('/faq/');
+            const isProcess = path.includes('/process/');
+            const isPartner = path.includes('/partner-cases/');
+
+            let frontmatter = { title: formData.get('name') || formData.get('title') || formData.get('question') || '' };
+
+            if (isFaq) {
+                frontmatter = {
+                    title: formData.get('question'),
+                    question: formData.get('question'),
+                    answer: formData.get('answer'),
+                    order: parseInt(formData.get('order')) || 0
+                };
+            } else if (isProcess) {
+                frontmatter = {
+                    title: formData.get('title'),
+                    image: formData.get('image'),
+                    order: parseInt(formData.get('order')) || 1,
+                    published: true
+                };
+            } else if (isPartner) {
+                const images = [];
+                let i = 0;
+                while (formData.has(`image_${i}`)) {
+                    const img = formData.get(`image_${i}`);
+                    if (img) images.push(img);
+                    i++;
+                }
+                frontmatter = {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    images: images.length ? images : [],
+                    order: parseInt(formData.get('order')) || 1,
+                    published: true
+                };
+            } else {
+                frontmatter = {
+                    title: formData.get('name'),
+                    name: formData.get('name'),
+                    category: formData.get('category'),
+                    price: formData.get('price'),
+                    description: formData.get('description'),
+                    image: formData.get('image'),
+                    badge: formData.get('badge'),
+                    featured: formData.get('featured') === 'true',
+                    published: formData.get('published') === 'true'
+                };
+            }
+
+            const body = sectionData[path]?.body || '';
+            
+            try {
+                await saveMarkdownFile(path, frontmatter, body, `Update ${sections[currentSection].title} - ${frontmatter.title || path.split('/').pop()}`);
+                showToast('Saved successfully! Cloudflare Pages will rebuild shortly.');
+                document.querySelector('.modal-overlay').remove();
+                await loadSection(currentSection);
+            } catch (error) {
+                showToast('Save failed: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteProduct(path) {
+            if (!confirm('Are you sure you want to delete this item? This cannot be undone.')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/${path}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `Delete ${path}`,
+                        sha: fileSha[path],
+                        branch: BRANCH
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('Delete failed');
+                }
+
+                showToast('Deleted successfully!');
+                await loadSection(currentSection);
+            } catch (error) {
+                showToast('Delete failed: ' + error.message, 'error');
+            }
+        }
+
+        function renderMarkdownEditor(path, content) {
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+            const data = content.data;
+
+            panelTabs.innerHTML = '<div class="panel-tab active">Content Fields</div>';
+            panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+
+            const container = document.getElementById('tab-0');
+
+            // Determine which editor to show based on path
+            if (path.includes('/home/')) {
+                renderHomeEditor(container, data);
+            } else if (path.includes('/about/')) {
+                renderAboutEditor(container, data);
+            } else if (path.includes('/contact/')) {
+                renderContactEditor(container, data);
+            } else if (path.includes('/order/')) {
+                renderOrderEditor(container, data);
+            } else if (path.includes('/faq/')) {
+                renderFaqSettingsEditor(container, data);
+            } else if (path.includes('/jewelry/jewelry.md')) {
+                renderJewelrySettingsEditor(container, data);
+            } else if (path.includes('/watches/watches.md')) {
+                renderWatchSettingsEditor(container, data);
+            }
+        }
+
+        function renderHomeEditor(container, data) {
+            container.innerHTML = `
+                <div class="form-grid">
+                    <div class="section-divider"><h3 class="section-title">Hero Section</h3></div>
+                    ${createFormField('Hero Title', 'hero_title', data.hero_title || '')}
+                    ${createFormField('Hero Subtitle', 'hero_subtitle', data.hero_subtitle || '')}
+                    ${createFormField('Hero Description', 'hero_description', data.hero_description || '', 'textarea')}
+                    ${createFormField('Hero CTA Button', 'hero_cta', data.hero_cta || '')}
+                    ${createFormField('Hero Image URL', 'hero_image', data.hero_image || '')}
+                    ${createFormField('Featured Title', 'featured_title', data.featured_title || '')}
+                    ${createFormField('Featured Subtitle', 'featured_subtitle', data.featured_subtitle || '')}
+
+                    <div class="section-divider"><h3 class="section-title">Craft Section</h3></div>
+                    ${createFormField('Craft Label', 'craft_label', data.craft_label || '')}
+                    ${createFormField('Craft Title', 'craft_title', data.craft_title || '')}
+
+                    <div class="section-divider"><h3 class="section-title">Brand Promises</h3></div>
+                    <div class="form-group full-width">
+                        <label>Promises (JSON-like format)</label>
+                        <textarea id="brand_promises" rows="10" style="font-family:monospace;font-size:13px;">${data.brand_promises ? JSON.stringify(data.brand_promises, null, 2) : '[]'}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderAboutEditor(container, data) {
+            container.innerHTML = `
+                <div class="form-grid">
+                    <div class="section-divider"><h3 class="section-title">Section Info</h3></div>
+                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
+                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+
+                    <div class="section-divider"><h3 class="section-title">Story</h3></div>
+                    ${createFormField('Story Image URL', 'story_image', data.story_image || '')}
+                    <div class="form-group full-width">
+                        <label>Story Paragraphs (JSON array)</label>
+                        <textarea id="story_paragraphs" rows="6" style="font-family:monospace;font-size:13px;">${data.story_paragraphs ? JSON.stringify(data.story_paragraphs, null, 2) : '[]'}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">Highlights</h3></div>
+                    ${createFormField('Highlights Label', 'highlights_label', data.highlights_label || '')}
+                    ${createFormField('Highlights Title', 'highlights_title', data.highlights_title || '')}
+                    <div class="form-group full-width">
+                        <label>Highlights Items (JSON array)</label>
+                        <textarea id="highlights" rows="8" style="font-family:monospace;font-size:13px;">${data.highlights ? JSON.stringify(data.highlights, null, 2) : '[]'}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">Process Steps</h3></div>
+                    ${createFormField('Process Label', 'process_label', data.process_label || '')}
+                    ${createFormField('Process Title', 'process_title', data.process_title || '')}
+                    <div class="form-group full-width">
+                        <label>Process Steps (JSON array)</label>
+                        <textarea id="process_steps" rows="8" style="font-family:monospace;font-size:13px;">${data.process_steps ? JSON.stringify(data.process_steps, null, 2) : '[]'}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">Promises</h3></div>
+                    ${createFormField('Promises Label', 'promises_label', data.promises_label || '')}
+                    ${createFormField('Promises Title', 'promises_title', data.promises_title || '')}
+                    <div class="form-group full-width">
+                        <label>Promises List (JSON array of strings)</label>
+                        <textarea id="promises" rows="8" style="font-family:monospace;font-size:13px;">${data.promises ? JSON.stringify(data.promises, null, 2) : '[]'}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderContactEditor(container, data) {
+            container.innerHTML = `
+                <div class="form-grid">
+                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
+                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+                    
+                    <div class="section-divider"><h3 class="section-title">Introduction</h3></div>
+                    <div class="form-group full-width">
+                        <label>Intro Text</label>
+                        <textarea name="intro" rows="3">${data.intro || ''}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">Contact Items</h3></div>
+                    <div class="form-group full-width">
+                        <label>Contact Items (JSON array)</label>
+                        <textarea id="contact_items" rows="10" style="font-family:monospace;font-size:13px;">${data.contact_items ? JSON.stringify(data.contact_items, null, 2) : '[]'}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">Social Links</h3></div>
+                    ${createFormField('Social Links Title', 'social_title', data.social_title || '')}
+                    <div class="form-group full-width">
+                        <label>Social Links (JSON array)</label>
+                        <textarea id="social_links" rows="8" style="font-family:monospace;font-size:13px;">${data.social_links ? JSON.stringify(data.social_links, null, 2) : '[]'}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">Form</h3></div>
+                    ${createFormField('Form Title', 'form_title', data.form_title || '')}
+                    ${createFormField('Success Title', 'form_success_title', data.form_success_title || '')}
+                    <div class="form-group full-width">
+                        <label>Success Message</label>
+                        <textarea name="form_success_message" rows="2">${data.form_success_message || ''}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderOrderEditor(container, data) {
+            container.innerHTML = `
+                <div class="form-grid">
+                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
+                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+                    ${createFormField('Section Subtitle', 'section_subtitle', data.section_subtitle || '')}
+
+                    <div class="section-divider"><h3 class="section-title">Order Steps</h3></div>
+                    <div class="form-group full-width">
+                        <label>Steps (JSON array)</label>
+                        <textarea id="steps" rows="12" style="font-family:monospace;font-size:13px;">${data.steps ? JSON.stringify(data.steps, null, 2) : '[]'}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">CTA Section</h3></div>
+                    ${createFormField('CTA Title', 'cta_title', data.cta_title || '')}
+                    ${createFormField('CTA Subtitle', 'cta_subtitle', data.cta_subtitle || '')}
+                    ${createFormField('WhatsApp Button', 'cta_whatsapp', data.cta_whatsapp || '')}
+                    ${createFormField('Email Button', 'cta_email', data.cta_email || '')}
+                    ${createFormField('Form Button', 'cta_form', data.cta_form || '')}
+                </div>
+            `;
+        }
+
+        function renderFaqSettingsEditor(container, data) {
+            container.innerHTML = `
+                <div class="form-grid">
+                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
+                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+                </div>
+            `;
+        }
+
+        function renderJewelrySettingsEditor(container, data) {
+            container.innerHTML = `
+                <div class="form-grid">
+                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
+                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+                    ${createFormField('Section Subtitle', 'section_subtitle', data.section_subtitle || '')}
+                    <div class="form-group full-width">
+                        <label>Categories (JSON array)</label>
+                        <textarea id="categories" rows="8" style="font-family:monospace;font-size:13px;">${data.categories ? JSON.stringify(data.categories, null, 2) : '[]'}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderWatchSettingsEditor(container, data) {
+            container.innerHTML = `
+                <div class="form-grid">
+                    ${createFormField('Section Label', 'section_label', data.section_label || '')}
+                    ${createFormField('Section Title', 'section_title', data.section_title || '')}
+                    ${createFormField('Section Subtitle', 'section_subtitle', data.section_subtitle || '')}
+                </div>
+            `;
+        }
+
+        function renderJsonEditor(path, data) {
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+
+            panelTabs.innerHTML = '<div class="panel-tab active">Theme Settings</div>';
+            panelContent.innerHTML = `
+                <div class="tab-panel active" id="tab-0">
+                    <div class="form-grid">
+                        <div class="section-divider"><h3 class="section-title">Color Scheme</h3></div>
+                        <div class="form-group">
+                            <label>Primary Background</label>
+                            <input type="color" name="colors.primary_bg" value="${data.colors?.primary_bg || '#FAFAF8'}">
+                        </div>
+                        <div class="form-group">
+                            <label>White Background</label>
+                            <input type="color" name="colors.white_bg" value="${data.colors?.white_bg || '#FFFFFF'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Dark Background</label>
+                            <input type="color" name="colors.dark_bg" value="${data.colors?.dark_bg || '#0F0F0F'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Accent Gold</label>
+                            <input type="color" name="colors.accent_gold" value="${data.colors?.accent_gold || '#C5A467'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Accent Gold Dark</label>
+                            <input type="color" name="colors.accent_gold_dark" value="${data.colors?.accent_gold_dark || '#B8924A'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Nav & Heading Color</label>
+                            <input type="color" name="colors.nav_heading_color" value="${data.colors?.nav_heading_color || '#C5A467'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Primary Text</label>
+                            <input type="color" name="colors.text_primary" value="${data.colors?.text_primary || '#1A1A1A'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Medium Text</label>
+                            <input type="color" name="colors.text_medium" value="${data.colors?.text_medium || '#333333'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Secondary Text</label>
+                            <input type="color" name="colors.text_secondary" value="${data.colors?.text_secondary || '#8A8A8A'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Border Color</label>
+                            <input type="color" name="colors.border_color" value="${data.colors?.border_color || '#E8E4DE'}">
+                        </div>
+
+                        <div class="section-divider"><h3 class="section-title">Hero Section</h3></div>
+                        <div class="form-group">
+                            <label>Background Color</label>
+                            <input type="color" name="hero.bg_color" value="${data.hero?.bg_color || '#000000'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Overlay Opacity (0-1)</label>
+                            <input type="number" name="hero.overlay_opacity" value="${data.hero?.overlay_opacity || 0.4}" step="0.1" min="0" max="1">
+                        </div>
+                        <div class="form-group">
+                            <label>Text Color</label>
+                            <input type="color" name="hero.text_color" value="${data.hero?.text_color || '#FFFFFF'}">
+                        </div>
+
+                        <div class="section-divider"><h3 class="section-title">WhatsApp CTA</h3></div>
+                        <div class="form-group">
+                            <label>WhatsApp Link</label>
+                            <input type="text" name="whatsapp_cta.link" value="${data.whatsapp_cta?.link || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Button Text</label>
+                            <input type="text" name="whatsapp_cta.text" value="${data.whatsapp_cta?.text || ''}">
+                        </div>
+                        <div class="form-group">
+                            <label>Button Color</label>
+                            <input type="color" name="whatsapp_cta.button_color" value="${data.whatsapp_cta?.button_color || '#E2B94D'}">
+                        </div>
+                        <div class="form-group">
+                            <label>Text Color</label>
+                            <input type="color" name="whatsapp_cta.text_color" value="${data.whatsapp_cta?.text_color || '#1A1A1A'}">
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Save current section
+        async function saveCurrentSection() {
+            const btn = document.getElementById('saveBtn');
+            btn.disabled = true;
+            btn.classList.add('saving');
+
+            try {
+                const sectionInfo = sections[currentSection];
+
+                if (currentSection === 'theme') {
+                    // Save JSON
+                    const newData = {};
+                    document.querySelectorAll('#tab-0 input').forEach(input => {
+                        const parts = input.name.split('.');
+                        if (parts.length === 2) {
+                            if (!newData[parts[0]]) newData[parts[0]] = {};
+                            newData[parts[0]][parts[1]] = input.type === 'number' ? parseFloat(input.value) : input.value;
+                        }
+                    });
+                    await saveJsonFile('content/settings/theme.json', newData, 'Update Theme Settings');
+                } else if (sectionInfo.loadFiles) {
+                    showToast('Products must be saved individually using the Edit button.', 'error');
+                    return;
+                } else {
+                    // Save markdown
+                    const file = sectionInfo.files[0];
+                    const content = sectionData[file.path];
+                    const newData = { ...content.data };
+
+                    // Collect form values
+                    const inputs = document.querySelectorAll('#tab-0 input, #tab-0 textarea');
+                    inputs.forEach(input => {
+                        const name = input.name || input.id;
+                        if (!name) return;
+                        
+                        // Handle JSON fields
+                        if (['brand_promises', 'story_paragraphs', 'highlights', 'process_steps', 'promises', 
+                             'contact_items', 'social_links', 'steps', 'categories'].includes(name)) {
+                            try {
+                                newData[name] = JSON.parse(input.value);
+                            } catch (e) {
+                                console.error('JSON parse error for', name);
+                            }
+                        } else {
+                            newData[name] = input.value;
+                        }
+                    });
+
+                    await saveMarkdownFile(file.path, newData, content.body, `Update ${sectionInfo.title}`);
+                }
+
+                showToast('Saved successfully! Cloudflare Pages will rebuild shortly.');
+            } catch (error) {
+                console.error('Save error:', error);
+                showToast('Save failed: ' + error.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.classList.remove('saving');
+            }
+        }
+
+        // Initialize
+        if (checkAuth()) {
+            loadSection('home');
+        }
+    </script>
+</body>
+</html>
