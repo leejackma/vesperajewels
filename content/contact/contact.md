@@ -20,7 +20,10 @@ contact_items:
     title: "Email"
     content: ""
 social_title: "Follow Us"
-social_links: []
+social_links:
+  -
+    type: "whatsapp"
+    url: "https://wa.me/85284193445"
 form_title: "Send Us a Message"
 form_success_title: "Message Sent!"
 form_success_message: "Thank you for reaching out. We'll get back to you within 24 hours."
