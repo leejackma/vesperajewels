@@ -8,6 +8,15 @@ class ContentLoader {
         this.contentCache = {};
     }
 
+    // Ensure a value is an array - handles string "[]", null, undefined
+    ensureArray(val) {
+        if (Array.isArray(val)) return val;
+        if (typeof val === 'string') {
+            try { const p = JSON.parse(val); return Array.isArray(p) ? p : []; } catch(e) { return []; }
+        }
+        return [];
+    }
+
     async init() {
         try {
             await this.loadAllContent();
@@ -143,8 +152,7 @@ class ContentLoader {
 
         // Brand promises
         if (home.brand_promises) {
-            // Handle both array and string format
-            let promises = home.brand_promises;
+            let promises = this.ensureArray(home.brand_promises);
             if (typeof promises === 'string') {
                 try {
                     promises = JSON.parse(promises);
@@ -153,7 +161,7 @@ class ContentLoader {
                 }
             }
             if (Array.isArray(promises)) {
-                promises.forEach((p, i) => {
+                this.ensureArray(promises).forEach((p, i) => {
                     this.setText(`[data-cms="home.promise.${i}.icon"]`, p.icon);
                     this.setText(`[data-cms="home.promise.${i}.title"]`, p.title);
                     this.setText(`[data-cms="home.promise.${i}.description"]`, p.description);
@@ -201,7 +209,7 @@ class ContentLoader {
                 }
             }
             if (Array.isArray(highlights)) {
-                highlights.forEach((h, i) => {
+                this.ensureArray(highlights).forEach((h, i) => {
                     this.setText(`[data-cms="about.highlight.${i}.icon"]`, h.icon);
                     this.setText(`[data-cms="about.highlight.${i}.title"]`, h.title);
                     this.setText(`[data-cms="about.highlight.${i}.description"]`, h.description);
@@ -223,7 +231,7 @@ class ContentLoader {
                 }
             }
             if (Array.isArray(processSteps)) {
-                processSteps.forEach((s, i) => {
+                this.ensureArray(processSteps).forEach((s, i) => {
                     this.setText(`[data-cms="about.process.${i}.number"]`, s.number);
                     this.setText(`[data-cms="about.process.${i}.title"]`, s.title);
                 });
@@ -244,7 +252,7 @@ class ContentLoader {
                 }
             }
             if (Array.isArray(promises)) {
-                promises.forEach((p, i) => {
+                this.ensureArray(promises).forEach((p, i) => {
                     this.setText(`[data-cms="about.promise.${i}"]`, typeof p === 'string' ? p : p.text);
                 });
             }
@@ -345,7 +353,7 @@ class ContentLoader {
                 }
             }
             if (Array.isArray(steps)) {
-                steps.forEach((s, i) => {
+                this.ensureArray(steps).forEach((s, i) => {
                     this.setText(`[data-cms="order.step.${i}.number"]`, s.number);
                     this.setText(`[data-cms="order.step.${i}.title"]`, s.title);
                     this.setText(`[data-cms="order.step.${i}.description"]`, s.description);
@@ -378,7 +386,7 @@ class ContentLoader {
                 }
             }
             if (Array.isArray(contactItems)) {
-                contactItems.forEach((item, i) => {
+                this.ensureArray(contactItems).forEach((item, i) => {
                     this.setText(`[data-cms="contact.item.${i}.title"]`, item.title);
                     this.setText(`[data-cms="contact.item.${i}.content"]`, item.content);
                 });
@@ -417,7 +425,7 @@ class ContentLoader {
         
         // Show icons that have links configured
         const configuredTypes = new Set();
-        socialLinks.forEach(link => {
+        this.ensureArray(socialLinks).forEach(link => {
             if (link.type && link.url && socialIcons[link.type]) {
                 const icon = socialIcons[link.type];
                 icon.href = link.type === 'email' ? `mailto:${link.url}` : link.url;
