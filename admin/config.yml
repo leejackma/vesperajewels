@@ -5,8 +5,8 @@ backend:
   name: github
   repo: leejackma/vesperajewels
   branch: main
-  base_url: https://vesperajewels-auth.leejackma.workers.dev
-  auth_endpoint: /auth
+  base_url: https://vesperajewels.com
+  auth_endpoint: /api/auth
 
 # Enable editorial workflow for draft/review/publish
 publish_mode: editorial_workflow
