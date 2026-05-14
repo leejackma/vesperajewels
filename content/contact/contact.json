@@ -15,6 +15,12 @@
       "icon": "phone",
       "title": "Call Us",
       "content": "+852 84193445"
+    },
+    {
+      "type": "email",
+      "icon": "email",
+      "title": "Email",
+      "content": ""
     }
   ],
   "social_title": "Follow Us",
@@ -22,6 +28,18 @@
     {
       "type": "whatsapp",
       "url": "https://wa.me/85284193445"
+    },
+    {
+      "type": "facebook",
+      "url": "https://www.facebook.com/share/14cDex3wzp7/?mibextid=wwXIfr"
+    },
+    {
+      "type": "instagram",
+      "url": "https://www.instagram.com/9_18kgolddiamondjewelry?igsh=dDUwYjVobWVnaTI2&utm_source=qr"
+    },
+    {
+      "type": "tiktok",
+      "url": "https://www.tiktok.com/@vespera.fine.jewel?_r=1&_t=ZP-96MHzZGYK6B"
     }
   ],
   "form_success_title": "Message Sent!",
