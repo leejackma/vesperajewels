@@ -1,5 +1,5 @@
 {
-  "section_label": "QUESTIONS QUESTIONS QUESTIONS",
+  "section_label": "QUESTIONS",
   "section_title": "Frequently Asked Questions",
   "items": [
     {
@@ -73,5 +73,7 @@
       "order": "9",
       "_file": "delivery-time"
     }
-  ]
+  ],
+  "faqSectionLabel": "QUESTIONS QUESTIONS QUESTIONS",
+  "faqSectionTitle": "Frequently Asked Questions"
 }
