@@ -20,7 +20,7 @@
       "type": "email",
       "icon": "email",
       "title": "Email",
-      "content": ""
+      "content": "888888@vesperajewels.com"
     }
   ],
   "social_title": "Follow Us",
@@ -40,6 +40,10 @@
     {
       "type": "tiktok",
       "url": "https://www.tiktok.com/@vespera.fine.jewel?_r=1&_t=ZP-96MHzZGYK6B"
+    },
+    {
+      "type": "email",
+      "url": "888888@vesperajewels.com"
     }
   ],
   "form_success_title": "Message Sent!",
