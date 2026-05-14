@@ -16,24 +16,31 @@
         <p>Please wait while the admin panel loads.</p>
     </div>
     <script>
-    // Check if we're returning from OAuth with a token in the hash
+    // Poll localStorage for OAuth result (same-origin bridge)
     (function() {
-      var hash = window.location.hash;
-      if (hash && hash.indexOf('access_token=') !== -1) {
-        var token = hash.split('access_token=')[1].split('&')[0];
-        if (token) {
-          // Store auth data in Decap CMS expected format
-          var authData = {
-            token: token,
-            provider: 'github'
-          };
-          localStorage.setItem('decap-cms-user', JSON.stringify(authData));
-          // Clean the URL hash
-          history.replaceState(null, '', window.location.pathname);
-        }
-      }
+      var pollInterval = setInterval(function() {
+        try {
+          var result = localStorage.getItem('decap_cms_oauth_result');
+          if (result) {
+            localStorage.removeItem('decap_cms_oauth_result');
+            clearInterval(pollInterval);
+            // Dispatch message event for Decap CMS
+            window.dispatchEvent(new MessageEvent('message', { data: result, origin: window.location.origin }));
+          }
+        } catch(e) {}
+      }, 300);
+      
+      // Also listen for direct postMessage
+      window.addEventListener('message', function(e) {
+        try {
+          var data = typeof e.data === 'string' ? JSON.parse(e.data) : e.data;
+          if (data && data.type === 'authorization' && data.authorization) {
+            clearInterval(pollInterval);
+          }
+        } catch(err) {}
+      });
     })();
     </script>
-    <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js?v=20260514c"></script>
+    <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js?v=20260514d"></script>
 </body>
 </html>
