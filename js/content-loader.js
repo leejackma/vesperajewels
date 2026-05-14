@@ -90,7 +90,14 @@ class ContentLoader {
         try {
             const response = await fetch('content/faq/faq.json');
             if (response.ok) {
-                this.contentCache.faqItems = await response.json();
+                const faqData = await response.json();
+                // Support both old array format and new object format
+                if (Array.isArray(faqData)) {
+                    this.contentCache.faqItems = faqData;
+                } else {
+                    this.contentCache.faq = faqData;
+                    this.contentCache.faqItems = faqData.items || [];
+                }
                 // Sort by order
                 this.contentCache.faqItems.sort((a, b) => (parseInt(a.order) || 0) - (parseInt(b.order) || 0));
             }
@@ -299,8 +306,9 @@ class ContentLoader {
 
     renderFAQ() {
         // Section title
-        this.setText('[data-cms="faq.section_label"]', 'QUESTIONS');
-        this.setText('[data-cms="faq.section_title"]', 'Frequently Asked Questions');
+        const faq = this.contentCache.faq || {};
+        this.setText('[data-cms="faq.section_label"]', faq.section_label || 'QUESTIONS');
+        this.setText('[data-cms="faq.section_title"]', faq.section_title || 'Frequently Asked Questions');
         
         // Render FAQ items dynamically
         this.renderFAQItems();

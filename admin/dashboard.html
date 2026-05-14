@@ -1544,17 +1544,11 @@
 
             <div class="nav-section">
                 <div class="nav-section-title">信息页面</div>
-                <div class="nav-item" data-section="faq" onclick="switchSection('faq')">
+                <div class="nav-item" data-section="faq-items" onclick="switchSection('faq-items')">
                     <span class="nav-icon">
                         <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"></circle><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
                     </span>
-                    FAQ Settings
-                </div>
-                <div class="nav-item" data-section="faq-items" onclick="switchSection('faq-items')">
-                    <span class="nav-icon">
-                        <svg viewBox="0 0 24 24"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line></svg>
-                    </span>
-                    FAQ Items
+                    FAQ
                 </div>
                 <div class="nav-item" data-section="process" onclick="switchSection('process')">
                     <span class="nav-icon">
@@ -2406,14 +2400,9 @@
                 files: [{ path: 'content/watches/products', type: 'directory' }],
                 loadFiles: true
             },
-            faq: {
-                title: 'FAQ Settings',
-                desc: '编辑常见问题页面设置',
-                files: [{ path: 'content/faq/faq.json', type: 'faq-json' }]
-            },
             'faq-items': {
-                title: 'FAQ Items',
-                desc: '管理常见问题',
+                title: 'FAQ',
+                desc: '编辑常见问题标题和管理问答',
                 files: [{ path: 'content/faq/faq.json', type: 'faq-items-json' }]
             },
             process: {
@@ -3966,17 +3955,28 @@
         // ===== FAQ Items Editor (combined JSON array) =====
         let faqItemsPath = '';
         let faqItemsData = [];
+        let faqSectionMeta = { section_label: '', section_title: '' };
 
         function renderFaqItemsEditor(path, data) {
             const panelTabs = document.getElementById('panelTabs');
             const panelContent = document.getElementById('panelContent');
 
             // Clear loading state and set up tabs
-            panelTabs.innerHTML = '<div class="panel-tab active">FAQ项目</div>';
+            panelTabs.innerHTML = '<div class="panel-tab active">FAQ管理</div>';
             panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
             
             faqItemsPath = path;
-            faqItemsData = Array.isArray(data) ? data : [];
+            // Support both old array format and new object format
+            if (Array.isArray(data)) {
+                faqItemsData = data;
+                faqSectionMeta = { section_label: 'QUESTIONS', section_title: 'Frequently Asked Questions' };
+            } else {
+                faqItemsData = data.items || [];
+                faqSectionMeta = {
+                    section_label: data.section_label || 'QUESTIONS',
+                    section_title: data.section_title || 'Frequently Asked Questions'
+                };
+            }
             
             const container = document.getElementById('tab-0');
             
@@ -3999,8 +3999,31 @@
             if (existingManageBtn) existingManageBtn.remove();
             header.appendChild(addBtn);
 
-            // Render FAQ items list
-            container.innerHTML = '<div id="faqItemsList"></div>';
+            // Build section title fields + FAQ items list
+            let html = '';
+            
+            // Section title editor
+            html += `
+                <div style="background:#fff;border:1px solid #E8E4DE;border-radius:12px;padding:20px;margin-bottom:20px;">
+                    <div style="font-family:Playfair Display,serif;font-size:16px;color:#C5A467;margin-bottom:16px;">板块标题</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>小标题</label>
+                            <input type="text" id="faqSectionLabel" value="${(faqSectionMeta.section_label || '').replace(/"/g, '&quot;')}" placeholder="如 QUESTIONS">
+                        </div>
+                        <div class="form-group">
+                            <label>大标题</label>
+                            <input type="text" id="faqSectionTitle" value="${(faqSectionMeta.section_title || '').replace(/"/g, '&quot;')}" placeholder="如 Frequently Asked Questions">
+                        </div>
+                    </div>
+                    <button class="btn-save" onclick="saveFaqSectionMeta()" style="margin-top:12px;">保存标题</button>
+                </div>
+            `;
+            
+            html += '<div style="font-family:Playfair Display,serif;font-size:16px;color:#C5A467;margin-bottom:12px;">问答列表</div>';
+            html += '<div id="faqItemsList"></div>';
+            
+            container.innerHTML = html;
             const listContainer = document.getElementById('faqItemsList');
             
             if (faqItemsData.length === 0) {
@@ -4114,6 +4137,26 @@
             if (modal) modal.remove();
         }
 
+        async function saveFaqSectionMeta() {
+            const label = document.getElementById('faqSectionLabel').value.trim();
+            const title = document.getElementById('faqSectionTitle').value.trim();
+            
+            faqSectionMeta.section_label = label;
+            faqSectionMeta.section_title = title;
+            
+            try {
+                const dataToSave = {
+                    section_label: label,
+                    section_title: title,
+                    items: faqItemsData
+                };
+                await saveJsonFile(faqItemsPath, dataToSave, '更新FAQ标题');
+                showToast('标题保存成功', 'success');
+            } catch (error) {
+                showToast('保存失败: ' + error.message, 'error');
+            }
+        }
+
         function escapeHtml(text) {
             if (!text) return '';
             const div = document.createElement('div');
@@ -4153,7 +4196,12 @@
             closeFaqModal();
             
             try {
-                await saveJsonFile(faqItemsPath, faqItemsData, '更新FAQ');
+                const dataToSave = {
+                    section_label: faqSectionMeta.section_label,
+                    section_title: faqSectionMeta.section_title,
+                    items: faqItemsData
+                };
+                await saveJsonFile(faqItemsPath, dataToSave, '更新FAQ');
                 showToast('FAQ保存成功', 'success');
                 // Reload the section
                 await loadSection('faq-items');
@@ -4172,7 +4220,12 @@
             faqItemsData.splice(index, 1);
             
             try {
-                await saveJsonFile(faqItemsPath, faqItemsData, '删除FAQ');
+                const dataToSave = {
+                    section_label: faqSectionMeta.section_label,
+                    section_title: faqSectionMeta.section_title,
+                    items: faqItemsData
+                };
+                await saveJsonFile(faqItemsPath, dataToSave, '删除FAQ');
                 showToast('FAQ删除成功', 'success');
                 // Reload the section
                 await loadSection('faq-items');

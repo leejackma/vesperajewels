@@ -1,73 +1,77 @@
-[
-  {
-    "title": "How to pay?",
-    "question": "How to pay?",
-    "answer": "Please tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount.\n\n  We accept Western Union, Money Gram, Wise (By Swift) and Bank Transfer. 50% deposit and 50% before shipping â we will make video and photos of the products to confirm with you before shipping.\nPlease tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount.\n\n  We accept Western Union, Money Gram, Wise (By Swift) and Bank Transfer. 50% deposit and 50% before shipping â we will make video and photos of the products to confirm with you before shipping.\n\n  For small orders, you will need to pay in advance. For larger orders, the payment terms is negotiable. We will process and issue your order as soon as possible after payment.\n  For small orders, you will need to pay in advance. For larger orders, the payment terms is negotiable. We will process and issue your order as soon as possible after payment.",
-    "order": 1,
-    "published": true,
-    "_file": "faq-1778784278812"
-  },
-  {
-    "title": "Quality Problem",
-    "question": "What If There's A Quality Problem?",
-    "answer": "We offer a 30-day quality guarantee. If there are any manufacturing defects, we'll repair or replace your piece at no extra cost.",
-    "order": "10",
-    "_file": "quality-problem"
-  },
-  {
-    "title": "Out Of Stock",
-    "question": "What If The Product Is Out Of Stock?",
-    "answer": "Most items can be reproduced within 7-15 days. Contact us and we'll provide an estimated production time for your specific order.",
-    "order": "2",
-    "_file": "out-of-stock"
-  },
-  {
-    "title": "How To Know Price",
-    "question": "How To Know The Price?",
-    "answer": "All products on our website show current prices. For custom designs or bulk orders, please contact us for a personalized quote.",
-    "order": "3",
-    "_file": "how-to-know-price"
-  },
-  {
-    "title": "Brand Box Package",
-    "question": "Do You Provide Brand Box & Package?",
-    "answer": "Yes! Every Vespera Jewels piece comes in a premium brand box with elegant packaging, perfect for gifting.",
-    "order": "4",
-    "_file": "brand-box"
-  },
-  {
-    "title": "Quality Confirmation",
-    "question": "How Can I Confirm The Quality?",
-    "answer": "Each piece undergoes rigorous quality inspection before shipping. We provide detailed photos of your specific item and can arrange video calls for verification.",
-    "order": "5",
-    "_file": "quality-confirmation"
-  },
-  {
-    "title": "More Pictures Videos",
-    "question": "Can I Get More Pictures Or Videos?",
-    "answer": "Absolutely! We can send additional photos and videos of any product. Contact us and we'll provide them within 24 hours.",
-    "order": "6",
-    "_file": "more-pictures"
-  },
-  {
-    "title": "Personal Wholesale",
-    "question": "Is This Personal Or Wholesale?",
-    "answer": "Vespera Jewels serves both retail and wholesale customers. We offer special pricing for bulk orders and business partnerships.",
-    "order": "7",
-    "_file": "personal-wholesale"
-  },
-  {
-    "title": "Worldwide Shipping",
-    "question": "Do You Ship Worldwide?",
-    "answer": "Yes, we ship to over 100 countries worldwide. All shipments are fully insured and tracked.",
-    "order": "8",
-    "_file": "worldwide-shipping"
-  },
-  {
-    "title": "Delivery Time",
-    "question": "How Long Is The Delivery Time?",
-    "answer": "Production takes 7-15 days. Shipping varies by destination: 7-14 days express, 20-30 days standard. We'll provide tracking information.",
-    "order": "9",
-    "_file": "delivery-time"
-  }
-]
+{
+  "section_label": "QUESTIONS",
+  "section_title": "Frequently Asked Questions",
+  "items": [
+    {
+      "title": "How to pay?",
+      "question": "How to pay?",
+      "answer": "Please tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount.\n\n  We accept Western Union, Money Gram, Wise (By Swift) and Bank Transfer. 50% deposit and 50% before shipping â we will make video and photos of the products to confirm with you before shipping.\nPlease tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount.\n\n  We accept Western Union, Money Gram, Wise (By Swift) and Bank Transfer. 50% deposit and 50% before shipping â we will make video and photos of the products to confirm with you before shipping.\n\n  For small orders, you will need to pay in advance. For larger orders, the payment terms is negotiable. We will process and issue your order as soon as possible after payment.\n  For small orders, you will need to pay in advance. For larger orders, the payment terms is negotiable. We will process and issue your order as soon as possible after payment.",
+      "order": 1,
+      "published": true,
+      "_file": "faq-1778784278812"
+    },
+    {
+      "title": "Quality Problem",
+      "question": "What If There's A Quality Problem?",
+      "answer": "We offer a 30-day quality guarantee. If there are any manufacturing defects, we'll repair or replace your piece at no extra cost.",
+      "order": "10",
+      "_file": "quality-problem"
+    },
+    {
+      "title": "Out Of Stock",
+      "question": "What If The Product Is Out Of Stock?",
+      "answer": "Most items can be reproduced within 7-15 days. Contact us and we'll provide an estimated production time for your specific order.",
+      "order": "2",
+      "_file": "out-of-stock"
+    },
+    {
+      "title": "How To Know Price",
+      "question": "How To Know The Price?",
+      "answer": "All products on our website show current prices. For custom designs or bulk orders, please contact us for a personalized quote.",
+      "order": "3",
+      "_file": "how-to-know-price"
+    },
+    {
+      "title": "Brand Box Package",
+      "question": "Do You Provide Brand Box & Package?",
+      "answer": "Yes! Every Vespera Jewels piece comes in a premium brand box with elegant packaging, perfect for gifting.",
+      "order": "4",
+      "_file": "brand-box"
+    },
+    {
+      "title": "Quality Confirmation",
+      "question": "How Can I Confirm The Quality?",
+      "answer": "Each piece undergoes rigorous quality inspection before shipping. We provide detailed photos of your specific item and can arrange video calls for verification.",
+      "order": "5",
+      "_file": "quality-confirmation"
+    },
+    {
+      "title": "More Pictures Videos",
+      "question": "Can I Get More Pictures Or Videos?",
+      "answer": "Absolutely! We can send additional photos and videos of any product. Contact us and we'll provide them within 24 hours.",
+      "order": "6",
+      "_file": "more-pictures"
+    },
+    {
+      "title": "Personal Wholesale",
+      "question": "Is This Personal Or Wholesale?",
+      "answer": "Vespera Jewels serves both retail and wholesale customers. We offer special pricing for bulk orders and business partnerships.",
+      "order": "7",
+      "_file": "personal-wholesale"
+    },
+    {
+      "title": "Worldwide Shipping",
+      "question": "Do You Ship Worldwide?",
+      "answer": "Yes, we ship to over 100 countries worldwide. All shipments are fully insured and tracked.",
+      "order": "8",
+      "_file": "worldwide-shipping"
+    },
+    {
+      "title": "Delivery Time",
+      "question": "How Long Is The Delivery Time?",
+      "answer": "Production takes 7-15 days. Shipping varies by destination: 7-14 days express, 20-30 days standard. We'll provide tracking information.",
+      "order": "9",
+      "_file": "delivery-time"
+    }
+  ]
+}
