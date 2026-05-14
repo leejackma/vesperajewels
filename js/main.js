@@ -444,6 +444,58 @@ document.addEventListener('DOMContentLoaded', function() {
         filtersContainer.innerHTML = html;
     }
 
+    // ============================================
+    // Order Steps Dynamic Rendering
+    // ============================================
+    
+    // Load and render order steps from order.json
+    async function loadOrderSteps() {
+        try {
+            const response = await fetch('content/order/order.json');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.steps && Array.isArray(data.steps)) {
+                    renderOrderSteps(data.steps);
+                }
+            }
+        } catch (e) {
+            console.log('Failed to load order steps:', e.message);
+        }
+    }
+    
+    // Render order step cards dynamically
+    function renderOrderSteps(steps) {
+        const container = document.getElementById('orderStepsGrid');
+        if (!container) return;
+        
+        let html = '';
+        steps.forEach((step, index) => {
+            const imageSrc = convertImagePath(step.image) || 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=300&q=80';
+            html += `
+                <div class="step-card animate-on-scroll" style="animation-delay: ${index * 100}ms">
+                    <div class="text-center">
+                        <div class="step-number mx-auto mb-4">${escapeHtml(step.number || (index + 1).toString())}</div>
+                        <img src="${escapeHtml(imageSrc)}" alt="${escapeHtml(step.title || '')}" class="w-full aspect-square object-cover mb-4">
+                        <h3 class="font-playfair text-lg mb-2" style="color: #C5A467">${escapeHtml(step.title || '')}</h3>
+                        <p class="text-textLight text-sm">${escapeHtml(step.description || '')}</p>
+                    </div>
+                </div>
+            `;
+        });
+        
+        container.innerHTML = html;
+        
+        // Re-observe new elements for animation
+        setTimeout(() => {
+            document.querySelectorAll('#orderStepsGrid .animate-on-scroll').forEach(el => {
+                observer.observe(el);
+            });
+        }, 100);
+    }
+    
+    // Load order steps on page load
+    loadOrderSteps();
+
     // Attach filter event listeners for dynamically generated buttons
     function attachFilterListeners() {
         const filterBtns = document.querySelectorAll('.filter-btn');

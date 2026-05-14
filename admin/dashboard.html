@@ -3907,27 +3907,339 @@
             `;
         }
 
-        function renderOrderEditor(container, data) {
-            container.innerHTML = `
-                <div class="form-grid">
-                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
-                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
-                    ${createFormField('板块副标题', 'section_subtitle', data.section_subtitle || '')}
+        // ===== Order Steps Editor (visual editor) =====
+        let orderStepsData = [];
+        let orderJsonPath = '';
+        let orderSectionMeta = { section_label: '', section_title: '', section_subtitle: '', cta_title: '', cta_subtitle: '', cta_whatsapp: '', cta_email: '', cta_form: '' };
 
-                    <div class="section-divider"><h3 class="section-title">订购步骤</h3></div>
-                    <div class="form-group full-width">
-                        <label>步骤（JSON 数组）</label>
-                        <textarea id="steps" rows="12" style="font-family:monospace;font-size:13px;">${data.steps ? JSON.stringify(data.steps, null, 2) : '[]'}</textarea>
+        function renderOrderEditor(path, data) {
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+
+            // Clear loading state and set up tabs
+            panelTabs.innerHTML = '<div class="panel-tab active">订购步骤管理</div>';
+            panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+            
+            orderJsonPath = path;
+            // Parse steps data
+            if (data.steps && Array.isArray(data.steps)) {
+                orderStepsData = data.steps;
+            } else if (typeof data.steps === 'string') {
+                try {
+                    orderStepsData = JSON.parse(data.steps);
+                } catch (e) {
+                    orderStepsData = [];
+                }
+            } else {
+                orderStepsData = [];
+            }
+            
+            // Save section metadata
+            orderSectionMeta = {
+                section_label: data.section_label || '',
+                section_title: data.section_title || '',
+                section_subtitle: data.section_subtitle || '',
+                cta_title: data.cta_title || '',
+                cta_subtitle: data.cta_subtitle || '',
+                cta_whatsapp: data.cta_whatsapp || '',
+                cta_email: data.cta_email || '',
+                cta_form: data.cta_form || ''
+            };
+            
+            const container = document.getElementById('tab-0');
+            
+            // Update header with add button
+            const header = document.querySelector('.content-header');
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-product-btn';
+            addBtn.id = 'addOrderStepBtn';
+            addBtn.onclick = () => addOrderStep();
+            addBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                添加步骤
+            `;
+            const existingBtn = header.querySelector('.add-product-btn');
+            if (existingBtn) existingBtn.remove();
+            header.appendChild(addBtn);
+
+            // Build section title fields + steps list
+            let html = '';
+            
+            // Section title editor
+            html += `
+                <div style="background:#fff;border:1px solid #E8E4DE;border-radius:12px;padding:20px;margin-bottom:20px;">
+                    <div style="font-family:Playfair Display,serif;font-size:16px;color:#C5A467;margin-bottom:16px;">板块标题</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>小标题</label>
+                            <input type="text" id="orderSectionLabel" value="${(orderSectionMeta.section_label || '').replace(/"/g, '&quot;')}" placeholder="如 PURCHASE">
+                        </div>
+                        <div class="form-group">
+                            <label>大标题</label>
+                            <input type="text" id="orderSectionTitle" value="${(orderSectionMeta.section_title || '').replace(/"/g, '&quot;')}" placeholder="如 How to Order">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>副标题</label>
+                            <input type="text" id="orderSectionSubtitle" value="${(orderSectionMeta.section_subtitle || '').replace(/"/g, '&quot;')}" placeholder="副标题文字">
+                        </div>
                     </div>
-
-                    <div class="section-divider"><h3 class="section-title">行动号召区域</h3></div>
-                    ${createFormField('行动号召标题', 'cta_title', data.cta_title || '')}
-                    ${createFormField('行动号召副标题', 'cta_subtitle', data.cta_subtitle || '')}
-                    ${createFormField('WhatsApp按钮文字', 'cta_whatsapp', data.cta_whatsapp || '')}
-                    ${createFormField('邮箱按钮文字', 'cta_email', data.cta_email || '')}
-                    ${createFormField('表单按钮文字', 'cta_form', data.cta_form || '')}
+                    <button class="btn-save" onclick="saveOrderSectionMeta()" style="margin-top:12px;">保存标题</button>
                 </div>
             `;
+            
+            // CTA section editor
+            html += `
+                <div style="background:#fff;border:1px solid #E8E4DE;border-radius:12px;padding:20px;margin-bottom:20px;">
+                    <div style="font-family:Playfair Display,serif;font-size:16px;color:#C5A467;margin-bottom:16px;">行动号召区域</div>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>CTA标题</label>
+                            <input type="text" id="orderCtaTitle" value="${(orderSectionMeta.cta_title || '').replace(/"/g, '&quot;')}">
+                        </div>
+                        <div class="form-group">
+                            <label>CTA副标题</label>
+                            <input type="text" id="orderCtaSubtitle" value="${(orderSectionMeta.cta_subtitle || '').replace(/"/g, '&quot;')}">
+                        </div>
+                        <div class="form-group">
+                            <label>WhatsApp按钮文字</label>
+                            <input type="text" id="orderCtaWhatsapp" value="${(orderSectionMeta.cta_whatsapp || '').replace(/"/g, '&quot;')}">
+                        </div>
+                        <div class="form-group">
+                            <label>邮箱按钮文字</label>
+                            <input type="text" id="orderCtaEmail" value="${(orderSectionMeta.cta_email || '').replace(/"/g, '&quot;')}">
+                        </div>
+                        <div class="form-group full-width">
+                            <label>表单按钮文字</label>
+                            <input type="text" id="orderCtaForm" value="${(orderSectionMeta.cta_form || '').replace(/"/g, '&quot;')}">
+                        </div>
+                    </div>
+                    <button class="btn-save" onclick="saveOrderSectionMeta()" style="margin-top:12px;">保存CTA</button>
+                </div>
+            `;
+            
+            html += '<div style="font-family:Playfair Display,serif;font-size:16px;color:#C5A467;margin-bottom:12px;">订购步骤列表</div>';
+            html += '<div id="orderStepsList"></div>';
+            
+            container.innerHTML = html;
+            renderOrderStepsList();
+        }
+
+        function renderOrderStepsList() {
+            const listContainer = document.getElementById('orderStepsList');
+            if (!listContainer) return;
+            
+            if (orderStepsData.length === 0) {
+                listContainer.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                        <p>暂无订购步骤</p>
+                        <p style="font-size:13px;margin-top:8px;">点击右上角"添加步骤"开始创建</p>
+                    </div>
+                `;
+            } else {
+                let html = '';
+                orderStepsData.forEach((step, index) => {
+                    const descPreview = (step.description || '').substring(0, 60) + ((step.description || '').length > 60 ? '...' : '');
+                    html += `
+                        <div style="background:#fff;border:1px solid #E8E4DE;border-radius:12px;padding:16px 20px;margin-bottom:12px;">
+                            <div style="display:flex;justify-content:space-between;align-items:start;">
+                                <div style="flex:1;display:flex;gap:12px;align-items:start;">
+                                    <div style="width:50px;height:50px;border-radius:50%;background:#F5F0EB;display:flex;align-items:center;justify-content:center;color:#C5A467;font-weight:600;flex-shrink:0;">${step.number || (index + 1)}</div>
+                                    <div>
+                                        <div style="font-weight:500;color:#1a1a1a;">${step.title || 'Untitled'}</div>
+                                        <div style="font-size:13px;color:#8A8A8A;margin-top:2px;">${descPreview}</div>
+                                    </div>
+                                </div>
+                                <div style="display:flex;gap:8px;flex-shrink:0;margin-left:12px;">
+                                    <button class="btn-small btn-edit" onclick="editOrderStep(${index})">编辑</button>
+                                    <button class="btn-small btn-remove" onclick="deleteOrderStep(${index})">删除</button>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                });
+                listContainer.innerHTML = html;
+            }
+        }
+
+        function addOrderStep() {
+            const newStep = {
+                number: (orderStepsData.length + 1).toString(),
+                title: '新步骤',
+                description: '步骤描述',
+                image: ''
+            };
+            orderStepsData.push(newStep);
+            renderOrderStepsList();
+            editOrderStep(orderStepsData.length - 1);
+        }
+
+        function editOrderStep(index) {
+            const step = orderStepsData[index];
+            if (!step) return;
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.id = 'orderStepModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width:500px;">
+                    <div class="modal-header">
+                        <h3 style="font-family:Playfair Display,serif;color:#C5A467;">编辑步骤 ${index + 1}</h3>
+                        <button class="modal-close" onclick="closeOrderStepModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>步骤编号</label>
+                                <input type="text" id="editStepNumber" value="${(step.number || '').replace(/"/g, '&quot;')}" placeholder="如 1">
+                            </div>
+                            <div class="form-group">
+                                <label>步骤标题</label>
+                                <input type="text" id="editStepTitle" value="${(step.title || '').replace(/"/g, '&quot;')}" placeholder="步骤标题">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>步骤描述</label>
+                                <textarea id="editStepDesc" rows="3" placeholder="步骤描述">${(step.description || '').replace(/"/g, '&quot;')}</textarea>
+                            </div>
+                            <div class="form-group full-width">
+                                <label>步骤图片</label>
+                                <div id="editStepImageContainer"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="closeOrderStepModal()">取消</button>
+                        <button class="btn-save" onclick="saveOrderStep(${index})">保存</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+            
+            // Initialize image upload component
+            const imageContainer = document.getElementById('editStepImageContainer');
+            imageContainer.innerHTML = createImageUploadComponent('stepImage', step.image || '', 'order', 'image');
+        }
+
+        window.closeOrderStepModal = function() {
+            const modal = document.getElementById('orderStepModal');
+            if (modal) modal.remove();
+            document.body.style.overflow = '';
+        };
+
+        async function saveOrderStep(index) {
+            const step = orderStepsData[index];
+            if (!step) return;
+            
+            step.number = document.getElementById('editStepNumber').value;
+            step.title = document.getElementById('editStepTitle').value;
+            step.description = document.getElementById('editStepDesc').value;
+            
+            // Get image value from the hidden input
+            const imageInput = document.querySelector('#editStepImageContainer input[name="stepImage"]');
+            if (imageInput) {
+                step.image = imageInput.value;
+            }
+            
+            try {
+                const dataToSave = {
+                    section_label: orderSectionMeta.section_label,
+                    section_title: orderSectionMeta.section_title,
+                    section_subtitle: orderSectionMeta.section_subtitle,
+                    steps: orderStepsData,
+                    cta_title: orderSectionMeta.cta_title,
+                    cta_subtitle: orderSectionMeta.cta_subtitle,
+                    cta_whatsapp: orderSectionMeta.cta_whatsapp,
+                    cta_email: orderSectionMeta.cta_email,
+                    cta_form: orderSectionMeta.cta_form
+                };
+                await saveJsonFile(orderJsonPath, dataToSave, '更新订购步骤');
+                showToast('步骤保存成功', 'success');
+                closeOrderStepModal();
+                renderOrderStepsList();
+                // Reload the section
+                await loadSection('order');
+            } catch (error) {
+                console.error('保存步骤失败:', error);
+                showToast('保存失败: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteOrderStep(index) {
+            const step = orderStepsData[index];
+            if (!step) return;
+            if (!confirm(`确定要删除步骤"${step.title || '此步骤'}"吗？`)) {
+                return;
+            }
+            
+            orderStepsData.splice(index, 1);
+            
+            // Re-number remaining steps
+            orderStepsData.forEach((s, i) => {
+                s.number = (i + 1).toString();
+            });
+            
+            try {
+                const dataToSave = {
+                    section_label: orderSectionMeta.section_label,
+                    section_title: orderSectionMeta.section_title,
+                    section_subtitle: orderSectionMeta.section_subtitle,
+                    steps: orderStepsData,
+                    cta_title: orderSectionMeta.cta_title,
+                    cta_subtitle: orderSectionMeta.cta_subtitle,
+                    cta_whatsapp: orderSectionMeta.cta_whatsapp,
+                    cta_email: orderSectionMeta.cta_email,
+                    cta_form: orderSectionMeta.cta_form
+                };
+                await saveJsonFile(orderJsonPath, dataToSave, '删除订购步骤');
+                showToast('步骤删除成功', 'success');
+                renderOrderStepsList();
+                // Reload the section
+                await loadSection('order');
+            } catch (error) {
+                console.error('删除步骤失败:', error);
+                showToast('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        async function saveOrderSectionMeta() {
+            orderSectionMeta.section_label = document.getElementById('orderSectionLabel').value;
+            orderSectionMeta.section_title = document.getElementById('orderSectionTitle').value;
+            orderSectionMeta.section_subtitle = document.getElementById('orderSectionSubtitle').value;
+            orderSectionMeta.cta_title = document.getElementById('orderCtaTitle').value;
+            orderSectionMeta.cta_subtitle = document.getElementById('orderCtaSubtitle').value;
+            orderSectionMeta.cta_whatsapp = document.getElementById('orderCtaWhatsapp').value;
+            orderSectionMeta.cta_email = document.getElementById('orderCtaEmail').value;
+            orderSectionMeta.cta_form = document.getElementById('orderCtaForm').value;
+            
+            try {
+                const dataToSave = {
+                    section_label: orderSectionMeta.section_label,
+                    section_title: orderSectionMeta.section_title,
+                    section_subtitle: orderSectionMeta.section_subtitle,
+                    steps: orderStepsData,
+                    cta_title: orderSectionMeta.cta_title,
+                    cta_subtitle: orderSectionMeta.cta_subtitle,
+                    cta_whatsapp: orderSectionMeta.cta_whatsapp,
+                    cta_email: orderSectionMeta.cta_email,
+                    cta_form: orderSectionMeta.cta_form
+                };
+                await saveJsonFile(orderJsonPath, dataToSave, '更新订购板块');
+                showToast('标题保存成功', 'success');
+                // Reload the section
+                await loadSection('order');
+            } catch (error) {
+                console.error('保存标题失败:', error);
+                showToast('保存失败: ' + error.message, 'error');
+            }
         }
 
         function renderFaqSettingsEditor(container, data) {
@@ -4367,6 +4679,10 @@
                     await saveJsonFile('content/settings/theme.json', newData, '更新主题设置');
                 } else if (sectionInfo.loadFiles || sectionInfo.files[0].type === 'faq-directory') {
                     showToast('产品需要使用编辑按钮单独保存。', 'error');
+                    return;
+                } else if (currentSection === 'order') {
+                    // Order section has its own save mechanism with visual step editor
+                    showToast('订购步骤使用单独的编辑功能保存。', 'info');
                     return;
                 } else {
                     // Save JSON

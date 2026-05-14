@@ -363,6 +363,7 @@ class ContentLoader {
         const o = this.contentCache.order;
         if (!o) return;
 
+        // Update section labels and CTA text
         this.setText('[data-cms="order.section_label"]', o.section_label);
         this.setText('[data-cms="order.section_title"]', o.section_title);
         this.setText('[data-cms="order.section_subtitle"]', o.section_subtitle);
@@ -371,25 +372,9 @@ class ContentLoader {
         this.setText('[data-cms="order.cta_whatsapp"]', o.cta_whatsapp);
         this.setText('[data-cms="order.cta_email"]', o.cta_email);
         this.setText('[data-cms="order.cta_form"]', o.cta_form);
-
-        // Handle steps
-        if (o.steps) {
-            let steps = o.steps;
-            if (typeof steps === 'string') {
-                try {
-                    steps = JSON.parse(steps);
-                } catch (e) {
-                    steps = [];
-                }
-            }
-            if (Array.isArray(steps)) {
-                this.ensureArray(steps).forEach((s, i) => {
-                    this.setText(`[data-cms="order.step.${i}.number"]`, s.number);
-                    this.setText(`[data-cms="order.step.${i}.title"]`, s.title);
-                    this.setText(`[data-cms="order.step.${i}.description"]`, s.description);
-                });
-            }
-        }
+        
+        // Steps are now dynamically rendered in main.js via loadOrderSteps()
+        // No need to handle steps here
     }
 
     renderContact() {
