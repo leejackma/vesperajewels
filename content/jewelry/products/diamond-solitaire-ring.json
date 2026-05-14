@@ -4,8 +4,9 @@
   "category": "rings",
   "description": "Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.",
   "images": [
-    "/assets/uploads/ring1.jpg"
+    "/assets/uploads/ring1.jpg",
+    "/assets/uploads/jewelry/product_1778780053920_1778780053922.jpg"
   ],
-  "order": "1",
-  "published": "true"
+  "order": 1,
+  "published": true
 }
