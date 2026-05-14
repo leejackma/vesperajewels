@@ -3761,7 +3761,7 @@
             } else if (path.includes('/contact/')) {
                 renderContactEditor(container, data);
             } else if (path.includes('/order/')) {
-                renderOrderEditor(container, data);
+                renderOrderEditor(path, data);
             } else if (path.includes('/faq/')) {
                 renderFaqSettingsEditor(container, data);
             } else if (path.includes('/jewelry/jewelry.')) {
@@ -3789,7 +3789,7 @@
             } else if (path.includes('/contact/')) {
                 renderContactEditor(container, data);
             } else if (path.includes('/order/')) {
-                renderOrderEditor(container, data);
+                renderOrderEditor(path, data);
             } else if (path.includes('/faq/faq.json')) {
                 renderFaqSettingsEditorFromData(container, data);
             } else if (path.includes('/jewelry/jewelry.')) {
