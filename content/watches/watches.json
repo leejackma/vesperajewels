@@ -4,12 +4,33 @@
   "section_title": "Luxury Watches",
   "section_subtitle": "Precision engineering meets timeless elegance",
   "categories": [
-    { "id": "all", "name": "All" },
-    { "id": "dress-watches", "name": "Dress Watches" },
-    { "id": "chronograph", "name": "Chronograph" },
-    { "id": "luxury", "name": "Luxury" },
-    { "id": "sport", "name": "Sport" },
-    { "id": "ladies", "name": "Ladies" },
-    { "id": "skeleton", "name": "Skeleton" }
+    {
+      "id": "all",
+      "name": "All"
+    },
+    {
+      "id": "diamond-watches",
+      "name": "diamond Watches"
+    },
+    {
+      "id": "18kgoldwatch",
+      "name": "18Kgoldwatch"
+    },
+    {
+      "id": "diamond-bezel",
+      "name": "diamond bezel"
+    },
+    {
+      "id": "sport",
+      "name": "Sport"
+    },
+    {
+      "id": "ladies",
+      "name": "Ladies"
+    },
+    {
+      "id": "skeleton",
+      "name": "Skeleton"
+    }
   ]
 }
