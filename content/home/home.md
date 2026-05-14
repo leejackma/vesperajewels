@@ -1,6 +1,6 @@
 ---
 title: "Home Page Content"
-hero_title: "Luxury jewelry manufacturer"
+hero_title: "Luxury jewelry factory"
 hero_subtitle: "Highest Quality Lowest Prices Secure Transactions"
 hero_description: "Discover our exquisite collection of handcrafted jewelry and precision-engineered watches"
 hero_cta: "Explore Collection"
