@@ -146,6 +146,16 @@ class ContentLoader {
 
         this.setText('[data-cms="home.hero_title"]', home.hero_title);
         this.setText('[data-cms="home.hero_subtitle"]', home.hero_subtitle);
+
+        // Hero background image
+        if (home.hero_image) {
+            const heroImg = document.querySelector('#home .absolute.inset-0 img');
+            if (heroImg) {
+                // If it's a relative path (uploaded image), prepend site base or use as-is
+                // Relative paths like /assets/uploads/... will resolve against the site domain
+                heroImg.src = home.hero_image;
+            }
+        }
         this.setText('[data-cms="home.featured_title"]', home.featured_title);
         this.setText('[data-cms="home.craft_label"]', home.craft_label);
         this.setText('[data-cms="home.craft_title"]', home.craft_title);

@@ -1789,6 +1789,12 @@
             const id = `img-${name}-${Date.now()}`;
             const hasValue = currentValue && currentValue.trim() !== '';
             const isExternalUrl = hasValue && (currentValue.startsWith('http://') || currentValue.startsWith('https://')) && !currentValue.includes('/assets/uploads/');
+            // Build preview src: use GitHub raw URL for uploaded images to bypass Cloudflare WAF
+            let previewSrc = currentValue || '';
+            if (hasValue && !currentValue.startsWith('http')) {
+                const cleanPath = currentValue.startsWith('/') ? currentValue.substring(1) : currentValue;
+                previewSrc = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${cleanPath}`;
+            }
 
             return `
                 <div class="form-group">
@@ -1796,7 +1802,7 @@
                     <div class="image-upload-wrapper" id="${id}">
                         ${hasValue ? `
                             <div class="image-upload-preview">
-                                <img src="${currentValue}" alt="预览" onerror="this.style.display='none'">
+                                <img src="${previewSrc}" alt="预览" onerror="this.style.display='none'">
                                 <button type="button" class="remove-btn" onclick="removeImagePreview('${id}', '${name}')" title="移除图片">
                                     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                         <line x1="18" y1="6" x2="6" y2="18"></line>
@@ -1940,7 +1946,16 @@
                 const result = await uploadImageToGitHub(file, section, fieldName);
                 const imagePath = result.path;
                 
-                // Update URL input
+                // Build preview URL: use GitHub raw URL to bypass Cloudflare WAF
+                let previewSrc;
+                if (imagePath.startsWith('http')) {
+                    previewSrc = imagePath;
+                } else {
+                    const cleanPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+                    previewSrc = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${cleanPath}`;
+                }
+
+                // Update URL input with the site-relative path (for frontend rendering)
                 if (urlInput) urlInput.value = imagePath;
 
                 // Update or create preview
@@ -1951,7 +1966,7 @@
                     wrapper.querySelector('.image-size-hint').after(preview);
                 }
                 preview.innerHTML = `
-                    <img src="${imagePath}" alt="预览">
+                    <img src="${previewSrc}" alt="预览" onerror="this.alt='预览加载失败'; this.style.background='#fee'; this.style.minHeight='60px';">
                     <button type="button" class="remove-btn" onclick="removeImagePreview('${id}', '${name}')" title="移除图片">
                         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
