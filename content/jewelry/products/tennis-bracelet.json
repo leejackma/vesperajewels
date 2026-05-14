@@ -1,10 +1,11 @@
 {
   "name": "Diamond Tennis Bracelet",
+  "price": "$5,8009999999",
   "category": "bracelets",
-  "price": "$5,800",
   "description": "Luxurious tennis bracelet featuring brilliant diamonds set in platinum. A statement piece for any occasion.",
-  "image": "/assets/uploads/bracelet1.jpg",
-  "badge": "",
-  "featured": "false",
-  "published": "true"
+  "images": [
+    "/assets/uploads/jewelry/product_1778780811498_1778780811500.jpg"
+  ],
+  "order": 1,
+  "published": true
 }
