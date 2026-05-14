@@ -22,9 +22,21 @@ class ContentLoader {
             await this.loadAllContent();
             this.renderContent();
             this.initFAQAccordion();
+            // Remove the loading overlay to reveal the page
+            this.revealPage();
             console.log('ContentLoader: All content loaded and rendered', this.contentCache);
         } catch(e) {
             console.error('ContentLoader error:', e);
+            // Even on error, reveal the page so it's not stuck
+            this.revealPage();
+        }
+    }
+
+    revealPage() {
+        const overlay = document.getElementById('cms-loading-overlay');
+        if (overlay) {
+            overlay.style.opacity = '0';
+            setTimeout(() => overlay.remove(), 300);
         }
     }
 
