@@ -1,10 +1,11 @@
 {
   "name": "Gold Band Ring",
-  "category": "rings",
   "price": "$1,200",
+  "category": "rings",
   "description": "Classic solid 18K gold band. Comfortable fit with polished finish suitable for everyday wear.",
-  "image": "/assets/uploads/ring2.jpg",
-  "badge": "",
-  "featured": "false",
-  "published": "true"
+  "images": [
+    "/assets/uploads/jewelry/product_1778780770046_1778780770049.jpg"
+  ],
+  "order": 1,
+  "published": true
 }
