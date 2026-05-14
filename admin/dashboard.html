@@ -1074,6 +1074,195 @@
             background: var(--gold-dark);
         }
 
+        /* Category Manager Styles */
+        .category-manager-modal {
+            background: var(--white);
+            border-radius: 16px;
+            max-width: 600px;
+            width: 100%;
+            max-height: calc(100vh - 80px);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .category-manager-body {
+            padding: 20px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .category-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .category-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 16px;
+            background: var(--bg);
+            border-radius: 10px;
+            margin-bottom: 10px;
+            gap: 12px;
+        }
+
+        .category-item.system-category {
+            background: #f0f0f0;
+            border: 1px dashed var(--border);
+        }
+
+        .category-item-info {
+            flex: 1;
+            min-width: 0;
+        }
+
+        .category-item-name {
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--text);
+            margin-bottom: 4px;
+        }
+
+        .category-item-id {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .category-item.system-category .category-item-name {
+            color: var(--text-secondary);
+        }
+
+        .category-item input {
+            flex: 1;
+            padding: 8px 12px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            font-size: 14px;
+            background: var(--white);
+        }
+
+        .category-item input:focus {
+            outline: none;
+            border-color: var(--gold);
+        }
+
+        .category-item-actions {
+            display: flex;
+            gap: 6px;
+        }
+
+        .category-item-actions button {
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: none;
+        }
+
+        .category-item-actions .btn-edit-cat {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .category-item-actions .btn-edit-cat:hover {
+            background: var(--gold);
+            border-color: var(--gold);
+            color: var(--white);
+        }
+
+        .category-item-actions .btn-delete-cat {
+            background: #fee2e2;
+            border: 1px solid #fecaca;
+            color: #dc2626;
+        }
+
+        .category-item-actions .btn-delete-cat:hover {
+            background: #dc2626;
+            color: var(--white);
+        }
+
+        .category-item-actions .btn-save-cat {
+            background: var(--gold);
+            border: 1px solid var(--gold);
+            color: var(--white);
+        }
+
+        .category-item-actions .btn-save-cat:hover {
+            background: var(--gold-dark);
+        }
+
+        .category-item-actions .btn-cancel-cat {
+            background: var(--bg);
+            border: 1px solid var(--border);
+            color: var(--text);
+        }
+
+        .category-item-actions .btn-cancel-cat:hover {
+            background: var(--border);
+        }
+
+        .category-item-actions .btn-disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .add-category-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 14px;
+            background: var(--bg);
+            border: 2px dashed var(--border);
+            border-radius: 10px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-top: 10px;
+        }
+
+        .add-category-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+            background: rgba(197, 164, 103, 0.05);
+        }
+
+        .add-category-btn svg {
+            width: 18px;
+            height: 18px;
+        }
+
+        .manage-categories-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 14px;
+            background: var(--white);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text);
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-left: 8px;
+        }
+
+        .manage-categories-btn:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .manage-categories-btn svg {
+            width: 16px;
+            height: 16px;
+        }
+
         /* Multi-Image Gallery */
         .product-images-gallery {
             background: var(--bg);
@@ -2415,6 +2604,23 @@
             if (existingBtn) existingBtn.remove();
             header.appendChild(addBtn);
 
+            // Add manage categories button
+            const manageCatBtn = document.createElement('button');
+            manageCatBtn.className = 'manage-categories-btn';
+            manageCatBtn.id = 'manageCategoriesBtn';
+            manageCatBtn.onclick = () => openCategoryManager(productType);
+            manageCatBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    <line x1="12" y1="11" x2="12" y2="17"></line>
+                    <line x1="9" y1="14" x2="15" y2="14"></line>
+                </svg>
+                管理分类
+            `;
+            const existingManageBtn = header.querySelector('.manage-categories-btn');
+            if (existingManageBtn) existingManageBtn.remove();
+            header.appendChild(manageCatBtn);
+
             // Create tabs
             panelTabs.innerHTML = '<div class="panel-tab active">产品列表</div>';
             panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
@@ -2466,6 +2672,325 @@
                 `;
             }
         }
+
+        // Category Manager Functions
+        window.openCategoryManager = async function(productType) {
+            const settingsPath = productType === 'jewelry' ? 'content/jewelry/jewelry.json' : 'content/watches/watches.json';
+            const productDir = `content/${productType}/products`;
+            
+            // Load categories and products
+            const settings = await fetchJsonFile(settingsPath);
+            const categories = settings.categories || [];
+            
+            // Count products per category
+            const files = await fetchDirectory(productDir);
+            const productFiles = files.filter(f => f.name.endsWith('.json'));
+            
+            const productCountMap = {};
+            for (const file of productFiles) {
+                const content = await fetchJsonFile(file.path);
+                const data = content.data || content || {};
+                const cat = data.category || '';
+                productCountMap[cat] = (productCountMap[cat] || 0) + 1;
+            }
+            
+            // Create modal
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'categoryManagerModal';
+            overlay.onclick = (e) => {
+                if (e.target === overlay) closeCategoryManager();
+            };
+            
+            const title = productType === 'jewelry' ? '珠宝分类管理' : '手表分类管理';
+            
+            overlay.innerHTML = `
+                <div class="category-manager-modal">
+                    <div class="product-modal-header">
+                        <h3>${title}</h3>
+                        <button class="product-modal-close" onclick="closeCategoryManager()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="category-manager-body">
+                        <div class="category-list" id="categoryList"></div>
+                        <button class="add-category-btn" onclick="addNewCategory()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            添加新分类
+                        </button>
+                    </div>
+                    <div class="product-modal-footer">
+                        <button class="btn-cancel" onclick="closeCategoryManager()">取消</button>
+                        <button class="btn-save" onclick="saveCategories('${productType}')">保存修改</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            // Store data for later use
+            window._categoryManagerData = {
+                settingsPath: settingsPath,
+                categories: JSON.parse(JSON.stringify(categories)),
+                productCountMap: productCountMap,
+                newCategories: []
+            };
+            
+            renderCategoryList();
+        };
+
+        window.closeCategoryManager = function() {
+            const modal = document.getElementById('categoryManagerModal');
+            if (modal) modal.remove();
+            window._categoryManagerData = null;
+        };
+
+        function renderCategoryList() {
+            const list = document.getElementById('categoryList');
+            if (!list || !window._categoryManagerData) return;
+            
+            const { categories, newCategories, productCountMap } = window._categoryManagerData;
+            
+            let html = '';
+            
+            // Render existing categories
+            categories.forEach((cat, index) => {
+                const isSystem = cat.id === 'all';
+                const productCount = productCountMap[cat.id] || 0;
+                
+                html += `
+                    <div class="category-item ${isSystem ? 'system-category' : ''}" data-index="${index}" data-id="${cat.id}">
+                        <div class="category-item-info">
+                            <div class="category-item-name">${isSystem ? cat.name + ' (系统分类)' : cat.name}</div>
+                            <div class="category-item-id">ID: ${cat.id}</div>
+                            ${productCount > 0 ? `<div class="category-item-id" style="color: #C5A467;">包含 ${productCount} 个产品</div>` : ''}
+                        </div>
+                        <div class="category-item-actions">
+                            ${isSystem ? '' : `
+                                <button class="btn-edit-cat" onclick="editCategory(${index})">编辑</button>
+                                <button class="btn-delete-cat" onclick="deleteCategory(${index})">删除</button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Render new categories
+            newCategories.forEach((cat, index) => {
+                html += `
+                    <div class="category-item" data-new-index="${index}">
+                        <input type="text" value="${cat.name}" placeholder="分类名称" oninput="updateNewCategoryName(${index}, this.value)">
+                        <div class="category-item-info">
+                            <div class="category-item-id">ID: ${cat.id || '...'}</div>
+                        </div>
+                        <div class="category-item-actions">
+                            <button class="btn-delete-cat" onclick="removeNewCategory(${index})">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (categories.length === 0 && newCategories.length === 0) {
+                html = '<p style="text-align:center;color:var(--text-secondary);padding:20px;">暂无分类</p>';
+            }
+            
+            list.innerHTML = html;
+        }
+
+        function generateIdFromName(name) {
+            return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        }
+
+        window.updateNewCategoryName = function(index, name) {
+            if (!window._categoryManagerData) return;
+            window._categoryManagerData.newCategories[index].name = name;
+            window._categoryManagerData.newCategories[index].id = generateIdFromName(name);
+            renderCategoryList();
+        };
+
+        window.addNewCategory = function() {
+            if (!window._categoryManagerData) return;
+            window._categoryManagerData.newCategories.push({
+                name: '',
+                id: ''
+            });
+            renderCategoryList();
+        };
+
+        window.removeNewCategory = function(index) {
+            if (!window._categoryManagerData) return;
+            window._categoryManagerData.newCategories.splice(index, 1);
+            renderCategoryList();
+        };
+
+        window.editCategory = function(index) {
+            const item = document.querySelector(`.category-item[data-index="${index}"]`);
+            if (!item) return;
+            
+            const cat = window._categoryManagerData.categories[index];
+            const productCount = window._categoryManagerData.productCountMap[cat.id] || 0;
+            
+            item.innerHTML = `
+                <input type="text" value="${cat.name}" id="editCatName${index}" placeholder="分类名称">
+                <div class="category-item-info">
+                    <div class="category-item-id">ID: <span id="editCatId${index}">${cat.id}</span></div>
+                    ${productCount > 0 ? `<div class="category-item-id" style="color: #C5A467;">包含 ${productCount} 个产品</div>` : ''}
+                </div>
+                <div class="category-item-actions">
+                    <button class="btn-save-cat" onclick="saveCategoryEdit(${index})">保存</button>
+                    <button class="btn-cancel-cat" onclick="cancelCategoryEdit(${index})">取消</button>
+                </div>
+            `;
+            
+            // Add input event listener for auto-generating ID
+            const input = document.getElementById(`editCatName${index}`);
+            input.addEventListener('input', function() {
+                const newIdSpan = document.getElementById(`editCatId${index}`);
+                if (newIdSpan) {
+                    newIdSpan.textContent = generateIdFromName(this.value);
+                }
+            });
+            input.focus();
+        };
+
+        window.cancelCategoryEdit = function(index) {
+            renderCategoryList();
+        };
+
+        window.saveCategoryEdit = function(index) {
+            if (!window._categoryManagerData) return;
+            
+            const input = document.getElementById(`editCatName${index}`);
+            const newName = input.value.trim();
+            
+            if (!newName) {
+                alert('分类名称不能为空');
+                return;
+            }
+            
+            const oldId = window._categoryManagerData.categories[index].id;
+            const newId = generateIdFromName(newName);
+            
+            // Update category
+            window._categoryManagerData.categories[index].name = newName;
+            window._categoryManagerData.categories[index].id = newId;
+            
+            // Update product count map keys if ID changed
+            if (oldId !== newId && window._categoryManagerData.productCountMap[oldId]) {
+                window._categoryManagerData.productCountMap[newId] = window._categoryManagerData.productCountMap[oldId];
+                delete window._categoryManagerData.productCountMap[oldId];
+            }
+            
+            renderCategoryList();
+        };
+
+        window.deleteCategory = async function(index) {
+            if (!window._categoryManagerData) return;
+            
+            const cat = window._categoryManagerData.categories[index];
+            const productCount = window._categoryManagerData.productCountMap[cat.id] || 0;
+            
+            let confirmMsg = `确定要删除分类 "${cat.name}" 吗？`;
+            if (productCount > 0) {
+                confirmMsg = `分类 "${cat.name}" 下有 ${productCount} 个产品。\n\n删除后，这些产品的分类将被清空。\n\n确定要继续吗？`;
+            }
+            
+            if (!confirm(confirmMsg)) return;
+            
+            // Clear category for products using this category
+            if (productCount > 0) {
+                const productType = window._categoryManagerData.settingsPath.includes('jewelry') ? 'jewelry' : 'watch';
+                const productDir = `content/${productType}/products`;
+                
+                try {
+                    const files = await fetchDirectory(productDir);
+                    const productFiles = files.filter(f => f.name.endsWith('.json'));
+                    
+                    for (const file of productFiles) {
+                        const content = await fetchJsonFile(file.path);
+                        const data = content.data || content || {};
+                        
+                        if (data.category === cat.id) {
+                            // Update product to clear category
+                            if (content.data) {
+                                content.data.category = '';
+                            } else {
+                                content.category = '';
+                            }
+                            await saveJsonFile(file.path, content, `清除产品 "${data.name}" 的分类`);
+                        }
+                    }
+                } catch (e) {
+                    console.error('更新产品分类失败:', e);
+                    alert('更新产品分类时出错');
+                    return;
+                }
+            }
+            
+            // Remove category
+            window._categoryManagerData.categories.splice(index, 1);
+            delete window._categoryManagerData.productCountMap[cat.id];
+            
+            renderCategoryList();
+        };
+
+        window.saveCategories = async function(productType) {
+            if (!window._categoryManagerData) return;
+            
+            const { settingsPath, categories, newCategories } = window._categoryManagerData;
+            
+            // Validate new categories
+            for (const cat of newCategories) {
+                if (!cat.name.trim()) {
+                    alert('新分类名称不能为空');
+                    return;
+                }
+                if (!cat.id) {
+                    alert('新分类ID不能为空');
+                    return;
+                }
+            }
+            
+            // Check for duplicate IDs
+            const allCategories = [...categories, ...newCategories];
+            const ids = allCategories.map(c => c.id);
+            const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
+            if (duplicateIds.length > 0) {
+                alert(`分类ID重复: ${duplicateIds.join(', ')}`);
+                return;
+            }
+            
+            // Merge all categories (new categories first, then existing, with "all" at the beginning)
+            const allCategoriesFinal = [
+                { id: 'all', name: 'All' },
+                ...newCategories,
+                ...categories.filter(c => c.id !== 'all')
+            ];
+            
+            try {
+                // Load current settings
+                const settings = await fetchJsonFile(settingsPath);
+                settings.categories = allCategoriesFinal;
+                
+                // Save settings
+                await saveJsonFile(settingsPath, settings, `更新 ${productType === 'jewelry' ? '珠宝' : '手表'} 分类`);
+                
+                showToast('分类保存成功！');
+                closeCategoryManager();
+                
+                // Refresh product section
+                await loadSection(productType + '-products');
+            } catch (error) {
+                console.error('保存分类失败:', error);
+                alert('保存分类失败: ' + error.message);
+            }
+        };
 
         // Filter products by category
         window.filterProducts = function(category, productType) {
