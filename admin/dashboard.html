@@ -2555,6 +2555,7 @@
                 }
 
                 showToast('删除成功！');
+                await rebuildProductsIndex(productType);
                 await loadSection(productType + '-products');
             } catch (error) {
                 showToast('删除失败: ' + error.message, 'error');
@@ -2830,6 +2831,7 @@
 
             try {
                 await saveJsonFile(path, productData, `保存产品: ${name}`);
+                await rebuildProductsIndex(currentProductType);
                 showToast('保存成功！');
                 closeProductModal();
                 await loadSection(currentProductType + '-products');
@@ -2837,6 +2839,28 @@
                 showToast('保存失败: ' + error.message, 'error');
             }
         };
+
+        // Rebuild products-index.json after save/delete
+        async function rebuildProductsIndex(productType) {
+            try {
+                const productDir = `content/${productType}/products`;
+                const files = await fetchDirectory(productDir);
+                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+                const products = [];
+                for (const file of jsonFiles) {
+                    const content = await fetchJsonFile(file.path);
+                    const data = content.data || content || {};
+                    products.push({
+                        ...data,
+                        _slug: file.name.replace('.json', ''),
+                        _path: file.path
+                    });
+                }
+                await saveJsonFile(`content/${productType}/products-index.json`, products, `更新产品索引`);
+            } catch (e) {
+                console.error('重建产品索引失败:', e);
+            }
+        }
 
         // Enhanced upload function for products
         async function uploadImageToGitHub(file, uploadDir, fieldName, section) {
