@@ -456,17 +456,26 @@ class ContentLoader {
             }
         }
         
-        // Also update WhatsApp CTA button from theme if not set
-        if (this.contentCache.theme?.whatsapp_cta?.link) {
-            const whatsappCta = document.getElementById('whatsappCtaBtn');
-            if (whatsappCta && !whatsappCta.getAttribute('data-cms-set')) {
-                // Check if there's a WhatsApp link in social_links
-                const whatsappLink = socialLinks.find(l => l.type === 'whatsapp');
-                if (whatsappLink) {
-                    whatsappCta.href = whatsappLink.url;
-                    whatsappCta.setAttribute('data-cms-set', 'true');
-                }
-            }
+        // Update Order CTA buttons (WhatsApp + Email) from contact social_links
+        const whatsappLink = socialLinks.find(l => l.type === 'whatsapp');
+        const emailLink = socialLinks.find(l => l.type === 'email');
+        
+        // WhatsApp button in Order section
+        const orderWhatsappBtn = document.querySelector('#order a[href*="wa.me"]');
+        if (orderWhatsappBtn && whatsappLink) {
+            orderWhatsappBtn.href = whatsappLink.url;
+        }
+        
+        // Email button in Order section
+        const orderEmailBtn = document.querySelector('#order a[href^="mailto:"]');
+        if (orderEmailBtn && emailLink) {
+            orderEmailBtn.href = `mailto:${emailLink.url}`;
+        }
+        
+        // Hero WhatsApp CTA button
+        const whatsappCta = document.getElementById('whatsappCtaBtn');
+        if (whatsappCta && whatsappLink) {
+            whatsappCta.href = whatsappLink.url;
         }
     }
 
