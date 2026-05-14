@@ -1,6 +1,6 @@
 /**
  * Vespera Jewels - Content Loader
- * Loads CMS content and renders to page dynamically
+ * Loads CMS content from JSON files and renders to page dynamically
  */
 
 class ContentLoader {
@@ -24,45 +24,36 @@ class ContentLoader {
             await this.loadSection(section);
         }
         
-        // Load FAQ items dynamically
+        // Load FAQ items from combined JSON
         await this.loadFAQItems();
     }
 
     async loadTheme() {
         try {
             const response = await fetch('content/settings/theme.json');
-            if (!response.ok) throw new Error('JSON not found');
-            this.contentCache.theme = await response.json();
-            this.applyTheme(this.contentCache.theme);
-        } catch {
-            try {
-                const response = await fetch('content/settings/theme.md');
-                if (response.ok) {
-                    const text = await response.text();
-                    this.contentCache.theme = this.parseFrontmatter(text);
-                    this.applyTheme(this.contentCache.theme);
-                }
-            } catch (e) {
-                console.log('Using default theme');
+            if (response.ok) {
+                this.contentCache.theme = await response.json();
+                this.applyTheme(this.contentCache.theme);
             }
+        } catch (e) {
+            console.log('Using default theme');
         }
     }
 
     async loadSection(section) {
         const paths = {
-            home: 'content/home/home.md',
-            about: 'content/about/about.md',
-            jewelry: 'content/jewelry/jewelry.md',
-            watches: 'content/watches/watches.md',
-            order: 'content/order/how-to-order.md',
-            contact: 'content/contact/contact.md'
+            home: 'content/home/home.json',
+            about: 'content/about/about.json',
+            jewelry: 'content/jewelry/jewelry.json',
+            watches: 'content/watches/watches.json',
+            order: 'content/order/order.json',
+            contact: 'content/contact/contact.json'
         };
         
         try {
             const response = await fetch(paths[section]);
             if (response.ok) {
-                const text = await response.text();
-                this.contentCache[section] = this.parseFrontmatter(text);
+                this.contentCache[section] = await response.json();
             }
         } catch (e) {
             console.log(`Failed to load ${section}`);
@@ -70,128 +61,17 @@ class ContentLoader {
     }
 
     async loadFAQItems() {
-        // List of known FAQ files - in production this would be fetched from API
-        const faqFiles = [
-            'how-to-pay',
-            'out-of-stock', 
-            'how-to-know-price',
-            'brand-box',
-            'quality-confirmation',
-            'more-pictures',
-            'personal-wholesale',
-            'worldwide-shipping',
-            'delivery-time',
-            'quality-problem'
-        ];
-        
-        this.contentCache.faqItems = [];
-        
-        for (const file of faqFiles) {
-            try {
-                const response = await fetch(`content/faq/items/${file}.md`);
-                if (response.ok) {
-                    const text = await response.text();
-                    const item = this.parseFrontmatter(text);
-                    item._file = file;
-                    this.contentCache.faqItems.push(item);
-                }
-            } catch (e) {
-                // File not found, skip
-            }
-        }
-        
-        // Sort by order
-        this.contentCache.faqItems.sort((a, b) => (a.order || 0) - (b.order || 0));
-    }
-
-    parseFrontmatter(text) {
-        const match = text.match(/^---\n([\s\S]*?)\n---/);
-        if (!match) return {};
-        
         try {
-            // Use js-yaml if available
-            if (window.jsyaml) {
-                return window.jsyaml.load(match[1]) || {};
+            const response = await fetch('content/faq/faq.json');
+            if (response.ok) {
+                this.contentCache.faqItems = await response.json();
+                // Sort by order
+                this.contentCache.faqItems.sort((a, b) => (parseInt(a.order) || 0) - (parseInt(b.order) || 0));
             }
-        } catch(e) {
-            console.warn('js-yaml parse failed, falling back', e);
+        } catch (e) {
+            console.log('Failed to load FAQ items');
+            this.contentCache.faqItems = [];
         }
-        
-        // Fallback: simple parser
-        const yaml = match[1];
-        const result = {};
-        const lines = yaml.split('\n');
-        let currentArray = null;
-        let currentObj = null;
-        let currentObjKey = null;
-        
-        for (let i = 0; i < lines.length; i++) {
-            const line = lines[i];
-            
-            // Skip empty lines
-            if (line.trim() === '') continue;
-            
-            // Nested object property (4+ spaces indent)
-            const nestedMatch = line.match(/^(\s{4,})(\w+):\s*"?(.*?)"?\s*$/);
-            if (nestedMatch && currentArray && result[currentArray]) {
-                const lastItem = result[currentArray][result[currentArray].length - 1];
-                if (lastItem && typeof lastItem === 'object') {
-                    lastItem[nestedMatch[2]] = nestedMatch[3].replace(/^["']|["']$/g, '');
-                }
-                continue;
-            }
-            
-            // List item with dash (  -)
-            const dashMatch = line.match(/^(\s{2})-\s*$/);
-            if (dashMatch && currentArray) {
-                result[currentArray].push({});
-                continue;
-            }
-            
-            // List item with inline object {key: value}
-            const listObjMatch = line.match(/^\s+-\s+\{(.+)\}$/);
-            if (listObjMatch) {
-                const obj = {};
-                const pairs = listObjMatch[1].split(',');
-                for (const pair of pairs) {
-                    const [k, v] = pair.split(':').map(s => s.trim().replace(/^["']|["']$/g, ''));
-                    if (k && v !== undefined) obj[k] = v;
-                }
-                if (currentArray) result[currentArray].push(obj);
-                continue;
-            }
-            
-            // Array start
-            const arrayMatch = line.match(/^(\w+):\s*$/);
-            if (arrayMatch) {
-                currentArray = arrayMatch[1];
-                result[currentArray] = [];
-                continue;
-            }
-            
-            // Key-value
-            const kvMatch = line.match(/^(\w+):\s*(.*)$/);
-            if (kvMatch) {
-                currentArray = null;
-                const key = kvMatch[1];
-                let value = kvMatch[2].trim();
-                
-                // Handle empty array shorthand
-                if (value === '[]') {
-                    result[key] = [];
-                    continue;
-                }
-                
-                if ((value.startsWith('"') && value.endsWith('"')) ||
-                    (value.startsWith("'") && value.endsWith("'"))) {
-                    value = value.slice(1, -1);
-                }
-                
-                result[key] = value;
-            }
-        }
-        
-        return result;
     }
 
     applyTheme(theme) {
@@ -258,11 +138,22 @@ class ContentLoader {
 
         // Brand promises
         if (home.brand_promises) {
-            home.brand_promises.forEach((p, i) => {
-                this.setText(`[data-cms="home.promise.${i}.icon"]`, p.icon);
-                this.setText(`[data-cms="home.promise.${i}.title"]`, p.title);
-                this.setText(`[data-cms="home.promise.${i}.description"]`, p.description);
-            });
+            // Handle both array and string format
+            let promises = home.brand_promises;
+            if (typeof promises === 'string') {
+                try {
+                    promises = JSON.parse(promises);
+                } catch (e) {
+                    promises = [];
+                }
+            }
+            if (Array.isArray(promises)) {
+                promises.forEach((p, i) => {
+                    this.setText(`[data-cms="home.promise.${i}.icon"]`, p.icon);
+                    this.setText(`[data-cms="home.promise.${i}.title"]`, p.title);
+                    this.setText(`[data-cms="home.promise.${i}.description"]`, p.description);
+                });
+            }
         }
     }
 
@@ -272,9 +163,20 @@ class ContentLoader {
 
         this.setText('[data-cms="about.section_label"]', about.section_label);
         this.setText('[data-cms="about.section_title"]', about.section_title);
-        this.setText('[data-cms="about.story.0"]', about.story_paragraphs?.[0] || about.story);
-        this.setText('[data-cms="about.story.1"]', about.story_paragraphs?.[1]);
-        this.setText('[data-cms="about.story.2"]', about.story_paragraphs?.[2]);
+        
+        // Handle story_paragraphs
+        let storyParagraphs = about.story_paragraphs;
+        if (typeof storyParagraphs === 'string') {
+            try {
+                storyParagraphs = JSON.parse(storyParagraphs);
+            } catch (e) {
+                storyParagraphs = [storyParagraphs];
+            }
+        }
+        
+        this.setText('[data-cms="about.story.0"]', storyParagraphs?.[0] || about.story);
+        this.setText('[data-cms="about.story.1"]', storyParagraphs?.[1]);
+        this.setText('[data-cms="about.story.2"]', storyParagraphs?.[2]);
         
         if (about.story_image) {
             this.setImage('[data-cms="about.story_image"]', about.story_image);
@@ -283,31 +185,64 @@ class ContentLoader {
         this.setText('[data-cms="about.highlights_label"]', about.highlights_label);
         this.setText('[data-cms="about.highlights_title"]', about.highlights_title);
         
+        // Handle highlights
         if (about.highlights) {
-            about.highlights.forEach((h, i) => {
-                this.setText(`[data-cms="about.highlight.${i}.icon"]`, h.icon);
-                this.setText(`[data-cms="about.highlight.${i}.title"]`, h.title);
-                this.setText(`[data-cms="about.highlight.${i}.description"]`, h.description);
-            });
+            let highlights = about.highlights;
+            if (typeof highlights === 'string') {
+                try {
+                    highlights = JSON.parse(highlights);
+                } catch (e) {
+                    highlights = [];
+                }
+            }
+            if (Array.isArray(highlights)) {
+                highlights.forEach((h, i) => {
+                    this.setText(`[data-cms="about.highlight.${i}.icon"]`, h.icon);
+                    this.setText(`[data-cms="about.highlight.${i}.title"]`, h.title);
+                    this.setText(`[data-cms="about.highlight.${i}.description"]`, h.description);
+                });
+            }
         }
 
         this.setText('[data-cms="about.process_label"]', about.process_label);
         this.setText('[data-cms="about.process_title"]', about.process_title);
         
+        // Handle process_steps
         if (about.process_steps) {
-            about.process_steps.forEach((s, i) => {
-                this.setText(`[data-cms="about.process.${i}.number"]`, s.number);
-                this.setText(`[data-cms="about.process.${i}.title"]`, s.title);
-            });
+            let processSteps = about.process_steps;
+            if (typeof processSteps === 'string') {
+                try {
+                    processSteps = JSON.parse(processSteps);
+                } catch (e) {
+                    processSteps = [];
+                }
+            }
+            if (Array.isArray(processSteps)) {
+                processSteps.forEach((s, i) => {
+                    this.setText(`[data-cms="about.process.${i}.number"]`, s.number);
+                    this.setText(`[data-cms="about.process.${i}.title"]`, s.title);
+                });
+            }
         }
 
         this.setText('[data-cms="about.promises_label"]', about.promises_label);
         this.setText('[data-cms="about.promises_title"]', about.promises_title);
         
+        // Handle promises
         if (about.promises) {
-            about.promises.forEach((p, i) => {
-                this.setText(`[data-cms="about.promise.${i}"]`, typeof p === 'string' ? p : p.text);
-            });
+            let promises = about.promises;
+            if (typeof promises === 'string') {
+                try {
+                    promises = JSON.parse(promises);
+                } catch (e) {
+                    promises = [promises];
+                }
+            }
+            if (Array.isArray(promises)) {
+                promises.forEach((p, i) => {
+                    this.setText(`[data-cms="about.promise.${i}"]`, typeof p === 'string' ? p : p.text);
+                });
+            }
         }
     }
 
@@ -343,10 +278,17 @@ class ContentLoader {
         container.innerHTML = '';
         
         for (const item of this.contentCache.faqItems) {
-            if (item.published === false) continue;
+            if (item.published === false || item.published === 'false') continue;
             
             const faqItem = document.createElement('div');
             faqItem.className = 'faq-item border border-border bg-white';
+            
+            // Handle multi-line answer with | format
+            let answer = item.answer || '';
+            if (typeof answer === 'string' && answer.startsWith('|')) {
+                // Parse the | format
+                answer = answer.replace(/^\|\s*/, '').trim();
+            }
             
             faqItem.innerHTML = `
                 <button class="faq-question w-full flex items-center justify-between p-6 text-left" onclick="toggleFAQ(this)">
@@ -357,7 +299,7 @@ class ContentLoader {
                 </button>
                 <div class="faq-answer hidden px-6 pb-6">
                     <div class="text-textLight leading-relaxed">
-                        ${this.formatAnswer(item.answer)}
+                        ${this.formatAnswer(answer)}
                     </div>
                 </div>
             `;
@@ -387,12 +329,23 @@ class ContentLoader {
         this.setText('[data-cms="order.cta_email"]', o.cta_email);
         this.setText('[data-cms="order.cta_form"]', o.cta_form);
 
+        // Handle steps
         if (o.steps) {
-            o.steps.forEach((s, i) => {
-                this.setText(`[data-cms="order.step.${i}.number"]`, s.number);
-                this.setText(`[data-cms="order.step.${i}.title"]`, s.title);
-                this.setText(`[data-cms="order.step.${i}.description"]`, s.description);
-            });
+            let steps = o.steps;
+            if (typeof steps === 'string') {
+                try {
+                    steps = JSON.parse(steps);
+                } catch (e) {
+                    steps = [];
+                }
+            }
+            if (Array.isArray(steps)) {
+                steps.forEach((s, i) => {
+                    this.setText(`[data-cms="order.step.${i}.number"]`, s.number);
+                    this.setText(`[data-cms="order.step.${i}.title"]`, s.title);
+                    this.setText(`[data-cms="order.step.${i}.description"]`, s.description);
+                });
+            }
         }
     }
 
@@ -408,15 +361,34 @@ class ContentLoader {
         this.setText('[data-cms="contact.form_success_title"]', c.form_success_title);
         this.setText('[data-cms="contact.form_success_message"]', c.form_success_message);
 
+        // Handle contact_items
         if (c.contact_items) {
-            c.contact_items.forEach((item, i) => {
-                this.setText(`[data-cms="contact.item.${i}.title"]`, item.title);
-                this.setText(`[data-cms="contact.item.${i}.content"]`, item.content);
-            });
+            let contactItems = c.contact_items;
+            if (typeof contactItems === 'string') {
+                try {
+                    contactItems = JSON.parse(contactItems);
+                } catch (e) {
+                    contactItems = [];
+                }
+            }
+            if (Array.isArray(contactItems)) {
+                contactItems.forEach((item, i) => {
+                    this.setText(`[data-cms="contact.item.${i}.title"]`, item.title);
+                    this.setText(`[data-cms="contact.item.${i}.content"]`, item.content);
+                });
+            }
         }
         
         // Render social media links
-        this.renderSocialLinks(c.social_links);
+        let socialLinks = c.social_links;
+        if (typeof socialLinks === 'string') {
+            try {
+                socialLinks = JSON.parse(socialLinks);
+            } catch (e) {
+                socialLinks = [];
+            }
+        }
+        this.renderSocialLinks(socialLinks);
     }
     
     renderSocialLinks(socialLinks) {
@@ -503,18 +475,20 @@ class ContentLoader {
 
     setText(selector, value) {
         if (!value) return;
-        const el = document.querySelector(selector);
-        if (el) el.textContent = value;
+        document.querySelectorAll(selector).forEach(el => {
+            el.textContent = value;
+        });
     }
 
     setImage(selector, src) {
         if (!src) return;
-        const el = document.querySelector(selector);
-        if (el) el.src = src;
+        document.querySelectorAll(selector).forEach(el => {
+            el.src = src;
+        });
     }
 }
 
-// Initialize on DOM ready
+// Initialize when DOM is ready
 document.addEventListener('DOMContentLoaded', () => {
     const loader = new ContentLoader();
     loader.init();

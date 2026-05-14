@@ -1,0 +1,101 @@
+[
+  {
+    "name": "Diamond Drop Earrings",
+    "price": "$9999",
+    "category": "earrings",
+    "description": "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.",
+    "images": [
+      "/assets/uploads/earring1.jpg"
+    ],
+    "order": "1",
+    "published": "true",
+    "_slug": "diamond-drop-earrings",
+    "_path": "content/jewelry/products/diamond-drop-earrings.json"
+  },
+  {
+    "name": "Diamond Pendant",
+    "price": "$8888",
+    "category": "necklaces",
+    "description": "Elegant diamond pendant on 18K gold chain. Features a sparkling center stone with pavÃ© details.",
+    "images": [
+      "/assets/uploads/necklace2.jpg"
+    ],
+    "order": "1",
+    "published": "true",
+    "_slug": "diamond-pendant",
+    "_path": "content/jewelry/products/diamond-pendant.json"
+  },
+  {
+    "name": "Diamond Solitaire Ring",
+    "price": "$8888",
+    "category": "rings",
+    "description": "Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.",
+    "images": [
+      "/assets/uploads/ring1.jpg"
+    ],
+    "order": "1",
+    "published": "true",
+    "_slug": "diamond-solitaire-ring",
+    "_path": "content/jewelry/products/diamond-solitaire-ring.json"
+  },
+  {
+    "name": "Gold Band Ring",
+    "category": "rings",
+    "price": "$1,200",
+    "description": "Classic solid 18K gold band. Comfortable fit with polished finish suitable for everyday wear.",
+    "image": "/assets/uploads/ring2.jpg",
+    "badge": "",
+    "featured": "false",
+    "published": "true",
+    "_slug": "gold-band-ring",
+    "_path": "content/jewelry/products/gold-band-ring.json"
+  },
+  {
+    "name": "Gold Chain Bracelet",
+    "category": "bracelets",
+    "price": "$1,450",
+    "description": "Elegant solid gold chain bracelet with lobster clasp. Perfect for stacking or wearing alone.",
+    "image": "/assets/uploads/bracelet2.jpg",
+    "badge": "",
+    "featured": "false",
+    "published": "true",
+    "_slug": "gold-chain-bracelet",
+    "_path": "content/jewelry/products/gold-chain-bracelet.json"
+  },
+  {
+    "name": "Gold Hoop Earrings",
+    "category": "earrings",
+    "price": "$890",
+    "description": "Classic gold hoop earrings in solid 18K gold. Lightweight and comfortable for all-day wear.",
+    "image": "/assets/uploads/earring2.jpg",
+    "badge": "",
+    "featured": "false",
+    "published": "true",
+    "_slug": "gold-hoop-earrings",
+    "_path": "content/jewelry/products/gold-hoop-earrings.json"
+  },
+  {
+    "name": "Pearl Strand Necklace",
+    "category": "necklaces",
+    "price": "$3,400",
+    "description": "Lustrous freshwater pearls strung on silk thread. Each pearl is carefully selected for its uniform size and radiant sheen.",
+    "image": "/assets/uploads/necklace1.jpg",
+    "badge": "",
+    "featured": "true",
+    "published": "true",
+    "_slug": "pearl-necklace",
+    "_path": "content/jewelry/products/pearl-necklace.json"
+  },
+  {
+    "name": "Diamond Tennis Bracelet",
+    "category": "bracelets",
+    "price": "$5,800",
+    "description": "Luxurious tennis bracelet featuring brilliant diamonds set in platinum. A statement piece for any occasion.",
+    "image": "/assets/uploads/bracelet1.jpg",
+    "badge": "",
+    "featured": "false",
+    "published": "true",
+    "_slug": "tennis-bracelet",
+    "_path": "content/jewelry/products/tennis-bracelet.json"
+  }
+]

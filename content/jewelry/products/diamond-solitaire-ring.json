@@ -1,0 +1,11 @@
+{
+  "name": "Diamond Solitaire Ring",
+  "price": "$8888",
+  "category": "rings",
+  "description": "Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.",
+  "images": [
+    "/assets/uploads/ring1.jpg"
+  ],
+  "order": "1",
+  "published": "true"
+}

@@ -1269,7 +1269,6 @@
             color: var(--text);
         }
     </style>
-    <script src="https://cdn.jsdelivr.net/npm/js-yaml@4.1.0/dist/js-yaml.min.js"></script>
 </head>
 <body>
     <!-- Mobile Toggle -->
@@ -1923,7 +1922,7 @@
         }
 
         // GitHub API helpers
-        async function fetchFile(path) {
+        async function fetchJsonFile(path) {
             const cacheBuster = `?t=${Date.now()}`;
             const response = await fetch(`${API_BASE}/${path}${cacheBuster}`, {
                 headers: {
@@ -1944,6 +1943,10 @@
                 return JSON.parse(atob(data.content));
             }
             return data;
+        }
+
+        async function fetchFile(path) {
+            return fetchJsonFile(path);
         }
 
         async function fetchMarkdownFile(path) {
@@ -2165,22 +2168,22 @@
             home: {
                 title: 'Home',
                 desc: '编辑首页内容',
-                files: [{ path: 'content/home/home.md', type: 'markdown' }]
+                files: [{ path: 'content/home/home.json', type: 'json' }]
             },
             about: {
                 title: 'About Us',
                 desc: '编辑关于我们页面',
-                files: [{ path: 'content/about/about.md', type: 'markdown' }]
+                files: [{ path: 'content/about/about.json', type: 'json' }]
             },
             contact: {
                 title: 'Contact',
                 desc: '编辑联系方式',
-                files: [{ path: 'content/contact/contact.md', type: 'markdown' }]
+                files: [{ path: 'content/contact/contact.json', type: 'json' }]
             },
             jewelry: {
                 title: 'Jewelry Settings',
                 desc: '编辑珠宝系列设置',
-                files: [{ path: 'content/jewelry/jewelry.md', type: 'markdown' }]
+                files: [{ path: 'content/jewelry/jewelry.json', type: 'json' }]
             },
             'jewelry-products': {
                 title: 'Jewelry Products',
@@ -2191,7 +2194,7 @@
             watches: {
                 title: 'Watch Settings',
                 desc: '编辑腕表系列设置',
-                files: [{ path: 'content/watches/watches.md', type: 'markdown' }]
+                files: [{ path: 'content/watches/watches.json', type: 'json' }]
             },
             'watch-products': {
                 title: 'Watch Products',
@@ -2202,14 +2205,14 @@
             faq: {
                 title: 'FAQ Settings',
                 desc: '编辑常见问题页面设置',
-                files: [{ path: 'content/faq/items/faq.md', type: 'markdown' }]
+                files: [{ path: 'content/faq/faq.json', type: 'faq-json' }]
             },
             'faq-items': {
                 title: 'FAQ Items',
                 desc: '管理常见问题',
-                files: [{ path: 'content/faq/items', type: 'directory' }],
+                files: [{ path: 'content/faq', type: 'faq-directory' }],
                 loadFiles: true,
-                filter: (f) => f.name !== 'faq.md'
+                filter: (f) => f.name !== 'faq.json'
             },
             process: {
                 title: 'Process Steps',
@@ -2221,7 +2224,7 @@
             order: {
                 title: 'How to Order',
                 desc: '编辑订购流程',
-                files: [{ path: 'content/order/how-to-order.md', type: 'markdown' }]
+                files: [{ path: 'content/order/order.json', type: 'json' }]
             },
             partner: {
                 title: 'Partner Cases',
@@ -2269,10 +2272,10 @@
         // Load categories from settings
         async function loadCategories(type) {
             try {
-                const settingsPath = type === 'jewelry' ? 'content/jewelry/jewelry.md' : 'content/watches/watches.md';
-                const content = await fetchMarkdownFile(settingsPath);
-                if (content && content.data && content.data.categories) {
-                    return content.data.categories.map(cat => cat.id || cat.name);
+                const settingsPath = type === 'jewelry' ? 'content/jewelry/jewelry.json' : 'content/watches/watches.json';
+                const content = await fetchJsonFile(settingsPath);
+                if (content && content.categories) {
+                    return content.categories.map(cat => cat.id || cat.name);
                 }
             } catch (e) {
                 console.log('Could not load categories', e);
@@ -2328,23 +2331,52 @@
                         const listContainer = document.getElementById('productList');
 
                         for (const file of filteredFiles) {
-                            const content = await fetchMarkdownFile(file.path);
-                            sectionData[file.path] = content;
-                            renderProductItem(listContainer, file, content);
+                            // Handle different file types
+                            if (file.name.endsWith('.json')) {
+                                const content = await fetchJsonFile(file.path);
+                                sectionData[file.path] = content;
+                                renderProductItem(listContainer, file, content);
+                            } else {
+                                const content = await fetchMarkdownFile(file.path);
+                                sectionData[file.path] = content;
+                                renderProductItem(listContainer, file, content);
+                            }
                         }
                     }
                 } else {
                     // Single file sections
                     const file = sectionInfo.files[0];
                     
-                    if (file.type === 'markdown') {
+                    if (file.type === 'json') {
+                        const content = await fetchJsonFile(file.path);
+                        sectionData[file.path] = content;
+                        renderJsonEditorFromData(file.path, content);
+                    } else if (file.type === 'faq-json') {
+                        // FAQ items as a combined JSON array
+                        const content = await fetchJsonFile(file.path);
+                        sectionData[file.path] = content;
+                        renderFaqSettingsEditorFromData(file.path, content);
+                    } else if (file.type === 'markdown') {
                         const content = await fetchMarkdownFile(file.path);
                         sectionData[file.path] = content;
                         renderMarkdownEditor(file.path, content);
-                    } else if (file.type === 'json') {
-                        const content = await fetchFile(file.path);
-                        sectionData[file.path] = content;
-                        renderJsonEditor(file.path, content);
+                    } else if (file.type === 'faq-directory') {
+                        // FAQ items directory - load as JSON files
+                        const files = await fetchDirectory(file.path);
+                        const faqFiles = files.filter(f => f.name.endsWith('.json') && f.name !== 'faq.json');
+                        
+                        panelTabs.innerHTML = '<div class="panel-tab active">FAQ项目</div>';
+                        panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+                        
+                        const container = document.getElementById('tab-0');
+                        container.innerHTML = '<div class="list-editor" id="productList"></div>';
+                        const listContainer = document.getElementById('productList');
+                        
+                        for (const faqFile of faqFiles) {
+                            const content = await fetchJsonFile(faqFile.path);
+                            sectionData[faqFile.path] = content;
+                            renderProductItem(listContainer, faqFile, content);
+                        }
                     }
                 }
             } catch (error) {
@@ -2782,11 +2814,11 @@
                 .substring(0, 50);
             
             const productDir = `content/${currentProductType}/products`;
-            const filename = `${slug}.md`;
+            const filename = `${slug}.json`;
             const path = editingProductPath || `${productDir}/${filename}`;
 
-            // Build frontmatter
-            const frontmatter = {
+            // Build product data as JSON
+            const productData = {
                 name: name,
                 price: price,
                 category: category,
@@ -2797,7 +2829,7 @@
             };
 
             try {
-                await saveMarkdownFile(path, frontmatter, '', `保存产品: ${name}`);
+                await saveJsonFile(path, productData, `保存产品: ${name}`);
                 showToast('保存成功！');
                 closeProductModal();
                 await loadSection(currentProductType + '-products');
@@ -2882,7 +2914,9 @@
             item.className = 'list-item';
             item.dataset.path = file.path;
             
-            const title = content.data.title || content.data.name || content.data.question || file.name.replace('.md', '');
+            // Handle both markdown (content.data) and JSON (content directly) formats
+            const data = content.data || content;
+            const title = data.title || data.name || data.question || file.name.replace(/\.(md|json)$/, '');
             
             item.innerHTML = `
                 <div class="list-item-header">
@@ -2898,7 +2932,7 @@
 
             // Render preview fields
             const preview = document.getElementById(`preview-${file.path.replace(/\//g, '-')}`);
-            renderItemPreview(preview, content.data);
+            renderItemPreview(preview, data);
         }
 
         function renderItemPreview(container, data) {
@@ -3163,9 +3197,10 @@
         }
 
         function renderMarkdownEditor(path, content) {
+            // For markdown files - content has .data and .body
             const panelTabs = document.getElementById('panelTabs');
             const panelContent = document.getElementById('panelContent');
-            const data = content.data;
+            const data = content.data || content;
 
             panelTabs.innerHTML = '<div class="panel-tab active">内容字段</div>';
             panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
@@ -3183,9 +3218,37 @@
                 renderOrderEditor(container, data);
             } else if (path.includes('/faq/')) {
                 renderFaqSettingsEditor(container, data);
-            } else if (path.includes('/jewelry/jewelry.md')) {
+            } else if (path.includes('/jewelry/jewelry.')) {
                 renderJewelrySettingsEditor(container, data);
-            } else if (path.includes('/watches/watches.md')) {
+            } else if (path.includes('/watches/watches.')) {
+                renderWatchSettingsEditor(container, data);
+            }
+        }
+
+        function renderJsonEditorFromData(path, data) {
+            // For JSON files - data is directly the content object
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+
+            panelTabs.innerHTML = '<div class="panel-tab active">内容字段</div>';
+            panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+
+            const container = document.getElementById('tab-0');
+
+            // Determine which editor to show based on path
+            if (path.includes('/home/')) {
+                renderHomeEditor(container, data);
+            } else if (path.includes('/about/')) {
+                renderAboutEditor(container, data);
+            } else if (path.includes('/contact/')) {
+                renderContactEditor(container, data);
+            } else if (path.includes('/order/')) {
+                renderOrderEditor(container, data);
+            } else if (path.includes('/faq/faq.json')) {
+                renderFaqSettingsEditorFromData(container, data);
+            } else if (path.includes('/jewelry/jewelry.')) {
+                renderJewelrySettingsEditor(container, data);
+            } else if (path.includes('/watches/watches.')) {
                 renderWatchSettingsEditor(container, data);
             }
         }
@@ -3330,6 +3393,20 @@
             `;
         }
 
+        function renderFaqSettingsEditorFromData(container, data) {
+            // For JSON FAQ file - data is an array of FAQ items
+            // Just show a simple message that items are managed separately
+            container.innerHTML = `
+                <div class="form-grid">
+                    <div class="form-group full-width">
+                        <p style="color: var(--text-secondary); font-size: 14px;">
+                            FAQ项目在"FAQ Items"菜单中单独管理。每个FAQ都是一个单独的JSON文件。
+                        </p>
+                    </div>
+                </div>
+            `;
+        }
+
         function renderJewelrySettingsEditor(container, data) {
             container.innerHTML = `
                 <div class="form-grid">
@@ -3460,14 +3537,14 @@
                         }
                     });
                     await saveJsonFile('content/settings/theme.json', newData, '更新主题设置');
-                } else if (sectionInfo.loadFiles) {
+                } else if (sectionInfo.loadFiles || sectionInfo.files[0].type === 'faq-directory') {
                     showToast('产品需要使用编辑按钮单独保存。', 'error');
                     return;
                 } else {
-                    // Save markdown
+                    // Save JSON
                     const file = sectionInfo.files[0];
                     const content = sectionData[file.path];
-                    const newData = { ...content.data };
+                    const newData = { ...content };
 
                     // Collect form values
                     const inputs = document.querySelectorAll('#tab-0 input, #tab-0 textarea');
@@ -3513,7 +3590,7 @@
                         // Skip social_* and contact_* inputs - handled above for contact section
                         if (name.startsWith('social_') || name.startsWith('contact_')) return;
                         
-                        // Handle JSON fields (but skip social_links which is handled above)
+                        // Handle JSON fields
                         if (['brand_promises', 'story_paragraphs', 'highlights', 'process_steps', 'promises', 
                              'contact_items', 'steps', 'categories'].includes(name)) {
                             try {
@@ -3526,7 +3603,13 @@
                         }
                     });
 
-                    await saveMarkdownFile(file.path, newData, content.body, `更新 ${sectionInfo.title}`);
+                    // Determine JSON file path based on section
+                    let jsonPath = file.path;
+                    if (file.type === 'faq-json') {
+                        jsonPath = 'content/faq/faq.json';
+                    }
+                    
+                    await saveJsonFile(jsonPath, newData, `更新 ${sectionInfo.title}`);
                 }
 
                 showToast('保存成功！Cloudflare Pages 将很快重新构建。');

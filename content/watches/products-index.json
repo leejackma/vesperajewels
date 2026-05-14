@@ -1,0 +1,74 @@
+[
+  {
+    "name": "Classic Dress Watch",
+    "category": "Dress Watches",
+    "price": "$4,500",
+    "description": "Swiss automatic movement with sapphire crystal. This elegant timepiece combines timeless design with precision engineering.",
+    "image": "/assets/uploads/watch1.jpg",
+    "badge": "BESTSELLER",
+    "featured": "true",
+    "published": "true",
+    "_slug": "classic-dress-watch",
+    "_path": "content/watches/products/classic-dress-watch.json"
+  },
+  {
+    "name": "Diamond Encrusted",
+    "category": "Luxury",
+    "price": "$28,500",
+    "description": "Limited edition timepiece encrusted with diamonds. A masterpiece of watchmaking and gem setting.",
+    "image": "/assets/uploads/watch3.jpg",
+    "badge": "NEW",
+    "featured": "false",
+    "published": "true",
+    "_slug": "diamond-encrusted-watch",
+    "_path": "content/watches/products/diamond-encrusted-watch.json"
+  },
+  {
+    "name": "Gold Chronograph",
+    "category": "Chronograph",
+    "price": "$12,800",
+    "description": "18K gold case chronograph with tachymeter. A luxurious sports watch for the distinguished gentleman.",
+    "image": "/assets/uploads/watch2.jpg",
+    "badge": "",
+    "featured": "false",
+    "published": "true",
+    "_slug": "gold-chronograph",
+    "_path": "content/watches/products/gold-chronograph.json"
+  },
+  {
+    "name": "Ladies Collection",
+    "category": "Ladies",
+    "price": "$8,900",
+    "description": "Rose gold ladies watch with diamond bezel. Elegant proportions with a feminine aesthetic.",
+    "image": "/assets/uploads/watch5.jpg",
+    "badge": "",
+    "featured": "false",
+    "published": "true",
+    "_slug": "ladies-collection",
+    "_path": "content/watches/products/ladies-collection.json"
+  },
+  {
+    "name": "Skeleton Watch",
+    "category": "Skeleton",
+    "price": "$7,600",
+    "description": "Visible automatic movement through sapphire caseback. A window into fine Swiss watchmaking.",
+    "image": "/assets/uploads/watch6.jpg",
+    "badge": "",
+    "featured": "false",
+    "published": "true",
+    "_slug": "skeleton-watch",
+    "_path": "content/watches/products/skeleton-watch.json"
+  },
+  {
+    "name": "Sport Chronograph",
+    "category": "Sport",
+    "price": "$6,200",
+    "description": "Titanium case sport watch with water resistance. Built for performance without compromising on style.",
+    "image": "/assets/uploads/watch4.jpg",
+    "badge": "",
+    "featured": "false",
+    "published": "true",
+    "_slug": "sport-chronograph",
+    "_path": "content/watches/products/sport-chronograph.json"
+  }
+]
