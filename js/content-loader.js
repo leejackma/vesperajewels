@@ -9,9 +9,14 @@ class ContentLoader {
     }
 
     async init() {
-        await this.loadAllContent();
-        this.renderContent();
-        this.initFAQAccordion();
+        try {
+            await this.loadAllContent();
+            this.renderContent();
+            this.initFAQAccordion();
+            console.log('ContentLoader: All content loaded and rendered', this.contentCache);
+        } catch(e) {
+            console.error('ContentLoader error:', e);
+        }
     }
 
     async loadAllContent() {
@@ -351,6 +356,7 @@ class ContentLoader {
 
     renderContact() {
         const c = this.contentCache.contact;
+        console.log('renderContact called, data:', c);
         if (!c) return;
 
         this.setText('[data-cms="contact.section_label"]', c.section_label);
