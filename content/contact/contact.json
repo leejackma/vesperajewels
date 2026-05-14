@@ -9,6 +9,12 @@
       "icon": "location",
       "title": "Visit Our Factory",
       "content": "Shenzhen, Guangdong Province, China"
+    },
+    {
+      "type": "phone",
+      "icon": "phone",
+      "title": "Call Us",
+      "content": "+852 84193445"
     }
   ],
   "social_title": "Follow Us",
@@ -19,5 +25,6 @@
     }
   ],
   "form_success_title": "Message Sent!",
-  "form_success_message": "Thank you for reaching out. We'll get back to you within 24 hours."
+  "form_success_message": "Thank you for reaching out. We'll get back to you within 24 hours.",
+  "form_title": ""
 }
