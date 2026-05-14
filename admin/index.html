@@ -15,6 +15,25 @@
         <h2>Loading CMS...</h2>
         <p>Please wait while the admin panel loads.</p>
     </div>
-    <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js?v=20260514"></script>
+    <script>
+    // localStorage bridge: detect auth token stored by OAuth callback
+    (function() {
+      function checkAuthBridge() {
+        try {
+          var authResult = localStorage.getItem('decap-cms-auth-result');
+          if (authResult) {
+            localStorage.removeItem('decap-cms-auth-result');
+            // Dispatch as message event for Decap CMS to pick up
+            window.dispatchEvent(new MessageEvent('message', { data: authResult, origin: window.location.origin }));
+          }
+        } catch(e) {}
+      }
+      
+      // Check immediately and periodically
+      checkAuthBridge();
+      setInterval(checkAuthBridge, 500);
+    })();
+    </script>
+    <script src="https://unpkg.com/decap-cms@3.3.3/dist/decap-cms.js?v=20260514b"></script>
 </body>
 </html>
