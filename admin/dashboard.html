@@ -1541,7 +1541,7 @@
                         // Check if file exists and get sha
                         let sha = null;
                         try {
-                            const checkResponse = await fetch(`${API_BASE}/${path}`, {
+                            const checkResponse = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
                                 headers: {
                                     'Authorization': `Bearer ${token}`,
                                     'Accept': 'application/vnd.github.v3+json'
@@ -1565,7 +1565,7 @@
                             body.sha = sha;
                         }
 
-                        const response = await fetch(`${API_BASE}/${path}`, {
+                        const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
                             method: 'PUT',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -1923,7 +1923,8 @@
 
         // GitHub API helpers
         async function fetchFile(path) {
-            const response = await fetch(`${API_BASE}/${path}`, {
+            const cacheBuster = `?t=${Date.now()}`;
+            const response = await fetch(`${API_BASE}/${path}${cacheBuster}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/vnd.github.v3+json'
@@ -1945,7 +1946,8 @@
         }
 
         async function fetchMarkdownFile(path) {
-            const response = await fetch(`${API_BASE}/${path}`, {
+            const cacheBuster = `?t=${Date.now()}`;
+            const response = await fetch(`${API_BASE}/${path}${cacheBuster}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/vnd.github.v3+json'
@@ -2045,7 +2047,7 @@
         }
 
         async function fetchDirectory(path) {
-            const response = await fetch(`${API_BASE}/${path}`, {
+            const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
                 headers: {
                     'Authorization': `Bearer ${token}`,
                     'Accept': 'application/vnd.github.v3+json'
@@ -2073,7 +2075,7 @@
                 body.sha = fileSha[path];
             }
 
-            const response = await fetch(`${API_BASE}/${path}`, {
+            const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
                 method: 'PUT',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -2484,7 +2486,7 @@
             if (!confirm('确定要删除此产品吗？此操作无法撤销。')) return;
 
             try {
-                const response = await fetch(`${API_BASE}/${path}`, {
+                const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
@@ -2804,7 +2806,7 @@
                         // Check if file exists and get sha
                         let sha = null;
                         try {
-                            const checkResponse = await fetch(`${API_BASE}/${fullPath}`, {
+                            const checkResponse = await fetch(`${API_BASE}/${fullPath}?t=${Date.now()}`, {
                                 headers: {
                                     'Authorization': `Bearer ${token}`,
                                     'Accept': 'application/vnd.github.v3+json'
@@ -2828,7 +2830,7 @@
                             body.sha = sha;
                         }
 
-                        const response = await fetch(`${API_BASE}/${fullPath}`, {
+                        const response = await fetch(`${API_BASE}/${fullPath}?t=${Date.now()}`, {
                             method: 'PUT',
                             headers: {
                                 'Authorization': `Bearer ${token}`,
@@ -3117,7 +3119,7 @@
             if (!confirm('确定要删除此项目吗？此操作无法撤销。')) return;
 
             try {
-                const response = await fetch(`${API_BASE}/${path}`, {
+                const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`,
