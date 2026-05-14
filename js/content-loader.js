@@ -377,6 +377,42 @@ class ContentLoader {
                 this.setText(`[data-cms="contact.item.${i}.content"]`, item.content);
             });
         }
+        
+        // Render social media links
+        this.renderSocialLinks(c.social_links);
+    }
+    
+    renderSocialLinks(socialLinks) {
+        if (!socialLinks || !Array.isArray(socialLinks)) return;
+        
+        const socialIcons = {
+            whatsapp: document.getElementById('socialWhatsApp'),
+            facebook: document.getElementById('socialFacebook'),
+            instagram: document.getElementById('socialInstagram'),
+            tiktok: document.getElementById('socialTiktok'),
+            email: document.getElementById('socialEmail')
+        };
+        
+        socialLinks.forEach(link => {
+            if (link.type && link.url && socialIcons[link.type]) {
+                const icon = socialIcons[link.type];
+                icon.href = link.type === 'email' ? `mailto:${link.url}` : link.url;
+                icon.style.display = 'flex';
+            }
+        });
+        
+        // Also update WhatsApp CTA button from theme if not set
+        if (this.contentCache.theme?.whatsapp_cta?.link) {
+            const whatsappCta = document.getElementById('whatsappCtaBtn');
+            if (whatsappCta && !whatsappCta.getAttribute('data-cms-set')) {
+                // Check if there's a WhatsApp link in social_links
+                const whatsappLink = socialLinks.find(l => l.type === 'whatsapp');
+                if (whatsappLink) {
+                    whatsappCta.href = whatsappLink.url;
+                    whatsappCta.setAttribute('data-cms-set', 'true');
+                }
+            }
+        }
     }
 
     initFAQAccordion() {
