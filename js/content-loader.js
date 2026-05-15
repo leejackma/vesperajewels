@@ -179,6 +179,14 @@ class ContentLoader {
         this.setText('[data-cms="home.craft_label"]', home.craft_label);
         this.setText('[data-cms="home.craft_title"]', home.craft_title);
 
+        // Craft images
+        ['craft_image_1', 'craft_image_2', 'craft_image_3'].forEach(key => {
+            if (home[key]) {
+                const img = document.querySelector(`[data-cms="home.${key}"]`);
+                if (img) img.src = home[key];
+            }
+        });
+
         // Brand promises
         if (home.brand_promises) {
             let promises = this.ensureArray(home.brand_promises);
