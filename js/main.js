@@ -1217,7 +1217,6 @@ document.addEventListener('keydown', function(e) {
 });
 
 // ============================================
-// Craft Images Carousel
 // ============================================
 let craftCarouselInterval = null;
 let craftResizeHandler = null;
