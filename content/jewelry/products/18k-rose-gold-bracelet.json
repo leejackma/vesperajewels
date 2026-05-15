@@ -1,0 +1,17 @@
+{
+  "name": "18K rose gold bracelet",
+  "subtitle": "",
+  "price": "$5,700",
+  "category": "bracelets",
+  "description": "18k",
+  "images": [
+    "/assets/uploads/jewelry/product_1778835641562_1778835641576.jpg",
+    "/assets/uploads/jewelry/product_1778835647472_1778835647484.jpg",
+    "/assets/uploads/jewelry/product_1778835654645_1778835654657.jpg",
+    "/assets/uploads/jewelry/product_1778835658941_1778835658955.jpg",
+    "/assets/uploads/jewelry/product_1778835666152_1778835666167.jpg",
+    "/assets/uploads/jewelry/product_1778835675890_1778835675904.jpg"
+  ],
+  "order": 1,
+  "published": true
+}
