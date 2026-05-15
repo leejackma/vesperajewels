@@ -1797,12 +1797,2189 @@
             }
 
             return `
+                <div class="form-group">
+                    <label>${getImageFieldLabel(name)} <span class="hint">(推荐 ${config.width}×${config.height}px)</span></label>
+                    <div class="image-upload-wrapper" id="${id}">
+                        ${hasValue ? `
+                            <div class="image-upload-preview">
+                                <img src="${previewSrc}" alt="预览" onerror="this.style.display='none'">
+                                <button type="button" class="remove-btn" onclick="removeImagePreview('${id}', '${name}')" title="移除图片">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                                    </svg>
+                                </button>
+                            </div>
+                        ` : ''}
+                        
+                        <div class="image-size-hint">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                            推荐尺寸: ${config.width}×${config.height}px (${config.desc})
+                            ${isExternalUrl ? '<span style="color:#E2B94D;margin-left:5px;">[外部链接]</span>' : ''}
+                        </div>
+
+                        <div class="image-upload-actions">
+                            <input type="file" id="file-${id}" class="file-input-hidden" accept="image/*" onchange="handleFileSelect(event, '${id}', '${name}', '${section}', '${fieldName}')">
+                            <button type="button" class="upload-btn" onclick="document.getElementById('file-${id}').click()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                                    <polyline points="17 8 12 3 7 8"></polyline>
+                                    <line x1="12" y1="3" x2="12" y2="15"></line>
+                                </svg>
+                                ${hasValue ? '更换图片' : '上传图片'}
+                            </button>
+                            
+                            <button type="button" class="url-toggle" onclick="toggleUrlInput('${id}')">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <polyline points="6 9 12 15 18 9"></polyline>
+                                </svg>
+                                或输入图片URL
+                            </button>
+                            
+                            <div class="url-input-wrapper" id="url-${id}">
+                                <input type="text" name="${name}" value="${currentValue || ''}" placeholder="输入图片URL" onchange="updateImageUrl('${id}', '${name}')">
+                            </div>
+                            
+                            <div class="upload-progress" id="progress-${id}">
+                                <div class="spinner"></div>
+                                <span>上传中...</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getImageFieldLabel(name) {
+            const labels = {
+                'hero_image': '背景图片',
+                'story_image': '故事图片',
+                'image': '图片',
+                'images': '图片',
+                'featured_image': '精选图片',
+                'thumbnail': '缩略图'
+            };
+            return labels[name] || name.replace(/_/g, ' ');
+        }
+
+        function toggleUrlInput(id) {
+            const wrapper = document.getElementById(`url-${id}`);
+            const toggle = wrapper.previousElementSibling;
+            wrapper.classList.toggle('show');
+            toggle.classList.toggle('expanded');
+        }
+
+        function updateImageUrl(id, name) {
+            const input = document.getElementById(`url-${id}`).querySelector('input');
+            const preview = document.getElementById(id).querySelector('.image-upload-preview');
+            const sizeHint = document.getElementById(id).querySelector('.image-size-hint');
+            const uploadBtn = document.getElementById(id).querySelector('.upload-btn');
+            
+            if (input.value.trim()) {
+                // Update or create preview
+                if (preview) {
+                    preview.querySelector('img').src = input.value;
+                    preview.querySelector('img').style.display = 'block';
+                } else {
+                    const newPreview = document.createElement('div');
+                    newPreview.className = 'image-upload-preview';
+                    newPreview.innerHTML = `
+                        <img src="${input.value}" alt="预览" onerror="this.style.display='none'">
+                        <button type="button" class="remove-btn" onclick="removeImagePreview('${id}', '${name}')" title="移除图片">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    `;
+                    sizeHint.after(newPreview);
+                }
+                uploadBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    更换图片
+                `;
+            }
+        }
+
+        function removeImagePreview(id, name) {
+            const wrapper = document.getElementById(id);
+            const preview = wrapper.querySelector('.image-upload-preview');
+            const urlInput = document.getElementById(`url-${id}`).querySelector('input');
+            const uploadBtn = wrapper.querySelector('.upload-btn');
+            
+            if (preview) preview.remove();
+            if (urlInput) urlInput.value = '';
+            if (uploadBtn) {
+                uploadBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    上传图片
+                `;
+            }
+        }
+
+        async function handleFileSelect(event, id, name, section, fieldName) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const wrapper = document.getElementById(id);
+            const progress = document.getElementById(`progress-${id}`);
+            const uploadBtn = wrapper.querySelector('.upload-btn');
+            const urlInput = document.getElementById(`url-${id}`).querySelector('input');
+
+            // Show progress
+            progress.classList.add('show');
+            uploadBtn.disabled = true;
+
+            try {
+                const result = await uploadImageToGitHub(file, section, fieldName);
+                const imagePath = result.path;
+                
+                // Build preview URL: use GitHub raw URL to bypass Cloudflare WAF
+                let previewSrc;
+                if (imagePath.startsWith('http')) {
+                    previewSrc = imagePath;
+                } else {
+                    const cleanPath = imagePath.startsWith('/') ? imagePath.substring(1) : imagePath;
+                    previewSrc = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${cleanPath}`;
+                }
+
+                // Update URL input with the site-relative path (for frontend rendering)
+                if (urlInput) urlInput.value = imagePath;
+
+                // Update or create preview
+                let preview = wrapper.querySelector('.image-upload-preview');
+                if (!preview) {
+                    preview = document.createElement('div');
+                    preview.className = 'image-upload-preview';
+                    wrapper.querySelector('.image-size-hint').after(preview);
+                }
+                preview.innerHTML = `
+                    <img src="${previewSrc}" alt="预览" onerror="this.alt='预览加载失败'; this.style.background='#fee'; this.style.minHeight='60px';">
+                    <button type="button" class="remove-btn" onclick="removeImagePreview('${id}', '${name}')" title="移除图片">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </button>
+                    </button>
+                `;
+
+                // Update button text
+                uploadBtn.innerHTML = `
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                        <polyline points="17 8 12 3 7 8"></polyline>
+                        <line x1="12" y1="3" x2="12" y2="15"></line>
+                    </svg>
+                    更换图片
+                `;
+
+                showToast('图片上传成功！');
+            } catch (error) {
+                console.error('上传错误:', error);
+                showToast('上传失败: ' + error.message, 'error');
+            } finally {
+                progress.classList.remove('show');
+                uploadBtn.disabled = false;
+                // Clear file input
+                event.target.value = '';
+            }
+        }
+
+        // Create image field for product forms
+        function createProductImageField(name, currentValue, section) {
+            return createImageUploadComponent(name, currentValue, section, name);
+        }
+
+        // Create multiple image fields for partner cases
+        function createMultipleImageField(name, images, section) {
+            let html = `<div class="form-group full-width"><label>图片</label>`;
+            
+            if (images && images.length > 0) {
+                images.forEach((img, i) => {
+                    html += createImageUploadComponent(`image_${i}`, img, section, 'images');
+                });
+            }
+            
+            // Add new image slot
+            const newIndex = images ? images.length : 0;
+            html += createImageUploadComponent(`image_${newIndex}`, '', section, 'images');
+            
+            html += `</div>`;
+            return html;
+        }
+
+        // Social media platforms configuration
+        const socialPlatforms = [
+            { type: 'whatsapp', name: 'WhatsApp', icon: '📱', placeholder: '粘贴 WhatsApp 链接，如 https://wa.me/1234567890' },
+            { type: 'facebook', name: 'Facebook', icon: '📘', placeholder: '粘贴 Facebook 主页链接' },
+            { type: 'instagram', name: 'Instagram', icon: '📷', placeholder: '粘贴 Instagram 主页链接' },
+            { type: 'tiktok', name: 'TikTok', icon: '🎵', placeholder: '粘贴 TikTok 主页链接' },
+            { type: 'email', name: 'Email', icon: '✉️', placeholder: '输入联系邮箱' }
+        ];
+
+        // Create social media input fields
+        function createSocialMediaInputs(existingLinks) {
+            // Build lookup from existing links
+            const linkMap = {};
+            if (existingLinks && Array.isArray(existingLinks)) {
+                existingLinks.forEach(link => {
+                    if (link.type) {
+                        linkMap[link.type] = link.url || '';
+                    }
+                });
+            }
+
+            let html = '<div class="social-media-inputs">';
+            
+            socialPlatforms.forEach(platform => {
+                const currentValue = linkMap[platform.type] || '';
+                html += `
+                    <div class="social-input-item">
+                        <div class="social-input-label">
+                            <span class="social-icon">${platform.icon}</span>
+                            <span class="social-name">${platform.name}</span>
+                        </div>
+                        <input type="text" 
+                               name="social_${platform.type}" 
+                               value="${currentValue}" 
+                               placeholder="${platform.placeholder}"
+                               class="social-input">
+                    </div>
+                `;
+            });
+            
+            html += '</div>';
+            return html;
+        }
+
+        // Add CSS for social media inputs
+        function addSocialMediaStyles() {
+            if (document.getElementById('social-media-styles')) return;
+            
+            const style = document.createElement('style');
+            style.id = 'social-media-styles';
+            style.textContent = `
+                .social-media-inputs {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 12px;
+                }
+                
+                .social-input-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 12px;
+                }
+                
+                .social-input-label {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    min-width: 110px;
+                }
+                
+                .social-icon {
+                    font-size: 20px;
+                }
+                
+                .social-name {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: var(--text);
+                }
+                
+                .social-input {
+                    flex: 1;
+                    padding: 10px 14px;
+                    border: 1px solid var(--border);
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-family: 'Inter', sans-serif;
+                    background: var(--bg);
+                    transition: all 0.2s;
+                }
+                
+                .social-input:focus {
+                    outline: none;
+                    border-color: var(--gold);
+                    box-shadow: 0 0 0 3px rgba(197, 164, 103, 0.1);
+                }
+                
+                .social-input::placeholder {
+                    color: var(--text-secondary);
+                    font-size: 13px;
+                }
+            `;
+            document.head.appendChild(style);
+        }
+
+        // GitHub API helpers
+        async function fetchJsonFile(path) {
+            const cacheBuster = `?t=${Date.now()}`;
+            const response = await fetch(`${API_BASE}/${path}${cacheBuster}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) return null;
+                throw new Error(`API 错误: ${response.status}`);
+            }
+
+            const data = await response.json();
+            fileSha[path] = data.sha;
+            
+            if (data.encoding === 'base64') {
+                return JSON.parse(atob(data.content));
+            }
+            return data;
+        }
+
+        async function fetchFile(path) {
+            return fetchJsonFile(path);
+        }
+
+        async function fetchMarkdownFile(path) {
+            const cacheBuster = `?t=${Date.now()}`;
+            const response = await fetch(`${API_BASE}/${path}${cacheBuster}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) return null;
+                throw new Error(`API 错误: ${response.status}`);
+            }
+
+            const data = await response.json();
+            fileSha[path] = data.sha;
+            
+            if (data.encoding === 'base64') {
+                const content = atob(data.content);
+                const frontmatter = parseFrontmatter(content);
+                return frontmatter;
+            }
+            return { data: {} };
+        }
+
+        function parseFrontmatter(content) {
+            const match = content.match(/^---\n([\s\S]*?)\n---\n?([\s\S]*)$/);
+            if (!match) return { data: {}, body: content };
+
+            const yamlStr = match[1];
+            const body = match[2] || '';
+
+            try {
+                // Use js-yaml for reliable parsing
+                if (window.jsyaml) {
+                    const data = window.jsyaml.load(yamlStr) || {};
+                    return { data, body };
+                }
+            } catch(e) {
+                console.warn('js-yaml parse failed, using fallback', e);
+            }
+
+            // Fallback: simple parser
+            const data = {};
+            const lines = yamlStr.split('\n');
+            let currentKey = null;
+            let inArray = false;
+            let arrayItems = [];
+            let arrayKey = null;
+            let currentObj = null;
+
+            for (const line of lines) {
+                if (line.trim() === '') continue;
+
+                // Nested object property (4+ spaces)
+                const nestedMatch = line.match(/^\s{4}(\w+):\s*"?(.*?)"?\s*$/);
+                if (nestedMatch && inArray && arrayItems.length > 0) {
+                    const lastItem = arrayItems[arrayItems.length - 1];
+                    if (typeof lastItem === 'object' && lastItem !== null) {
+                        lastItem[nestedMatch[1]] = nestedMatch[2].replace(/^["']|["']$/g, '');
+                    }
+                    continue;
+                }
+
+                // Dash-only line (new object in array)
+                if (line.match(/^\s{2}-\s*$/)) {
+                    if (inArray) {
+                        arrayItems.push({});
+                    }
+                    continue;
+                }
+
+                // Array start (key: with no value)
+                if (line.match(/^(\w+):\s*$/)) {
+                    if (inArray && arrayKey) {
+                        data[arrayKey] = arrayItems;
+                        arrayItems = [];
+                        inArray = false;
+                        arrayKey = null;
+                    }
+                    currentKey = line.match(/^(\w+):\s*$/)[1];
+                    inArray = true;
+                    arrayKey = currentKey;
+                    arrayItems = [];
+                    data[currentKey] = [];
+                    continue;
+                }
+
+                // Key-value pair
+                if (line.match(/^(\w+):\s*(.+)/)) {
+                    if (inArray && arrayKey) {
+                        data[arrayKey] = arrayItems;
+                        arrayItems = [];
+                        inArray = false;
+                        arrayKey = null;
+                    }
+                    const [, key, value] = line.match(/^(\w+):\s*(.+)/);
+                    data[key] = extractValue(value);
+                    continue;
+                }
+            }
+
+            if (inArray && arrayKey) {
+                data[arrayKey] = arrayItems;
+            }
+
+            return { data, body };
+        }
+
+        function extractValue(str) {
+            str = str.trim();
+            if ((str.startsWith('"') && str.endsWith('"')) || 
+                (str.startsWith("'") && str.endsWith("'"))) {
+                return str.slice(1, -1);
+            }
+            return str;
+        }
+
+        async function fetchDirectory(path) {
+            const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json'
+                }
+            });
+
+            if (!response.ok) {
+                if (response.status === 404) return [];
+                throw new Error(`API 错误: ${response.status}`);
+            }
+
+            return response.json();
+        }
+
+        async function saveFile(path, content, message) {
+            const encoded = btoa(unescape(encodeURIComponent(content)));
+            
+            const body = {
+                message: message || `更新 ${path}`,
+                content: encoded,
+                branch: BRANCH
+            };
+
+            if (fileSha[path]) {
+                body.sha = fileSha[path];
+            }
+
+            const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
+                method: 'PUT',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Accept': 'application/vnd.github.v3+json',
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(body)
+            });
+
+            if (!response.ok) {
+                const err = await response.json();
+                throw new Error(err.message || `API 错误: ${response.status}`);
+            }
+
+            const data = await response.json();
+            fileSha[path] = data.content.sha;
+            return data;
+        }
+
+        async function saveJsonFile(path, data, message) {
+            return saveFile(path, JSON.stringify(data, null, 2), message);
+        }
+
+        async function saveMarkdownFile(path, frontmatter, body, message) {
+            let content = '---\n';
+            for (const [key, value] of Object.entries(frontmatter)) {
+                content += formatYamlValue(key, value);
+            }
+            content += '---\n';
+            if (body) {
+                content += '\n' + body;
+            }
+            return saveFile(path, content, message);
+        }
+
+        function formatYamlValue(key, value, indent = '') {
+            if (Array.isArray(value)) {
+                if (value.length === 0) return `${indent}${key}: []\n`;
+                let str = `${indent}${key}:\n`;
+                for (const item of value) {
+                    if (typeof item === 'object' && item !== null) {
+                        str += `${indent}  -\n`;
+                        for (const [k, v] of Object.entries(item)) {
+                            str += `${indent}    ${k}: "${escapeYaml(v)}"\n`;
+                        }
+                    } else {
+                        str += `${indent}  - "${escapeYaml(item)}"\n`;
+                    }
+                }
+                return str;
+            } else if (typeof value === 'object' && value !== null) {
+                let str = `${indent}${key}:\n`;
+                for (const [k, v] of Object.entries(value)) {
+                    str += `${indent}  ${k}: "${escapeYaml(v)}"\n`;
+                }
+                return str;
+            } else {
+                return `${indent}${key}: "${escapeYaml(value)}"\n`;
+            }
+        }
+
+        function escapeYaml(value) {
+            if (value === null || value === undefined) return '';
+            return String(value).replace(/\\/g, '\\\\').replace(/"/g, '\\"').replace(/\n/g, '\\n');
+        }
+
+        // Section definitions
+        const sections = {
+            home: {
+                title: 'Home',
+                desc: '编辑首页内容',
+                files: [{ path: 'content/home/home.json', type: 'json' }]
+            },
+            about: {
+                title: 'About Us',
+                desc: '编辑关于我们页面',
+                files: [{ path: 'content/about/about.json', type: 'json' }]
+            },
+            contact: {
+                title: 'Contact',
+                desc: '编辑联系方式',
+                files: [{ path: 'content/contact/contact.json', type: 'json' }]
+            },
+            jewelry: {
+                title: 'Jewelry Settings',
+                desc: '编辑珠宝系列设置',
+                files: [{ path: 'content/jewelry/jewelry.json', type: 'json' }]
+            },
+            'jewelry-products': {
+                title: 'Jewelry Products',
+                desc: '管理珠宝产品',
+                files: [{ path: 'content/jewelry/products', type: 'directory' }],
+                loadFiles: true
+            },
+            watches: {
+                title: 'Watch Settings',
+                desc: '编辑腕表系列设置',
+                files: [{ path: 'content/watches/watches.json', type: 'json' }]
+            },
+            'watch-products': {
+                title: 'Watch Products',
+                desc: '管理腕表产品',
+                files: [{ path: 'content/watches/products', type: 'directory' }],
+                loadFiles: true
+            },
+            'faq-items': {
+                title: 'FAQ',
+                desc: '编辑常见问题标题和管理问答',
+                files: [{ path: 'content/faq/faq.json', type: 'faq-items-json' }]
+            },
+            process: {
+                title: 'Process Steps',
+                desc: '管理流程步骤',
+                files: [{ path: 'content/process', type: 'directory' }],
+                loadFiles: true,
+                filter: (f) => !f.name.includes('settings')
+            },
+            order: {
+                title: 'How to Order',
+                desc: '编辑订购流程',
+                files: [{ path: 'content/order/order.json', type: 'json' }]
+            },
+            partner: {
+                title: 'Partner Cases',
+                desc: '管理合作伙伴案例',
+                files: [{ path: 'content/partner-cases', type: 'directory' }],
+                loadFiles: true,
+                filter: (f) => f.name.startsWith('case-')
+            },
+            theme: {
+                title: 'Theme Settings',
+                desc: '编辑网站主题和颜色',
+                files: [{ path: 'content/settings/theme.json', type: 'json' }]
+            },
+            featured: {
+                title: '精选产品',
+                desc: '管理首页轮播展示的产品',
+                files: [{ path: 'content/home/featured.json', type: 'featured-json' }]
+            }
+        };
+
+        // Switch section
+        async function switchSection(section) {
+            currentSection = section;
+            
+            // Update nav
+            document.querySelectorAll('.nav-item').forEach(item => {
+                item.classList.toggle('active', item.dataset.section === section);
+            });
+
+            // Update header
+            const sectionInfo = sections[section];
+            document.getElementById('sectionTitle').textContent = sectionInfo.title;
+            document.getElementById('sectionDesc').textContent = sectionInfo.desc;
+
+            // Mobile: close sidebar
+            if (window.innerWidth <= 900) {
+                document.querySelector('.sidebar').classList.remove('open');
+                document.querySelector('.overlay').classList.remove('open');
+            }
+
+            // Load section content
+            await loadSection(section);
+        }
+
+        // Product state for image management
+        let currentProductImages = [];
+        let currentProductType = ''; // 'jewelry' or 'watch'
+        let editingProductPath = null;
+
+        // Load categories from settings
+        async function loadCategories(type) {
+            try {
+                const settingsPath = type === 'jewelry' ? 'content/jewelry/jewelry.json' : 'content/watches/watches.json';
+                const content = await fetchJsonFile(settingsPath);
+                if (content && content.categories) {
+                    return content.categories.map(cat => cat.id || cat.name);
+                }
+            } catch (e) {
+                console.log('Could not load categories', e);
+            }
+            // Default categories
+            return type === 'jewelry' 
+                ? ['rings', 'necklaces', 'earrings', 'bracelets']
+                : ['dress-watches', 'chronograph', 'luxury', 'sport', 'ladies', 'skeleton'];
+        }
+
+        // Load section content
+        async function loadSection(section) {
+            const sectionInfo = sections[section];
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+
+            panelTabs.innerHTML = '';
+            panelContent.innerHTML = '<div class="loading-spinner"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 11-6.219-8.56"/></svg><p>加载内容中...</p></div>';
+
+            try {
+                sectionData = {};
+                fileSha = {};
+
+                if (section === 'jewelry-products' || section === 'watch-products') {
+                    // Special handling for product management
+                    await loadProductSection(section);
+                } else if (sectionInfo.loadFiles) {
+                    // Load directory listing
+                    const dirPath = sectionInfo.files[0].path;
+                    const files = await fetchDirectory(dirPath);
+                    const filteredFiles = sectionInfo.filter 
+                        ? files.filter(sectionInfo.filter) 
+                        : files.filter(f => f.type === 'file');
+
+                    // Create tabs
+                    panelTabs.innerHTML = '<div class="panel-tab active">全部项目</div>';
+                    panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+
+                    const container = document.getElementById('tab-0');
+                    
+                    if (filteredFiles.length === 0) {
+                        container.innerHTML = `
+                            <div class="empty-state">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                </svg>
+                                <p>暂无数据</p>
+                            </div>
+                        `;
+                    } else {
+                        container.innerHTML = '<div class="list-editor" id="productList"></div>';
+                        const listContainer = document.getElementById('productList');
+
+                        for (const file of filteredFiles) {
+                            // Handle different file types
+                            if (file.name.endsWith('.json')) {
+                                const content = await fetchJsonFile(file.path);
+                                sectionData[file.path] = content;
+                                renderProductItem(listContainer, file, content);
+                            } else {
+                                const content = await fetchMarkdownFile(file.path);
+                                sectionData[file.path] = content;
+                                renderProductItem(listContainer, file, content);
+                            }
+                        }
+                    }
+                } else {
+                    // Single file sections
+                    const file = sectionInfo.files[0];
+                    
+                    if (file.type === 'json') {
+                        const content = await fetchJsonFile(file.path);
+                        sectionData[file.path] = content;
+                        renderJsonEditorFromData(file.path, content);
+                    } else if (file.type === 'faq-items-json') {
+                        // FAQ items as a combined JSON array
+                        const content = await fetchJsonFile(file.path);
+                        sectionData[file.path] = content;
+                        renderFaqItemsEditor(file.path, content);
+                    } else if (file.type === 'featured-json') {
+                        // Featured products manager
+                        const content = await fetchJsonFile(file.path);
+                        sectionData[file.path] = content;
+                        renderFeaturedManager(file.path, content);
+                    } else if (file.type === 'markdown') {
+                        const content = await fetchMarkdownFile(file.path);
+                        sectionData[file.path] = content;
+                        renderMarkdownEditor(file.path, content);
+                    }
+                }
+            } catch (error) {
+                console.error('加载错误:', error);
+                panelContent.innerHTML = `
+                    <div class="empty-state">
+                        <p>加载内容出错: ${error.message}</p>
+                    </div>
+                `;
+                showToast('加载内容失败: ' + error.message, 'error');
+            }
+        }
+
+        // Load product section with card grid view
+        async function loadProductSection(section) {
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+            const productType = section === 'jewelry-products' ? 'jewelry' : 'watch';
+            const productDir = `content/${productType === 'watch' ? 'watches' : productType}/products`;
+
+            // Update header with add button
+            const header = document.querySelector('.content-header');
+            const addBtn = document.createElement('button');
+            addBtn.className = 'add-product-btn';
+            addBtn.id = 'addProductBtn';
+            addBtn.onclick = () => openProductModal(null, productType);
+            addBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                </svg>
+                添加产品
+            `;
+            // Remove existing add button if any
+            const existingBtn = header.querySelector('.add-product-btn');
+            if (existingBtn) existingBtn.remove();
+            header.appendChild(addBtn);
+
+            // Add manage categories button
+            const manageCatBtn = document.createElement('button');
+            manageCatBtn.className = 'manage-categories-btn';
+            manageCatBtn.id = 'manageCategoriesBtn';
+            manageCatBtn.onclick = () => openCategoryManager(productType);
+            manageCatBtn.innerHTML = `
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path>
+                    <line x1="12" y1="11" x2="12" y2="17"></line>
+                    <line x1="9" y1="14" x2="15" y2="14"></line>
+                </svg>
+                管理分类
+            `;
+            const existingManageBtn = header.querySelector('.manage-categories-btn');
+            if (existingManageBtn) existingManageBtn.remove();
+            header.appendChild(manageCatBtn);
+
+            // Create tabs
+            panelTabs.innerHTML = '<div class="panel-tab active">产品列表</div>';
+            panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+
+            const container = document.getElementById('tab-0');
+
+            try {
+                const files = await fetchDirectory(productDir);
+                const productFiles = files.filter(f => f.name.endsWith('.json'));
+
+                if (productFiles.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path>
+                            </svg>
+                            <p>暂无产品</p>
+                            <p style="font-size:13px;margin-top:8px;">点击右上角"添加产品"开始创建</p>
+                        </div>
+                    `;
+                } else {
+                    // Load categories first
+                    const categories = await loadCategories(productType);
+                    const allCategories = [...new Set(categories)];
+                    
+                    // Filter buttons
+                    let filterHtml = '<div style="margin-bottom:20px;display:flex;gap:8px;flex-wrap:wrap;">';
+                    filterHtml += `<button class="filter-btn active" data-filter="all" onclick="filterProducts('all', '${productType}')">全部</button>`;
+                    allCategories.forEach(cat => {
+                        filterHtml += `<button class="filter-btn" data-filter="${cat}" onclick="filterProducts('${cat}', '${productType}')">${cat}</button>`;
+                    });
+                    filterHtml += '</div>';
+                    
+                    container.innerHTML = filterHtml + '<div class="product-grid" id="productGrid"></div>';
+                    const grid = document.getElementById('productGrid');
+
+                    for (const file of productFiles) {
+                        const content = await fetchJsonFile(file.path);
+                        sectionData[file.path] = content;
+                        renderProductCard(grid, file, content, productType);
+                    }
+                }
+            } catch (error) {
+                console.error('加载产品错误:', error);
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>加载产品出错: ${error.message}</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Category Manager Functions
+        window.openCategoryManager = async function(productType) {
+            const settingsPath = productType === 'jewelry' ? 'content/jewelry/jewelry.json' : 'content/watches/watches.json';
+            const productDir = `content/${productType}/products`;
+            
+            // Load categories and products
+            const settings = await fetchJsonFile(settingsPath);
+            const categories = settings.categories || [];
+            
+            // Count products per category
+            const files = await fetchDirectory(productDir);
+            const productFiles = files.filter(f => f.name.endsWith('.json'));
+            
+            const productCountMap = {};
+            for (const file of productFiles) {
+                const content = await fetchJsonFile(file.path);
+                const data = content.data || content || {};
+                const cat = data.category || '';
+                productCountMap[cat] = (productCountMap[cat] || 0) + 1;
+            }
+            
+            // Create modal
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.id = 'categoryManagerModal';
+            overlay.onclick = (e) => {
+                if (e.target === overlay) closeCategoryManager();
+            };
+            
+            const title = productType === 'jewelry' ? '珠宝分类管理' : '手表分类管理';
+            
+            overlay.innerHTML = `
+                <div class="category-manager-modal">
+                    <div class="product-modal-header">
+                        <h3>${title}</h3>
+                        <button class="product-modal-close" onclick="closeCategoryManager()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="category-manager-body">
+                        <div class="category-list" id="categoryList"></div>
+                        <button class="add-category-btn" onclick="addNewCategory()">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"></line>
+                                <line x1="5" y1="12" x2="19" y2="12"></line>
+                            </svg>
+                            添加新分类
+                        </button>
+                    </div>
+                    <div class="product-modal-footer">
+                        <button class="btn-cancel" onclick="closeCategoryManager()">取消</button>
+                        <button class="btn-save" onclick="saveCategories('${productType}')">保存修改</button>
+                    </div>
+                </div>
+            `;
+            
+            document.body.appendChild(overlay);
+            
+            // Store data for later use
+            window._categoryManagerData = {
+                settingsPath: settingsPath,
+                categories: JSON.parse(JSON.stringify(categories)),
+                productCountMap: productCountMap,
+                newCategories: []
+            };
+            
+            renderCategoryList();
+        };
+
+        window.closeCategoryManager = function() {
+            const modal = document.getElementById('categoryManagerModal');
+            if (modal) modal.remove();
+            window._categoryManagerData = null;
+        };
+
+        function renderCategoryList() {
+            const list = document.getElementById('categoryList');
+            if (!list || !window._categoryManagerData) return;
+            
+            const { categories, newCategories, productCountMap } = window._categoryManagerData;
+            
+            let html = '';
+            
+            // Render existing categories
+            categories.forEach((cat, index) => {
+                const isSystem = cat.id === 'all';
+                const productCount = productCountMap[cat.id] || 0;
+                
+                html += `
+                    <div class="category-item ${isSystem ? 'system-category' : ''}" data-index="${index}" data-id="${cat.id}">
+                        <div class="category-item-info">
+                            <div class="category-item-name">${isSystem ? cat.name + ' (系统分类)' : cat.name}</div>
+                            <div class="category-item-id">ID: ${cat.id}</div>
+                            ${productCount > 0 ? `<div class="category-item-id" style="color: #C5A467;">包含 ${productCount} 个产品</div>` : ''}
+                        </div>
+                        <div class="category-item-actions">
+                            ${isSystem ? '' : `
+                                <button class="btn-edit-cat" onclick="editCategory(${index})">编辑</button>
+                                <button class="btn-delete-cat" onclick="deleteCategory(${index})">删除</button>
+                            `}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            // Render new categories
+            newCategories.forEach((cat, index) => {
+                html += `
+                    <div class="category-item" data-new-index="${index}">
+                        <input type="text" value="${cat.name}" placeholder="分类名称" oninput="updateNewCategoryName(${index}, this.value)">
+                        <div class="category-item-info">
+                            <div class="category-item-id">ID: ${cat.id || '...'}</div>
+                        </div>
+                        <div class="category-item-actions">
+                            <button class="btn-delete-cat" onclick="removeNewCategory(${index})">删除</button>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            if (categories.length === 0 && newCategories.length === 0) {
+                html = '<p style="text-align:center;color:var(--text-secondary);padding:20px;">暂无分类</p>';
+            }
+            
+            list.innerHTML = html;
+        }
+
+        function generateIdFromName(name) {
+            return name.toLowerCase().replace(/\s+/g, '-').replace(/[^a-z0-9-]/g, '');
+        }
+
+        window.updateNewCategoryName = function(index, name) {
+            if (!window._categoryManagerData) return;
+            window._categoryManagerData.newCategories[index].name = name;
+            window._categoryManagerData.newCategories[index].id = generateIdFromName(name);
+            renderCategoryList();
+        };
+
+        window.addNewCategory = function() {
+            if (!window._categoryManagerData) return;
+            window._categoryManagerData.newCategories.push({
+                name: '',
+                id: ''
+            });
+            renderCategoryList();
+        };
+
+        window.removeNewCategory = function(index) {
+            if (!window._categoryManagerData) return;
+            window._categoryManagerData.newCategories.splice(index, 1);
+            renderCategoryList();
+        };
+
+        window.editCategory = function(index) {
+            const item = document.querySelector(`.category-item[data-index="${index}"]`);
+            if (!item) return;
+            
+            const cat = window._categoryManagerData.categories[index];
+            const productCount = window._categoryManagerData.productCountMap[cat.id] || 0;
+            
+            item.innerHTML = `
+                <input type="text" value="${cat.name}" id="editCatName${index}" placeholder="分类名称">
+                <div class="category-item-info">
+                    <div class="category-item-id">ID: <span id="editCatId${index}">${cat.id}</span></div>
+                    ${productCount > 0 ? `<div class="category-item-id" style="color: #C5A467;">包含 ${productCount} 个产品</div>` : ''}
+                </div>
+                <div class="category-item-actions">
+                    <button class="btn-save-cat" onclick="saveCategoryEdit(${index})">保存</button>
+                    <button class="btn-cancel-cat" onclick="cancelCategoryEdit(${index})">取消</button>
+                </div>
+            `;
+            
+            // Add input event listener for auto-generating ID
+            const input = document.getElementById(`editCatName${index}`);
+            input.addEventListener('input', function() {
+                const newIdSpan = document.getElementById(`editCatId${index}`);
+                if (newIdSpan) {
+                    newIdSpan.textContent = generateIdFromName(this.value);
+                }
+            });
+            input.focus();
+        };
+
+        window.cancelCategoryEdit = function(index) {
+            renderCategoryList();
+        };
+
+        window.saveCategoryEdit = function(index) {
+            if (!window._categoryManagerData) return;
+            
+            const input = document.getElementById(`editCatName${index}`);
+            const newName = input.value.trim();
+            
+            if (!newName) {
+                alert('分类名称不能为空');
+                return;
+            }
+            
+            const oldId = window._categoryManagerData.categories[index].id;
+            const newId = generateIdFromName(newName);
+            
+            // Update category
+            window._categoryManagerData.categories[index].name = newName;
+            window._categoryManagerData.categories[index].id = newId;
+            
+            // Update product count map keys if ID changed
+            if (oldId !== newId && window._categoryManagerData.productCountMap[oldId]) {
+                window._categoryManagerData.productCountMap[newId] = window._categoryManagerData.productCountMap[oldId];
+                delete window._categoryManagerData.productCountMap[oldId];
+            }
+            
+            renderCategoryList();
+        };
+
+        window.deleteCategory = async function(index) {
+            if (!window._categoryManagerData) return;
+            
+            const cat = window._categoryManagerData.categories[index];
+            const productCount = window._categoryManagerData.productCountMap[cat.id] || 0;
+            
+            let confirmMsg = `确定要删除分类 "${cat.name}" 吗？`;
+            if (productCount > 0) {
+                confirmMsg = `分类 "${cat.name}" 下有 ${productCount} 个产品。\n\n删除后，这些产品的分类将被清空。\n\n确定要继续吗？`;
+            }
+            
+            if (!confirm(confirmMsg)) return;
+            
+            // Clear category for products using this category
+            if (productCount > 0) {
+                const productType = window._categoryManagerData.settingsPath.includes('jewelry') ? 'jewelry' : 'watch';
+                const productDir = `content/${productType}/products`;
+                
+                try {
+                    const files = await fetchDirectory(productDir);
+                    const productFiles = files.filter(f => f.name.endsWith('.json'));
+                    
+                    for (const file of productFiles) {
+                        const content = await fetchJsonFile(file.path);
+                        const data = content.data || content || {};
+                        
+                        if (data.category === cat.id) {
+                            // Update product to clear category
+                            if (content.data) {
+                                content.data.category = '';
+                            } else {
+                                content.category = '';
+                            }
+                            await saveJsonFile(file.path, content, `清除产品 "${data.name}" 的分类`);
+                        }
+                    }
+                } catch (e) {
+                    console.error('更新产品分类失败:', e);
+                    alert('更新产品分类时出错');
+                    return;
+                }
+            }
+            
+            // Remove category
+            window._categoryManagerData.categories.splice(index, 1);
+            delete window._categoryManagerData.productCountMap[cat.id];
+            
+            renderCategoryList();
+        };
+
+        window.saveCategories = async function(productType) {
+            if (!window._categoryManagerData) return;
+            
+            const { settingsPath, categories, newCategories } = window._categoryManagerData;
+            
+            // Validate new categories
+            for (const cat of newCategories) {
+                if (!cat.name.trim()) {
+                    alert('新分类名称不能为空');
+                    return;
+                }
+                if (!cat.id) {
+                    alert('新分类ID不能为空');
+                    return;
+                }
+            }
+            
+            // Check for duplicate IDs
+            const allCategories = [...categories, ...newCategories];
+            const ids = allCategories.map(c => c.id);
+            const duplicateIds = ids.filter((id, index) => ids.indexOf(id) !== index);
+            if (duplicateIds.length > 0) {
+                alert(`分类ID重复: ${duplicateIds.join(', ')}`);
+                return;
+            }
+            
+            // Merge all categories (new categories first, then existing, with "all" at the beginning)
+            const allCategoriesFinal = [
+                { id: 'all', name: 'All' },
+                ...newCategories,
+                ...categories.filter(c => c.id !== 'all')
+            ];
+            
+            try {
+                // Load current settings
+                const settings = await fetchJsonFile(settingsPath);
+                settings.categories = allCategoriesFinal;
+                
+                // Save settings
+                await saveJsonFile(settingsPath, settings, `更新 ${productType === 'jewelry' ? '珠宝' : '手表'} 分类`);
+                
+                showToast('分类保存成功！');
+                closeCategoryManager();
+                
+                // Refresh product section
+                await loadSection(productType + '-products');
+            } catch (error) {
+                console.error('保存分类失败:', error);
+                alert('保存分类失败: ' + error.message);
+            }
+        };
+
+        // Filter products by category
+        window.filterProducts = function(category, productType) {
+            // Update filter buttons
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.filter === category);
+            });
+
+            // Show/hide product cards
+            document.querySelectorAll('.product-card').forEach(card => {
+                const cardCategory = card.dataset.category;
+                if (category === 'all' || cardCategory === category) {
+                    card.style.display = '';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        };
+
+        // Render product card
+        function renderProductCard(container, file, content, productType) {
+            const data = content.data || content || {};
+            const name = data.name || '未命名产品';
+            const price = data.price || '';
+            const category = data.category || '';
+            const images = data.images || (data.image ? [data.image] : []);
+            const firstImage = images[0] || '';
+            const imgSrc = firstImage.startsWith('http') ? firstImage : `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${firstImage.startsWith('/') ? firstImage.substring(1) : firstImage}`;
+            const published = data.published !== false;
+            const slug = file.name.replace(/\.(json|md)$/, '');
+
+            const card = document.createElement('div');
+            card.className = 'product-card';
+            card.dataset.category = category;
+            card.dataset.path = file.path;
+
+            card.innerHTML = `
+                <div class="product-card-image">
+                    ${imgSrc 
+                        ? `<img src="${imgSrc}" alt="${name}" onerror="this.parentElement.innerHTML='<div class=\\'placeholder\\'><svg viewBox=\\'0 0 24 24\\' fill=\\'none\\' stroke=\\'currentColor\\' stroke-width=\\'1.5\\'><rect x=\\'3\\' y=\\'3\\' width=\\'18\\' height=\\'18\\' rx=\\'2\\' ry=\\'2\\'></rect><circle cx=\\'8.5\\' cy=\\'8.5\\' r=\\'1.5\\'></circle><polyline points=\\'21 15 16 10 5 21\\'></polyline></svg></div>'">`
+                        : `<div class="placeholder">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                                <circle cx="8.5" cy="8.5" r="1.5"></circle>
+                                <polyline points="21 15 16 10 5 21"></polyline>
+                            </svg>
+                        </div>`
+                    }
+                </div>
+                <div class="product-card-body">
+                    <div class="product-card-category">${category}</div>
+                    <div class="product-card-name">${name}</div>
+                    <div class="product-card-price">${price}</div>
+                    <div class="product-card-footer">
+                        <span class="product-status ${published ? 'published' : 'draft'}">${published ? '已发布' : '草稿'}</span>
+                        <div class="product-card-actions">
+                            <button class="btn-edit" onclick="openProductModal('${file.path}', '${productType}')">编辑</button>
+                            <button class="btn-delete" onclick="confirmDeleteProduct('${file.path}', '${productType}')">删除</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            container.appendChild(card);
+        }
+
+        // Confirm delete product
+        window.confirmDeleteProduct = async function(path, productType) {
+            if (!confirm('确定要删除此产品吗？此操作无法撤销。')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `删除产品: ${path.split('/').pop()}`,
+                        sha: fileSha[path],
+                        branch: BRANCH
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('删除失败');
+                }
+
+                showToast('删除成功！');
+                await rebuildProductsIndex(productType);
+                await loadSection(productType + '-products');
+            } catch (error) {
+                showToast('删除失败: ' + error.message, 'error');
+            }
+        };
+
+        // Open product modal for add/edit
+        window.openProductModal = async function(path, productType) {
+            currentProductType = productType;
+            editingProductPath = path;
+            currentProductImages = [];
+            
+            const categories = await loadCategories(productType);
+            const modalTitle = path ? '编辑产品' : '添加产品';
+            
+            let existingData = {
+                name: '',
+                price: '',
+                subtitle: '',
+                description: '',
+                category: categories[0] || '',
+                published: true,
+                order: 1,
+                images: []
+            };
+
+            // If editing, load existing data
+            if (path && sectionData[path]) {
+                const content = sectionData[path];
+                const data = content.data || content || {};
+                existingData = {
+                    name: data.name || '',
+                    price: data.price || '',
+                    subtitle: data.subtitle || '',
+                    description: data.description || '',
+                    category: data.category || categories[0] || '',
+                    published: data.published !== false,
+                    order: parseInt(data.order) || 1,
+                    images: data.images || (data.image ? [data.image] : [])
+                };
+                currentProductImages = [...existingData.images];
+            }
+
+            // Create modal
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.id = 'productModal';
+            modal.onclick = (e) => {
+                if (e.target === modal) closeProductModal();
+            };
+
+            modal.innerHTML = `
+                <div class="product-modal">
+                    <div class="product-modal-header">
+                        <h3>${modalTitle}</h3>
+                        <button class="product-modal-close" onclick="closeProductModal()">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="18" y1="6" x2="6" y2="18"></line>
+                                <line x1="6" y1="6" x2="18" y2="18"></line>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="product-modal-body">
+                        <!-- 产品图片 -->
+                        <div style="margin-bottom:25px;">
+                            <label style="display:block;font-size:13px;font-weight:500;color:var(--text);margin-bottom:12px;">
+                                产品图片 <span style="font-weight:400;color:var(--text-secondary);">(最多10张，建议600×600px)</span>
+                            </label>
+                            <div class="product-images-gallery">
+                                <div class="gallery-grid" id="galleryGrid"></div>
+                            </div>
+                        </div>
+
+                        <!-- 基本信息 -->
+                        <div class="section-divider" style="margin:20px 0 16px;"><h3 class="section-title">基本信息</h3></div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>产品名称 *</label>
+                                <input type="text" id="productName" value="${existingData.name}" placeholder="输入产品名称" required>
+                            </div>
+                            <div class="form-group">
+                                <label>产品简介</label>
+                                <input type="text" id="productSubtitle" value="${existingData.subtitle}" placeholder="简短描述，显示在产品卡片上">
+                            </div>
+                            <div class="form-group">
+                                <label>产品价格</label>
+                                <input type="text" id="productPrice" value="${existingData.price}" placeholder="如 $2,850">
+                            </div>
+                            <div class="form-group">
+                                <label>产品分类</label>
+                                <select id="productCategory">
+                                    ${categories.map(cat => `<option value="${cat}" ${existingData.category === cat ? 'selected' : ''}>${cat}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+
+                        <!-- 详细信息 -->
+                        <div class="section-divider" style="margin:20px 0 16px;"><h3 class="section-title">详细信息（仅在产品详情页显示）</h3></div>
+                        <div class="form-grid">
+                            <div class="form-group full-width">
+                                <label>产品详情</label>
+                                <textarea id="productDescription" rows="4" placeholder="输入产品详细描述">${existingData.description}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- 其他设置 -->
+                        <div class="section-divider" style="margin:20px 0 16px;"><h3 class="section-title">其他设置</h3></div>
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>排序</label>
+                                <input type="number" id="productOrder" value="${existingData.order}" min="1">
+                            </div>
+                            <div class="form-group">
+                                <label>发布状态</label>
+                                <div class="toggle-wrapper">
+                                    <label class="toggle-switch">
+                                        <input type="checkbox" id="productPublished" ${existingData.published ? 'checked' : ''}>
+                                        <span class="toggle-slider"></span>
+                                    </label>
+                                    <span class="toggle-label" id="publishedLabel">${existingData.published ? '已发布' : '草稿'}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="product-modal-footer">
+                        <button class="btn-cancel" onclick="closeProductModal()">取消</button>
+                        <button class="btn-save" onclick="saveProduct()">保存产品</button>
+                    </div>
+                </div>
+            `;
+
+            document.body.appendChild(modal);
+
+            // Add toggle listener
+            document.getElementById('productPublished').addEventListener('change', function() {
+                document.getElementById('publishedLabel').textContent = this.checked ? '已发布' : '草稿';
+            });
+
+            // Render gallery
+            renderImageGallery();
+        };
+
+        // Close product modal
+        window.closeProductModal = function() {
+            const modal = document.getElementById('productModal');
+            if (modal) modal.remove();
+            editingProductPath = null;
+            currentProductImages = [];
+        };
+
+        // Render image gallery
+        function renderImageGallery() {
+            const grid = document.getElementById('galleryGrid');
+            const maxImages = 10;
+            const uploadDir = currentProductType === 'jewelry' ? 'assets/uploads/jewelry/' : 'assets/uploads/watches/';
+
+            console.log('renderImageGallery called, images:', currentProductImages);
+
+            let html = '';
+            
+            // Render existing images
+            currentProductImages.forEach((img, index) => {
+                // Use GitHub raw URL for reliable preview (bypasses Cloudflare WAF)
+                let imgSrc;
+                if (img.startsWith('http')) {
+                    imgSrc = img;
+                } else {
+                    const cleanPath = img.startsWith('/') ? img.substring(1) : img;
+                    imgSrc = `https://raw.githubusercontent.com/${REPO_OWNER}/${REPO_NAME}/main/${cleanPath}`;
+                }
+                console.log(`Image ${index}: raw=${img}, src=${imgSrc}`);
+                html += `
+                    <div class="gallery-item" data-index="${index}">
+                        <img src="${imgSrc}" alt="图片 ${index + 1}" onerror="console.error('Image load failed:', this.src); this.alt='加载失败'; this.style.background='#fee'; this.style.minHeight='60px';">
+                        <div class="gallery-item-actions">
+                            ${index > 0 ? `
+                                <button class="btn-move-up" onclick="moveImage(${index}, -1)" title="上移">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="18 15 12 9 6 15"></polyline>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                            ${index < currentProductImages.length - 1 ? `
+                                <button class="btn-move-down" onclick="moveImage(${index}, 1)" title="下移">
+                                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <polyline points="6 9 12 15 18 9"></polyline>
+                                    </svg>
+                                </button>
+                            ` : ''}
+                            <button class="btn-remove" onclick="removeImage(${index})" title="删除">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                                </svg>
+                            </button>
+                        </div>
+                        <div class="gallery-item-number">${index + 1}</div>
+                    </div>
+                `;
+            });
+
+            // Add empty slots if under limit
+            if (currentProductImages.length < maxImages) {
+                const emptySlots = Math.min(2, maxImages - currentProductImages.length);
+                for (let i = 0; i < emptySlots; i++) {
+                    const slotIndex = currentProductImages.length + i;
+                    html += `
+                        <div class="gallery-item">
+                            <input type="file" id="galleryUpload${slotIndex}" class="file-input-hidden" accept="image/*" onchange="handleGalleryUpload(event, ${slotIndex})">
+                            <div class="empty-slot" onclick="document.getElementById('galleryUpload${slotIndex}').click()">
+                                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                                    <line x1="12" y1="5" x2="12" y2="19"></line>
+                                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                                </svg>
+                                <span>上传图片</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+
+            grid.innerHTML = html;
+        }
+
+        // Handle gallery image upload
+        async function handleGalleryUpload(event, index) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const uploadDir = currentProductType === 'jewelry' ? 'assets/uploads/jewelry/' : 'assets/uploads/watches/';
+            
+            try {
+                showToast('正在上传图片...');
+                const result = await uploadImageToGitHub(file, uploadDir, `product_${Date.now()}`, `${currentProductType}-products`);
+                
+                // Insert at correct position
+                if (index <= currentProductImages.length) {
+                    currentProductImages.splice(index, 0, result.path);
+                } else {
+                    currentProductImages.push(result.path);
+                }
+                
+                showToast('图片上传成功！');
+                renderImageGallery();
+            } catch (error) {
+                showToast('上传失败: ' + error.message, 'error');
+            }
+            
+            // Clear file input
+            event.target.value = '';
+        }
+
+        // Move image in gallery
+        window.moveImage = function(index, direction) {
+            const newIndex = index + direction;
+            if (newIndex < 0 || newIndex >= currentProductImages.length) return;
+            
+            const temp = currentProductImages[index];
+            currentProductImages[index] = currentProductImages[newIndex];
+            currentProductImages[newIndex] = temp;
+            
+            renderImageGallery();
+        };
+
+        // Remove image from gallery
+        window.removeImage = function(index) {
+            currentProductImages.splice(index, 1);
+            renderImageGallery();
+        };
+
+        // Save product
+        window.saveProduct = async function() {
+            const name = document.getElementById('productName').value.trim();
+            const subtitle = document.getElementById('productSubtitle').value.trim();
+            const price = document.getElementById('productPrice').value.trim();
+            const category = document.getElementById('productCategory').value;
+            const description = document.getElementById('productDescription').value.trim();
+            const order = parseInt(document.getElementById('productOrder').value) || 1;
+            const published = document.getElementById('productPublished').checked;
+
+            if (!name) {
+                showToast('请输入产品名称', 'error');
+                return;
+            }
+
+            // Generate slug from name
+            const slug = name.toLowerCase()
+                .replace(/[^a-z0-9\u4e00-\u9fa5]+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .substring(0, 50);
+            
+            const productDir = `content/${currentProductType === 'watch' ? 'watches' : currentProductType}/products`;
+            const filename = `${slug}.json`;
+            const newPath = `${productDir}/${filename}`;
+            
+            // If editing and slug changed, use new path and delete old file
+            let path = newPath;
+            let oldPathToDelete = null;
+            if (editingProductPath && editingProductPath !== newPath) {
+                oldPathToDelete = editingProductPath;
+            }
+
+            // Build product data as JSON
+            const productData = {
+                name: name,
+                subtitle: subtitle,
+                price: price,
+                category: category,
+                description: description,
+                images: currentProductImages,
+                order: order,
+                published: published
+            };
+
+            try {
+                await saveJsonFile(path, productData, `保存产品: ${name}`);
+                
+                // Track saved product for index rebuild (handles GitHub API delay)
+                window._lastSavedProduct = {
+                    type: currentProductType,
+                    slug: slug,
+                    path: path,
+                    data: productData
+                };
+                
+                // Delete old file if slug changed
+                if (oldPathToDelete) {
+                    try {
+                        // Get SHA of old file first
+                        const checkResponse = await fetch(`${API_BASE}/${oldPathToDelete}?t=${Date.now()}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/vnd.github.v3+json'
+                            }
+                        });
+                        if (checkResponse.ok) {
+                            const oldFileData = await checkResponse.json();
+                            await fetch(`${API_BASE}/${oldPathToDelete}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Accept': 'application/vnd.github.v3+json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    message: `删除旧产品文件（名称已更改）`,
+                                    sha: oldFileData.sha,
+                                    branch: BRANCH
+                                })
+                            });
+                        }
+                    } catch (e) {
+                        console.warn('删除旧文件失败:', e);
+                    }
+                }
+                
+                await rebuildProductsIndex(currentProductType);
+                showToast('保存成功！');
+                closeProductModal();
+                await loadSection(currentProductType + '-products');
+            } catch (error) {
+                showToast('保存失败: ' + error.message, 'error');
+            }
+        };
+
+        // Rebuild products-index.json after save/delete
+        async function rebuildProductsIndex(productType) {
+            try {
+                const productDir = `content/${productType === 'watch' ? 'watches' : productType}/products`;
+                // Fetch directory listing from GitHub
+                const files = await fetchDirectory(productDir);
+                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+                const products = [];
+                
+                for (const file of jsonFiles) {
+                    try {
+                        const content = await fetchJsonFile(file.path);
+                        const data = content.data || content || {};
+                        products.push({
+                            ...data,
+                            _slug: file.name.replace('.json', ''),
+                            _path: file.path
+                        });
+                    } catch(e) {
+                        console.warn('读取产品文件失败:', file.path, e);
+                    }
+                }
+                
+                // Also check if the just-saved product is in the list
+                // (GitHub API may have a few seconds delay, so we manually add it if missing)
+                if (window._lastSavedProduct && window._lastSavedProduct.type === productType) {
+                    const saved = window._lastSavedProduct;
+                    const existingIdx = products.findIndex(p => p._slug === saved.slug);
+                    if (existingIdx >= 0) {
+                        // Update existing entry
+                        products[existingIdx] = { ...saved.data, _slug: saved.slug, _path: saved.path };
+                    } else {
+                        // Add new entry
+                        products.push({ ...saved.data, _slug: saved.slug, _path: saved.path });
+                    }
+                    window._lastSavedProduct = null;
+                }
+                
+                // Sort by order
+                products.sort((a, b) => (a.order || 999) - (b.order || 999));
+                
+                await saveJsonFile(`content/${productType === 'watch' ? 'watches' : productType}/products-index.json`, products, `更新产品索引`);
+            } catch (e) {
+                console.error('重建产品索引失败:', e);
+            }
+        }
+
+        // Enhanced upload function for products
+        async function uploadImageToGitHub(file, uploadDir, fieldName, section) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const reader = new FileReader();
+                    reader.onload = async (e) => {
+                        const base64 = e.target.result.split(',')[1];
+                        const extension = file.name.split('.').pop().toLowerCase();
+                        
+                        // Generate filename with timestamp
+                        const cleanName = (typeof fieldName === 'string' ? fieldName : 'image').replace(/[^a-zA-Z0-9]/g, '_');
+                        const timestamp = Date.now();
+                        const filename = `${cleanName}_${timestamp}.${extension}`;
+                        const fullPath = uploadDir.endsWith('/') ? uploadDir + filename : uploadDir + '/' + filename;
+
+                        // Check if file exists and get sha
+                        let sha = null;
+                        try {
+                            const checkResponse = await fetch(`${API_BASE}/${fullPath}?t=${Date.now()}`, {
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Accept': 'application/vnd.github.v3+json'
+                                }
+                            });
+                            if (checkResponse.ok) {
+                                const existingFile = await checkResponse.json();
+                                sha = existingFile.sha;
+                            }
+                        } catch (err) {
+                            // File doesn't exist, that's fine
+                        }
+
+                        // Upload file
+                        const body = {
+                            message: `Upload image: ${filename}`,
+                            content: base64,
+                            branch: BRANCH
+                        };
+                        if (sha) {
+                            body.sha = sha;
+                        }
+
+                        const response = await fetch(`${API_BASE}/${fullPath}?t=${Date.now()}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/vnd.github.v3+json',
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(body)
+                        });
+
+                        if (!response.ok) {
+                            const err = await response.json();
+                            throw new Error(err.message || `上传失败: ${response.status}`);
+                        }
+
+                        const data = await response.json();
+                        resolve({
+                            path: `/${data.content.path}`,
+                            filename: filename
+                        });
+                    };
+                    reader.onerror = () => reject(new Error('读取文件失败'));
+                    reader.readAsDataURL(file);
+                } catch (error) {
+                    reject(error);
+                }
+            });
+        }
+
+        function renderProductItem(container, file, content) {
+            const item = document.createElement('div');
+            item.className = 'list-item';
+            item.dataset.path = file.path;
+            
+            // Handle both markdown (content.data) and JSON (content directly) formats
+            const data = content.data || content;
+            const title = data.title || data.name || data.question || file.name.replace(/\.(md|json)$/, '');
+            
+            item.innerHTML = `
+                <div class="list-item-header">
+                    <span class="list-item-title">${title}</span>
+                    <div class="list-item-actions">
+                        <button class="btn-small btn-edit" onclick="editProduct('${file.path}')">编辑</button>
+                        <button class="btn-small btn-remove" onclick="deleteProduct('${file.path}')">删除</button>
+                    </div>
+                </div>
+                <div class="item-preview" id="preview-${file.path.replace(/\//g, '-')}"></div>
+            `;
+            container.appendChild(item);
+
+            // Render preview fields
+            const preview = document.getElementById(`preview-${file.path.replace(/\//g, '-')}`);
+            renderItemPreview(preview, data);
+        }
+
+        function renderItemPreview(container, data) {
+            const fields = [];
+            
+            for (const [key, value] of Object.entries(data)) {
+                if (key === 'title') continue;
+                if (Array.isArray(value)) {
+                    fields.push(`<span><strong>${key}:</strong> ${value.length} 个项目</span>`);
+                } else if (typeof value === 'object' && value !== null) {
+                    fields.push(`<span><strong>${key}:</strong> (${Object.keys(value).length} 个字段)</span>`);
+                } else {
+                    const display = String(value).substring(0, 60) + (String(value).length > 60 ? '...' : '');
+                    fields.push(`<span><strong>${key}:</strong> ${display}</span>`);
+                }
+            }
+            
+            container.innerHTML = `<div class="nested-fields" style="margin-top:10px;">${fields.map(f => `<span style="font-size:12px;color:#8A8A8A;">${f}</span>`).join('')}</div>`;
+        }
+
+        function editProduct(path) {
+            const content = sectionData[path];
+            const modal = createEditModal(path, content);
+            document.body.appendChild(modal);
+        }
+
+        function createEditModal(path, content) {
+            const overlay = document.createElement('div');
+            overlay.className = 'modal-overlay';
+            overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);z-index:1000;display:flex;align-items:center;justify-content:center;padding:20px;';
+            
+            const modal = document.createElement('div');
+            modal.className = 'edit-modal';
+            modal.style.cssText = 'background:#FAFAF8;border-radius:16px;max-width:700px;width:100%;max-height:90vh;overflow:hidden;display:flex;flex-direction:column;';
+
+            const header = document.createElement('div');
+            header.style.cssText = 'padding:20px 25px;border-bottom:1px solid #E8E4DE;display:flex;align-items:center;justify-content:space-between;';
+            header.innerHTML = `
+                <h3 style="font-family:Playfair Display,serif;font-size:20px;color:#C5A467;">编辑项目</h3>
+                <button onclick="this.closest('.modal-overlay').remove()" style="background:none;border:none;cursor:pointer;padding:5px;">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#8A8A8A" stroke-width="2">
+                        <line x1="18" y1="6" x2="6" y2="18"></line>
+                        <line x1="6" y1="6" x2="18" y2="18"></line>
+                    </svg>
+                </button>
+            `;
+
+            const formContainer = document.createElement('div');
+            formContainer.style.cssText = 'padding:25px;overflow-y:auto;flex:1;';
+            formContainer.id = 'editFormContainer';
+
+            const footer = document.createElement('div');
+            footer.style.cssText = 'padding:20px 25px;border-top:1px solid #E8E4DE;display:flex;justify-content:flex-end;gap:10px;';
+            footer.innerHTML = `
+                <button onclick="this.closest('.modal-overlay').remove()" style="padding:12px 20px;border:1px solid #E8E4DE;background:#fff;border-radius:8px;cursor:pointer;">取消</button>
+                <button onclick="saveOtherItem('${path}')" style="padding:12px 20px;background:#C5A467;color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:500;">保存</button>
+            `;
+
+            modal.appendChild(header);
+            modal.appendChild(formContainer);
+            modal.appendChild(footer);
+            overlay.appendChild(modal);
+
+            // Render form after modal is in DOM
+            setTimeout(() => {
+                renderProductForm(formContainer, path, content);
+            }, 50);
+
+            return overlay;
+        }
+
+        function renderProductForm(container, path, content) {
+            const data = content.data;
+            const isFaq = path.includes('/faq/');
+            const isProcess = path.includes('/process/');
+            const isPartner = path.includes('/partner-cases/');
+
+            let html = '<div class="form-grid">';
+
+            // Common fields
+            if (isFaq) {
+                html += createFormField('问题', 'question', data.question || '');
+                html += createFormField('答案', 'answer', data.answer || '', 'textarea');
+                html += createFormField('排序', 'order', data.order || 1, 'number');
+            } else if (isProcess) {
+                html += createFormField('标题', 'title', data.title || '');
+                html += createImageUploadComponent('image', data.image || '', 'process', 'image');
+                html += createFormField('排序', 'order', data.order || 1, 'number');
+            } else if (isPartner) {
+                html += createFormField('标题', 'title', data.title || '');
+                html += createFormField('描述', 'description', data.description || '', 'textarea');
+                html += createFormField('排序', 'order', data.order || 1, 'number');
+                // Images array for partner cases
+                if (data.images && data.images.length > 0) {
+                    html += `<div class="form-group full-width"><label>图片</label>`;
+                    data.images.forEach((img, i) => {
+                        html += createImageUploadComponent(`image_${i}`, img, 'partner', 'images');
+                    });
+                    html += `</div>`;
+                } else {
+                    html += createImageUploadComponent('image_0', '', 'partner', 'images');
+                }
+            } else {
+                // Jewelry/Watch product
+                // 图片区域
+                html += '<div class="section-divider"><h3 class="section-title">产品图片</h3></div>';
+                html += createImageUploadComponent('image', data.image || '', path.includes('/jewelry/') ? 'jewelry-products' : 'watch-products', 'image');
+                
+                // 基本信息
+                html += '<div class="section-divider"><h3 class="section-title">基本信息</h3></div>';
+                html += createFormField('主标题', 'name', data.name || '');
+                html += createFormField('副标题', 'subtitle', data.subtitle || '');
+                html += createFormField('价格', 'price', data.price || '');
+                html += createFormField('分类', 'category', data.category || '', 'select', ['rings','necklaces','earrings','bracelets','watches']);
+                
+                // 详细信息
+                html += '<div class="section-divider"><h3 class="section-title">详细信息（仅在产品详情页显示）</h3></div>';
+                html += createFormField('产品详情', 'description', data.description || '', 'textarea');
+                
+                // 其他设置
+                html += '<div class="section-divider"><h3 class="section-title">其他设置</h3></div>';
+                html += createFormField('标签', 'badge', data.badge || '');
+                html += createFormField('排序', 'order', data.order || 1, 'number');
+                html += `
+                    <div class="form-group">
+                        <label>推荐</label>
+                        <select name="featured">
+                            <option value="true" ${data.featured ? 'selected' : ''}>是</option>
+                            <option value="false" ${!data.featured ? 'selected' : ''}>否</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>已发布</label>
+                        <select name="published">
+                            <option value="true" ${data.published !== false ? 'selected' : ''}>是</option>
+                            <option value="false" ${data.published === false ? 'selected' : ''}>否</option>
+                        </select>
+                    </div>
+                `;
+            }
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function createFormField(label, name, value, type = 'text', options = null) {
+            if (type === 'textarea') {
+                return `
+                    <div class="form-group full-width">
+                        <label>${label}</label>
+                        <textarea name="${name}">${value || ''}</textarea>
+                    </div>
+                `;
+            } else if (type === 'select' && options) {
+                const opts = options.map(opt => `<option value="${opt}" ${value === opt ? 'selected' : ''}>${opt}</option>`).join('');
+                return `
+                    <div class="form-group">
+                        <label>${label}</label>
+                        <select name="${name}">${opts}</select>
+                    </div>
+                `;
+            } else if (type === 'number') {
+                return `
+                    <div class="form-group">
+                        <label>${label}</label>
+                        <input type="number" name="${name}" value="${value || 0}">
+                    </div>
+                `;
+            }
+            return `
+                <div class="form-group">
+                    <label>${label}</label>
+                    <input type="text" name="${name}" value="${value || ''}">
+                </div>
+            `;
+        }
+
+        async function saveOtherItem(path) {
+            const container = document.getElementById('editFormContainer');
+            const formData = new FormData();
+            
+            container.querySelectorAll('input, textarea, select').forEach(el => {
+                formData.append(el.name, el.value);
+            });
+
+            // Build frontmatter
+            const isFaq = path.includes('/faq/');
+            const isProcess = path.includes('/process/');
+            const isPartner = path.includes('/partner-cases/');
+
+            let frontmatter = { title: formData.get('name') || formData.get('title') || formData.get('question') || '' };
+
+            if (isFaq) {
+                frontmatter = {
+                    title: formData.get('question'),
+                    question: formData.get('question'),
+                    answer: formData.get('answer'),
+                    order: parseInt(formData.get('order')) || 0
+                };
+            } else if (isProcess) {
+                frontmatter = {
+                    title: formData.get('title'),
+                    image: formData.get('image'),
+                    order: parseInt(formData.get('order')) || 1,
+                    published: true
+                };
+            } else if (isPartner) {
+                const images = [];
+                let i = 0;
+                while (formData.has(`image_${i}`)) {
+                    const img = formData.get(`image_${i}`);
+                    if (img) images.push(img);
+                    i++;
+                }
+                frontmatter = {
+                    title: formData.get('title'),
+                    description: formData.get('description'),
+                    images: images.length ? images : [],
+                    order: parseInt(formData.get('order')) || 1,
+                    published: true
+                };
+            } else {
+                frontmatter = {
+                    title: formData.get('name'),
+                    name: formData.get('name'),
+                    subtitle: formData.get('subtitle') || '',
+                    category: formData.get('category'),
+                    price: formData.get('price'),
+                    description: formData.get('description'),
+                    image: formData.get('image'),
+                    badge: formData.get('badge'),
+                    order: parseInt(formData.get('order')) || 1,
+                    featured: formData.get('featured') === 'true',
+                    published: formData.get('published') === 'true'
+                };
+            }
+
+            const body = sectionData[path]?.body || '';
+            
+            try {
+                await saveMarkdownFile(path, frontmatter, body, `更新 ${sections[currentSection].title} - ${frontmatter.title || path.split('/').pop()}`);
+                showToast('保存成功！Cloudflare Pages 将很快重新构建。');
+                document.querySelector('.modal-overlay').remove();
+                await loadSection(currentSection);
+            } catch (error) {
+                showToast('保存失败: ' + error.message, 'error');
+            }
+        }
+
+        async function deleteProduct(path) {
+            if (!confirm('确定要删除此项目吗？此操作无法撤销。')) return;
+
+            try {
+                const response = await fetch(`${API_BASE}/${path}?t=${Date.now()}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Accept': 'application/vnd.github.v3+json',
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        message: `删除 ${path}`,
+                        sha: fileSha[path],
+                        branch: BRANCH
+                    })
+                });
+
+                if (!response.ok) {
+                    throw new Error('删除失败');
+                }
+
+                showToast('删除成功！');
+                // Rebuild products index if deleting a product
+                if (path.includes('/products/')) {
+                    const productType = path.includes('/watches/') ? 'watch' : 'jewelry';
+                    await rebuildProductsIndex(productType);
+                }
+                await loadSection(currentSection);
+            } catch (error) {
+                showToast('删除失败: ' + error.message, 'error');
+            }
+        }
+
+        function renderMarkdownEditor(path, content) {
+            // For markdown files - content has .data and .body
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+            const data = content.data || content;
+
+            panelTabs.innerHTML = '<div class="panel-tab active">内容字段</div>';
+            panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+
+            const container = document.getElementById('tab-0');
+
+            // Determine which editor to show based on path
+            if (path.includes('/home/')) {
+                renderHomeEditor(container, data);
+            } else if (path.includes('/about/')) {
+                renderAboutEditor(container, data);
+            } else if (path.includes('/contact/')) {
+                renderContactEditor(container, data);
+            } else if (path.includes('/order/')) {
+                renderOrderEditor(path, data);
+            } else if (path.includes('/faq/')) {
+                renderFaqSettingsEditor(container, data);
+            } else if (path.includes('/jewelry/jewelry.')) {
+                renderJewelrySettingsEditor(container, data);
+            } else if (path.includes('/watches/watches.')) {
+                renderWatchSettingsEditor(container, data);
+            }
+        }
+
+        function renderJsonEditorFromData(path, data) {
+            // For JSON files - data is directly the content object
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+
+            panelTabs.innerHTML = '<div class="panel-tab active">内容字段</div>';
+            panelContent.innerHTML = '<div class="tab-panel active" id="tab-0"></div>';
+
+            const container = document.getElementById('tab-0');
+
+            // Determine which editor to show based on path
+            if (path.includes('/home/')) {
+                renderHomeEditor(container, data);
+            } else if (path.includes('/about/')) {
+                renderAboutEditor(container, data);
+            } else if (path.includes('/contact/')) {
+                renderContactEditor(container, data);
+            } else if (path.includes('/order/')) {
+                renderOrderEditor(path, data);
+            } else if (path.includes('/faq/faq.json')) {
+                renderFaqSettingsEditorFromData(container, data);
+            } else if (path.includes('/jewelry/jewelry.')) {
+                renderJewelrySettingsEditor(container, data);
+            } else if (path.includes('/watches/watches.')) {
+                renderWatchSettingsEditor(container, data);
+            }
+        }
+
+        function renderHomeEditor(container, data) {
+            brandPromisesData = Array.isArray(data.brand_promises) ? data.brand_promises : [];
+            // Initialize craft images from new format or fallback from old format
+            craftImages = data.craft_images || [data.craft_image_1, data.craft_image_2, data.craft_image_3].filter(Boolean);
+            
+            container.innerHTML = `
+                <div class="form-grid">
+                    <div class="section-divider"><h3 class="section-title">Hero 区域</h3></div>
+                    ${createFormField('主标题', 'hero_title', data.hero_title || '')}
+                    ${createFormField('副标题', 'hero_subtitle', data.hero_subtitle || '')}
+                    ${createFormField('描述', 'hero_description', data.hero_description || '', 'textarea')}
+                    ${createFormField('行动按钮', 'hero_cta', data.hero_cta || '')}
+                    ${createImageUploadComponent('hero_image', data.hero_image || '', 'home', 'hero_image')}
+                    ${createFormField('推荐标题', 'featured_title', data.featured_title || '')}
+                    ${createFormField('推荐副标题', 'featured_subtitle', data.featured_subtitle || '')}
+
+                    <div class="section-divider"><h3 class="section-title">工艺区域</h3></div>
+                    ${createFormField('工艺标签', 'craft_label', data.craft_label || '')}
+                    ${createFormField('工艺标题', 'craft_title', data.craft_title || '')}
+                    <div class="form-group">
+                        <label>工艺图片（滚动轮播）</label>
+                        <div id="craftImagesList" style="margin-bottom:12px;"></div>
+                        <button type="button" class="btn-save" style="font-size:13px;padding:6px 16px;" onclick="addCraftImage()">+ 添加图片</button>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">品牌承诺</h3></div>
+                    ${createFormField('板块标签', 'promises_label', data.promises_label || '')}
+                    ${createFormField('板块标题', 'promises_title', data.promises_title || '')}
+                    <div class="form-group full-width">
+                        <label>承诺模块</label>
+                        <div id="brandPromisesList"></div>
+                        <button class="btn-save" onclick="addBrandPromise()" style="margin-top:12px;">+ 添加模块</button>
+                    </div>
+                </div>
             `;
             renderBrandPromisesList();
             renderCraftImagesList();
         }
 
         // ===== Craft Images Editor =====
+        let craftImages = [];
+
+        function renderCraftImagesList() {
+            const container = document.getElementById('craftImagesList');
+            if (!container) return;
+            
+            if (craftImages.length === 0) {
+                container.innerHTML = '<p style="color:#8A8A8A;font-size:13px;">暂无图片，点击下方按钮添加</p>';
+                return;
+            }
             
             container.innerHTML = craftImages.map((img, i) => `
                 <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px;border:1px solid #E8E4DE;border-radius:6px;background:#fff;">
@@ -1813,11 +3990,31 @@
                 </div>
             `).join('');
         }
+
+        function addCraftImage() {
+            // Create file input
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                try {
+                    const result = await uploadImageToGitHub(file, 'assets/uploads/home', 'craft_image', 'home');
+                    if (result && result.path) {
+                        craftImages.push('/assets/uploads/home/' + result.path.split('/').pop());
+                        renderCraftImagesList();
+                    }
                 } catch(err) {
                     showToast('上传失败: ' + err.message, 'error');
                 }
             };
             input.click();
+        }
+
+        function removeCraftImage(index) {
+            craftImages.splice(index, 1);
+            renderCraftImagesList();
         }
 
         // ===== Brand Promises Editor =====
@@ -2938,6 +5135,7 @@
                     // For home section, use brandPromisesData and craftImages directly
                     if (currentSection === 'home') {
                         newData.brand_promises = brandPromisesData;
+                        newData.craft_images = craftImages;
                         // Remove old format fields
                         delete newData.craft_image_1;
                         delete newData.craft_image_2;
