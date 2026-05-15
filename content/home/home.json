@@ -9,17 +9,17 @@
   "featured_subtitle": "Explore our curated collection",
   "brand_promises": [
     {
-      "icon": "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ",
+      "icon": "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
       "title": "Diamond Jewelry",
       "description": "Exquisite diamond pieces certified for quality and brilliance. Each diamond is carefully selected for its exceptional cut, clarity, and carat."
     },
     {
-      "icon": "ÃÂÃÂ°ÃÂÃÂÃÂÃÂ¥ÃÂÃÂ",
+      "icon": "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ¥ÃÂÃÂÃÂÃÂ",
       "title": "Solid 18K Gold",
       "description": "Real 18K solid gold, never plated. Our pieces are crafted to last generations, maintaining their beauty and value over time."
     },
     {
-      "icon": "ÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂ",
+      "icon": "ÃÂÃÂÃÂÃÂ°ÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂÃÂ",
       "title": "Mirror Quality",
       "description": "Every piece undergoes rigorous quality inspection. We guarantee mirror-finish surfaces and impeccable detailing on all our jewelry."
     }
@@ -28,9 +28,13 @@
   "craft_subtitle": "OUR CRAFT",
   "craft_label": "OUR CRAFT",
   "craft_images": [
-    "/home/craft_image_1_1778831799835.jpg",
-    "/home/craft_image_2_1778831820225.jpg",
-    "/home/craft_image_3_1778831842839.jpg"
+    "/home/craft_image_1778837882178.jpg",
+    "/home/craft_image_1778837906271.jpg",
+    "/home/craft_image_1778837913303.jpg",
+    "/home/craft_image_1778837920970.jpg",
+    "/home/craft_image_1778837928153.jpg",
+    "/home/craft_image_1778837937077.jpg",
+    "/home/craft_image_1778837946409.jpg"
   ],
   "promises_label": "OUR EXPERTISE",
   "promises_title": "What We Offer",
@@ -49,5 +53,6 @@
   "file-img-hero_image-1778837233512": "",
   "file-img-craft_image_1-1778837233512": "",
   "file-img-craft_image_2-1778837233512": "",
-  "file-img-craft_image_3-1778837233512": ""
+  "file-img-craft_image_3-1778837233512": "",
+  "file-img-hero_image-1778837847852": ""
 }
