@@ -219,7 +219,6 @@ class ContentLoader {
 
     renderAbout() {
         const about = this.contentCache.about;
-        console.log('[DEBUG-CL] renderAbout called, about:', about ? 'loaded' : 'NULL');
         if (!about) return;
 
         this.setText('[data-cms="about.section_label"]', about.section_label);
@@ -252,14 +251,12 @@ class ContentLoader {
         this.setText('[data-cms="about.process_title"]', about.process_title);
         
         // Render process steps from about.json process_steps array
-        console.log('[DEBUG-CL] process_steps:', about.process_steps ? about.process_steps.length : 'MISSING');
-        const container = document.getElementById('processStepsContainer');
-        console.log('[DEBUG-CL] processStepsContainer:', container ? 'found' : 'NOT FOUND');
         if (about.process_steps && Array.isArray(about.process_steps) && about.process_steps.length > 0) {
+            const container = document.getElementById('processStepsContainer');
             if (container) {
                 const GITHUB_RAW = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main';
                 try {
-                    const html = about.process_steps.map((step, i) => {
+                    container.innerHTML = about.process_steps.map((step, i) => {
                         let imgSrc = step.image || '';
                         if (imgSrc.startsWith('/')) {
                             imgSrc = GITHUB_RAW + imgSrc;
@@ -273,11 +270,16 @@ class ContentLoader {
                             </div>
                         `;
                     }).join('');
-                    console.log('[DEBUG-CL] Setting processSteps innerHTML, length:', html.length);
-                    container.innerHTML = html;
-                    console.log('[DEBUG-CL] processSteps children:', container.children.length);
+                    // Re-observe new elements for scroll animation
+                    setTimeout(() => {
+                        container.querySelectorAll('.animate-on-scroll').forEach(el => {
+                            if (window._scrollObserver) {
+                                window._scrollObserver.observe(el);
+                            }
+                        });
+                    }, 100);
                 } catch(e) {
-                    console.error('[DEBUG-CL] Error rendering process steps:', e);
+                    console.error('Error rendering process steps:', e);
                 }
             }
         }
