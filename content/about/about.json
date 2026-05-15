@@ -68,13 +68,13 @@
     },
     {
       "order": 12,
-      "title": "Electroplate",
+      "title": "Electroplate  999999",
       "image": "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=400&h=300&fit=crop"
     },
     {
       "order": 13,
-      "title": "Quality Check",
-      "image": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=300&fit=crop"
+      "title": "Quality Check 999999",
+      "image": "/assets/uploads/process/step_1778848682844.jpg"
     }
   ],
   "promises_title": "The Vespera Jewels Promise",
@@ -87,5 +87,6 @@
     "Friendly customer service",
     "Respect for your privacy",
     "30-day return/exchange policy"
-  ]
+  ],
+  "file-img-story_image-1778848649939": ""
 }
