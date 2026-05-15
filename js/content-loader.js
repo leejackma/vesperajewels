@@ -187,22 +187,26 @@ class ContentLoader {
             }
         });
 
-        // Brand promises
-        if (home.brand_promises) {
-            let promises = this.ensureArray(home.brand_promises);
-            if (typeof promises === 'string') {
-                try {
-                    promises = JSON.parse(promises);
-                } catch (e) {
-                    promises = [];
-                }
-            }
-            if (Array.isArray(promises)) {
-                this.ensureArray(promises).forEach((p, i) => {
-                    this.setText(`[data-cms="home.promise.${i}.icon"]`, p.icon);
-                    this.setText(`[data-cms="home.promise.${i}.title"]`, p.title);
-                    this.setText(`[data-cms="home.promise.${i}.description"]`, p.description);
+        // Brand promises - dynamic rendering
+        this.setText('[data-cms="home.promises_label"]', home.promises_label);
+        this.setText('[data-cms="home.promises_title"]', home.promises_title);
+        if (home.brand_promises && Array.isArray(home.brand_promises) && home.brand_promises.length > 0) {
+            const grid = document.getElementById('brandPromisesGrid');
+            if (grid) {
+                const esc = typeof escapeHtml === 'function' ? escapeHtml : (t => t);
+                let html = '';
+                home.brand_promises.forEach((p, i) => {
+                    html += `
+                        <div class="bg-white p-8 text-center animate-on-scroll border border-border" style="animation-delay: ${i * 100}ms">
+                            <div class="w-24 h-24 mx-auto mb-6 rounded-full bg-cream flex items-center justify-center">
+                                <span class="text-5xl">${esc(p.icon || '📦')}</span>
+                            </div>
+                            <h3 class="font-playfair text-xl" style="color: #C5A467; margin-bottom: 1rem;">${esc(p.title || '')}</h3>
+                            <p class="text-textLight text-sm leading-relaxed">${esc(p.description || '')}</p>
+                        </div>
+                    `;
                 });
+                grid.innerHTML = html;
             }
         }
     }

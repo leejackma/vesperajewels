@@ -3800,6 +3800,8 @@
         }
 
         function renderHomeEditor(container, data) {
+            brandPromisesData = Array.isArray(data.brand_promises) ? data.brand_promises : [];
+            
             container.innerHTML = `
                 <div class="form-grid">
                     <div class="section-divider"><h3 class="section-title">Hero 区域</h3></div>
@@ -3819,12 +3821,128 @@
                     ${createImageUploadComponent('craft_image_3', data.craft_image_3 || '', 'home', 'craft_image_3')}
 
                     <div class="section-divider"><h3 class="section-title">品牌承诺</h3></div>
+                    ${createFormField('板块标签', 'promises_label', data.promises_label || '')}
+                    ${createFormField('板块标题', 'promises_title', data.promises_title || '')}
                     <div class="form-group full-width">
-                        <label>品牌承诺（JSON 格式）</label>
-                        <textarea id="brand_promises" rows="10" style="font-family:monospace;font-size:13px;">${data.brand_promises ? JSON.stringify(data.brand_promises, null, 2) : '[]'}</textarea>
+                        <label>承诺模块</label>
+                        <div id="brandPromisesList"></div>
+                        <button class="btn-save" onclick="addBrandPromise()" style="margin-top:12px;">+ 添加模块</button>
                     </div>
                 </div>
             `;
+            renderBrandPromisesList();
+        }
+
+        // ===== Brand Promises Editor =====
+        let brandPromisesData = [];
+
+        function renderBrandPromisesList() {
+            const listContainer = document.getElementById('brandPromisesList');
+            if (!listContainer) return;
+            
+            if (brandPromisesData.length === 0) {
+                listContainer.innerHTML = '<p style="color:#8A8A8A;font-size:13px;padding:8px 0;">暂无模块，点击下方按钮添加</p>';
+                return;
+            }
+            
+            let html = '';
+            brandPromisesData.forEach((item, index) => {
+                html += `
+                    <div style="background:#fff;border:1px solid #E8E4DE;border-radius:12px;padding:16px 20px;margin-bottom:12px;">
+                        <div style="display:flex;justify-content:space-between;align-items:start;">
+                            <div style="flex:1;">
+                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
+                                    <span style="font-size:24px;">${item.icon || '📦'}</span>
+                                    <span style="font-weight:500;color:#1a1a1a;">${item.title || '未命名'}</span>
+                                </div>
+                                <div style="font-size:13px;color:#8A8A8A;margin-top:2px;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.description || ''}</div>
+                            </div>
+                            <div style="display:flex;gap:8px;flex-shrink:0;margin-left:12px;">
+                                <button class="btn-small btn-edit" onclick="editBrandPromise(${index})">编辑</button>
+                                <button class="btn-small btn-remove" onclick="deleteBrandPromise(${index})">删除</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+            listContainer.innerHTML = html;
+        }
+
+        function addBrandPromise() {
+            brandPromisesData.push({
+                icon: '📦',
+                title: '新模块',
+                description: '模块描述'
+            });
+            renderBrandPromisesList();
+            editBrandPromise(brandPromisesData.length - 1);
+        }
+
+        function editBrandPromise(index) {
+            const item = brandPromisesData[index];
+            if (!item) return;
+            
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.id = 'brandPromiseModal';
+            modal.innerHTML = `
+                <div class="modal-content" style="max-width:500px;">
+                    <div class="modal-header">
+                        <h3 style="font-family:Playfair Display,serif;color:#C5A467;">编辑承诺模块 ${index + 1}</h3>
+                        <button class="modal-close" onclick="closeBrandPromiseModal()">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-grid">
+                            <div class="form-group">
+                                <label>图标 Emoji</label>
+                                <input type="text" id="editPromiseIcon" value="${(item.icon || '').replace(/"/g, '&quot;')}" placeholder="如 💍 🥇 🔍">
+                            </div>
+                            <div class="form-group">
+                                <label>标题</label>
+                                <input type="text" id="editPromiseTitle" value="${(item.title || '').replace(/"/g, '&quot;')}" placeholder="模块标题">
+                            </div>
+                            <div class="form-group full-width">
+                                <label>描述</label>
+                                <textarea id="editPromiseDesc" rows="4" placeholder="模块描述">${(item.description || '').replace(/</g, '&lt;')}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn-cancel" onclick="closeBrandPromiseModal()">取消</button>
+                        <button class="btn-save" onclick="saveBrandPromise(${index})">保存</button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            modal.classList.add('active');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeBrandPromiseModal() {
+            const modal = document.getElementById('brandPromiseModal');
+            if (modal) modal.remove();
+            document.body.style.overflow = '';
+        }
+
+        async function saveBrandPromise(index) {
+            const item = brandPromisesData[index];
+            if (!item) return;
+            
+            item.icon = document.getElementById('editPromiseIcon').value.trim() || '📦';
+            item.title = document.getElementById('editPromiseTitle').value.trim();
+            item.description = document.getElementById('editPromiseDesc').value.trim();
+            
+            closeBrandPromiseModal();
+            renderBrandPromisesList();
+            showToast('模块已更新，请点击页面底部保存按钮提交更改', 'success');
+        }
+
+        function deleteBrandPromise(index) {
+            const item = brandPromisesData[index];
+            if (!confirm(`确定要删除模块"${item.title || '此模块'}"吗？`)) return;
+            brandPromisesData.splice(index, 1);
+            renderBrandPromisesList();
+            showToast('模块已删除，请点击页面底部保存按钮提交更改', 'success');
         }
 
         function renderAboutEditor(container, data) {
@@ -4695,6 +4813,11 @@
 
                     // Collect form values
                     const inputs = document.querySelectorAll('#tab-0 input, #tab-0 textarea');
+                    
+                    // For home section, use brandPromisesData directly
+                    if (currentSection === 'home') {
+                        newData.brand_promises = brandPromisesData;
+                    }
                     
                     // For contact section, build social_links and contact_items from individual inputs
                     if (currentSection === 'contact') {
