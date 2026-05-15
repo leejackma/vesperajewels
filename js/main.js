@@ -171,7 +171,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const observer = window._scrollObserver;
     
     document.querySelectorAll('.animate-on-scroll').forEach(el => {
-        el => (window._scrollObserver || observer).observe(el);
+        (window._scrollObserver || observer).observe(el);
     });
     
     // ============================================
@@ -487,7 +487,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Re-observe new elements for animation
             setTimeout(() => {
                 document.querySelectorAll('#jewelryGrid .animate-on-scroll').forEach(el => {
-                    el => (window._scrollObserver || observer).observe(el);
+                    (window._scrollObserver || observer).observe(el);
                 });
             }, 100);
         }
@@ -540,7 +540,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Re-observe new elements for animation
             setTimeout(() => {
                 document.querySelectorAll('#watchGrid .animate-on-scroll').forEach(el => {
-                    el => (window._scrollObserver || observer).observe(el);
+                    (window._scrollObserver || observer).observe(el);
                 });
             }, 100);
         }
@@ -573,7 +573,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Re-observe new elements for animation
             setTimeout(() => {
                 document.querySelectorAll('#featuredGrid .animate-on-scroll').forEach(el => {
-                    el => (window._scrollObserver || observer).observe(el);
+                    (window._scrollObserver || observer).observe(el);
                 });
             }, 100);
         }
@@ -713,7 +713,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-observe new elements for animation
         setTimeout(() => {
             document.querySelectorAll('#orderStepsGrid .animate-on-scroll').forEach(el => {
-                el => (window._scrollObserver || observer).observe(el);
+                (window._scrollObserver || observer).observe(el);
             });
         }, 100);
     }
@@ -971,7 +971,7 @@ async function loadProcessSteps() {
             // Re-observe new elements for animation
             setTimeout(() => {
                 document.querySelectorAll('#processStepsContainer .animate-on-scroll').forEach(el => {
-                    el => (window._scrollObserver || observer).observe(el);
+                    (window._scrollObserver || observer).observe(el);
                 });
             }, 100);
         }
@@ -1252,7 +1252,7 @@ async function loadPartnerCases() {
                 // Re-observe new elements for animation
                 setTimeout(() => {
                     document.querySelectorAll('#partnerCasesContainer .animate-on-scroll').forEach(el => {
-                        el => (window._scrollObserver || observer).observe(el);
+                        (window._scrollObserver || observer).observe(el);
                     });
                 }, 100);
             }
