@@ -488,7 +488,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                 });
+                console.log('[DEBUG] Setting jewelryGrid innerHTML, length:', html.length, 'first 200 chars:', html.substring(0, 200));
                 jewelryGrid.innerHTML = html;
+                console.log('[DEBUG] jewelryGrid children after set:', jewelryGrid.children.length);
             } else {
                 jewelryGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No jewelry products available.</p>';
             }
@@ -541,7 +543,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                 });
+                console.log('[DEBUG] Setting watchGrid innerHTML, length:', html.length);
                 watchGrid.innerHTML = html;
+                console.log('[DEBUG] watchGrid children:', watchGrid.children.length);
             } else {
                 watchGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No watch products available.</p>';
             }
