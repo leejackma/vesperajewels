@@ -237,6 +237,7 @@
                             .filter(item => item.published !== false && item.published !== 'false')
                             .sort((a, b) => (a.order || 999) - (b.order || 999))
                             .map((item, index) => ({
+                                _slug: item._slug || item.slug || '',
                                 name: item.name || '',
                                 price: item.price || '',
                                 subtitle: item.subtitle || item.description?.substring(0, 50) || '',
@@ -266,6 +267,7 @@
                             .filter(item => item.published !== false && item.published !== 'false')
                             .sort((a, b) => (a.order || 999) - (b.order || 999))
                             .map((item) => ({
+                                _slug: item._slug || item.slug || '',
                                 name: item.name || '',
                                 price: item.price || '',
                                 subtitle: item.subtitle || item.description?.substring(0, 50) || '',
@@ -282,8 +284,31 @@
                 dynamicProducts.watch = [];
             }
 
-            // Featured products = first 4 from jewelry
-            if (dynamicProducts.jewelry.length > 0) {
+            // Featured products = from featured.json or fallback to jewelry first 4
+            dynamicProducts.featured = [];
+            try {
+                const featuredResponse = await fetch(githubRawUrl('content/home/featured.json'));
+                if (featuredResponse.ok) {
+                    const featuredData = await featuredResponse.json();
+                    if (featuredData.products && featuredData.products.length > 0) {
+                        const allProducts = [
+                            ...dynamicProducts.jewelry.map(p => ({...p, _type: 'jewelry'})),
+                            ...dynamicProducts.watch.map(p => ({...p, _type: 'watch'}))
+                        ];
+                        dynamicProducts.featured = featuredData.products.map(fp => {
+                            const matched = allProducts.find(p => 
+                                p._type === fp.type && (p._slug === fp.slug || p.name?.toLowerCase().replace(/[^a-z0-9]+/g, '-') === fp.slug)
+                            );
+                            return matched || null;
+                        }).filter(Boolean);
+                    }
+                }
+            } catch(e) {
+                console.log('Failed to load featured.json:', e);
+            }
+
+            // Fallback to jewelry first 4 if no featured products
+            if (dynamicProducts.featured.length === 0 && dynamicProducts.jewelry.length > 0) {
                 dynamicProducts.featured = dynamicProducts.jewelry.slice(0, 4);
             }
 

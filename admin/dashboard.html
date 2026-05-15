@@ -1540,6 +1540,12 @@
                     </span>
                     Watch Products
                 </div>
+                <div class="nav-item" data-section="featured" onclick="switchSection('featured')">
+                    <span class="nav-icon">
+                        <svg viewBox="0 0 24 24"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"></polygon></svg>
+                    </span>
+                    精选产品
+                </div>
             </div>
 
             <div class="nav-section">
@@ -2428,6 +2434,11 @@
                 title: 'Theme Settings',
                 desc: '编辑网站主题和颜色',
                 files: [{ path: 'content/settings/theme.json', type: 'json' }]
+            },
+            featured: {
+                title: '精选产品',
+                desc: '管理首页轮播展示的产品',
+                files: [{ path: 'content/home/featured.json', type: 'featured-json' }]
             }
         };
 
@@ -2547,6 +2558,11 @@
                         const content = await fetchJsonFile(file.path);
                         sectionData[file.path] = content;
                         renderFaqItemsEditor(file.path, content);
+                    } else if (file.type === 'featured-json') {
+                        // Featured products manager
+                        const content = await fetchJsonFile(file.path);
+                        sectionData[file.path] = content;
+                        renderFeaturedManager(file.path, content);
                     } else if (file.type === 'markdown') {
                         const content = await fetchMarkdownFile(file.path);
                         sectionData[file.path] = content;
@@ -4762,6 +4778,140 @@
                     </div>
                 </div>
             `;
+        }
+
+        // Featured products manager
+        let featuredProducts = [];
+        let featuredFilePath = '';
+
+        function renderFeaturedManager(path, data) {
+            featuredFilePath = path;
+            featuredProducts = data.products || [];
+            
+            const panelTabs = document.getElementById('panelTabs');
+            const panelContent = document.getElementById('panelContent');
+            
+            panelTabs.innerHTML = '<div class="panel-tab active">精选产品</div>';
+            panelContent.innerHTML = `
+                <div class="tab-panel active" id="tab-0">
+                    <div class="section-card">
+                        <div class="section-header">
+                            <span>精选产品管理</span>
+                            <span style="font-size:12px;color:var(--text-secondary)">管理首页轮播展示的产品</span>
+                        </div>
+                        <div class="section-body">
+                            <!-- 添加产品 -->
+                            <div style="display:flex;gap:12px;align-items:end;margin-bottom:20px;">
+                                <div class="form-group" style="flex:1">
+                                    <label>产品类型</label>
+                                    <select id="featuredType" onchange="updateFeaturedProductDropdown()">
+                                        <option value="jewelry">珠宝</option>
+                                        <option value="watch">手表</option>
+                                    </select>
+                                </div>
+                                <div class="form-group" style="flex:2">
+                                    <label>选择产品</label>
+                                    <select id="featuredProduct"></select>
+                                </div>
+                                <button class="btn-save" onclick="addFeaturedProduct()" style="height:38px">添加</button>
+                            </div>
+                            
+                            <!-- 已选列表 -->
+                            <div id="featuredList"></div>
+                            
+                            <!-- 保存按钮 -->
+                            <div style="margin-top:16px;text-align:right">
+                                <button class="btn-save" onclick="saveFeaturedProducts()">保存精选产品</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            renderFeaturedList();
+            updateFeaturedProductDropdown();
+        }
+
+        // 更新产品下拉框
+        async function updateFeaturedProductDropdown() {
+            const type = document.getElementById('featuredType')?.value || 'jewelry';
+            const select = document.getElementById('featuredProduct');
+            if (!select) return;
+            
+            try {
+                const dir = type === 'watch' ? 'content/watches/products' : 'content/jewelry/products';
+                const files = await fetchDirectory(dir);
+                const jsonFiles = files.filter(f => f.name.endsWith('.json'));
+                
+                select.innerHTML = jsonFiles.map(f => `<option value="${f.name.replace('.json','')}">${f.name.replace('.json','')}</option>`).join('');
+            } catch(e) {
+                select.innerHTML = '<option value="">加载失败</option>';
+            }
+        }
+
+        // 添加精选产品
+        function addFeaturedProduct() {
+            const type = document.getElementById('featuredType').value;
+            const slug = document.getElementById('featuredProduct').value;
+            if (!slug) return;
+            
+            // 检查是否已存在
+            if (featuredProducts.some(p => p.type === type && p.slug === slug)) {
+                showToast('该产品已在精选列表中', 'error');
+                return;
+            }
+            
+            featuredProducts.push({ type, slug });
+            renderFeaturedList();
+        }
+
+        // 删除精选产品
+        function removeFeaturedProduct(index) {
+            featuredProducts.splice(index, 1);
+            renderFeaturedList();
+        }
+
+        // 上移
+        function moveFeaturedUp(index) {
+            if (index <= 0) return;
+            [featuredProducts[index - 1], featuredProducts[index]] = [featuredProducts[index], featuredProducts[index - 1]];
+            renderFeaturedList();
+        }
+
+        // 下移
+        function moveFeaturedDown(index) {
+            if (index >= featuredProducts.length - 1) return;
+            [featuredProducts[index], featuredProducts[index + 1]] = [featuredProducts[index + 1], featuredProducts[index]];
+            renderFeaturedList();
+        }
+
+        // 渲染精选列表
+        function renderFeaturedList() {
+            const container = document.getElementById('featuredList');
+            if (!container) return;
+            
+            if (featuredProducts.length === 0) {
+                container.innerHTML = '<p style="text-align:center;color:var(--text-secondary);padding:20px;">暂无精选产品，请从上方添加</p>';
+                return;
+            }
+            
+            container.innerHTML = featuredProducts.map((fp, i) => `
+                <div style="display:flex;align-items:center;gap:12px;padding:10px;border:1px solid var(--border);border-radius:8px;margin-bottom:8px;">
+                    <span style="color:var(--text-secondary);font-size:12px;min-width:24px;">${i + 1}</span>
+                    <span style="font-size:12px;padding:2px 8px;border-radius:4px;background:${fp.type === 'jewelry' ? 'var(--gold)' : '#1a1a1a'};color:white;">${fp.type === 'jewelry' ? '珠宝' : '手表'}</span>
+                    <span style="flex:1;font-size:14px;">${fp.slug}</span>
+                    <button class="btn-small" onclick="moveFeaturedUp(${i})" ${i === 0 ? 'disabled' : ''} style="padding:4px 8px;">↑</button>
+                    <button class="btn-small" onclick="moveFeaturedDown(${i})" ${i === featuredProducts.length - 1 ? 'disabled' : ''} style="padding:4px 8px;">↓</button>
+                    <button class="btn-small btn-remove" onclick="removeFeaturedProduct(${i})">删除</button>
+                </div>
+            `).join('');
+        }
+
+        // 保存精选产品
+        async function saveFeaturedProducts() {
+            const data = { products: featuredProducts };
+            await saveJsonFile(featuredFilePath, data, '更新精选产品');
+            showToast('精选产品保存成功！');
         }
 
         function renderWatchSettingsEditor(container, data) {
