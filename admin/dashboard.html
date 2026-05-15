@@ -4115,6 +4115,45 @@ function moveProcessStep(index, direction) {
     renderProcessStepsList();
 }
 
+// ===== Promises Editor (visual editor) =====
+let promiseItemsData = [];
+
+function renderPromisesList() {
+    const container = document.getElementById('promisesListContainer');
+    if (!container) return;
+    
+    if (promiseItemsData.length === 0) {
+        container.innerHTML = '<p style="color:#999;font-size:13px;padding:8px 0;">暂无承诺项，点击下方按钮添加</p>';
+        return;
+    }
+    
+    container.innerHTML = promiseItemsData.map((item, index) => `
+        <div style="display:flex;gap:8px;align-items:center;margin-bottom:8px;padding:8px;background:#f9f9f9;border-radius:4px;">
+            <span style="color:#C5A467;font-weight:bold;min-width:20px;">✓</span>
+            <input type="text" value="${(typeof item === 'string' ? item : item.text || '').replace(/"/g, '&quot;')}" 
+                   onchange="updatePromiseItem(${index}, this.value)" 
+                   style="flex:1;padding:6px 10px;border:1px solid #ddd;border-radius:4px;font-size:14px;"
+                   placeholder="输入承诺内容">
+            <button type="button" onclick="removePromiseItem(${index})" 
+                    style="padding:4px 8px;background:#ff4444;color:white;border:none;border-radius:4px;cursor:pointer;font-size:12px;">删除</button>
+        </div>
+    `).join('');
+}
+
+function addPromiseItem() {
+    promiseItemsData.push('');
+    renderPromisesList();
+}
+
+function removePromiseItem(index) {
+    promiseItemsData.splice(index, 1);
+    renderPromisesList();
+}
+
+function updatePromiseItem(index, value) {
+    promiseItemsData[index] = value;
+}
+
 // ===== Order Steps Editor (visual editor) =====
 function renderAboutEditor(container, data) {
             container.innerHTML = `
@@ -4150,14 +4189,18 @@ function renderAboutEditor(container, data) {
                     ${createFormField('承诺标签', 'promises_label', data.promises_label || '')}
                     ${createFormField('承诺标题', 'promises_title', data.promises_title || '')}
                     <div class="form-group full-width">
-                        <label>承诺列表（JSON 字符串数组）</label>
-                        <textarea id="promises" rows="8" style="font-family:monospace;font-size:13px;">${data.promises ? JSON.stringify(data.promises, null, 2) : '[]'}</textarea>
+                        <label>承诺列表</label>
+                        <div id="promisesListContainer"></div>
+                        <button type="button" class="btn-save" style="font-size:13px;padding:6px 16px;margin-top:8px;" onclick="addPromiseItem()">+ 添加承诺</button>
                     </div>
                 </div>
             `;
             // Initialize process steps data and render list
             processStepsData = Array.isArray(data.process_steps) ? data.process_steps : [];
             renderProcessStepsList();
+            // Initialize promises data and render list
+            promiseItemsData = Array.isArray(data.promises) ? data.promises : [];
+            renderPromisesList();
         }
 
         function renderContactEditor(container, data) {
@@ -5171,7 +5214,7 @@ function renderAboutEditor(container, data) {
                         if (name.startsWith('social_') || name.startsWith('contact_') || name.startsWith('story_paragraph_')) return;
                         
                         // Handle JSON fields
-                        if (['brand_promises', 'story_paragraphs', 'highlights', 'process_steps', 'promises', 
+                        if (['brand_promises', 'story_paragraphs', 'highlights', 'process_steps',
                              'contact_items', 'steps', 'categories'].includes(name)) {
                             try {
                                 newData[name] = JSON.parse(input.value);
@@ -5195,6 +5238,8 @@ function renderAboutEditor(container, data) {
                             }
                         }
                         newData.story_paragraphs = paragraphs;
+                        // Save promises data
+                        newData.promises = promiseItemsData;
                     }
 
                     // Determine JSON file path based on section

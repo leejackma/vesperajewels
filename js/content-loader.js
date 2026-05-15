@@ -286,8 +286,8 @@ class ContentLoader {
 
         this.setText('[data-cms="about.promises_label"]', about.promises_label);
         this.setText('[data-cms="about.promises_title"]', about.promises_title);
-        
-        // Handle promises
+
+        // Render promises dynamically
         if (about.promises) {
             let promises = about.promises;
             if (typeof promises === 'string') {
@@ -297,10 +297,27 @@ class ContentLoader {
                     promises = [promises];
                 }
             }
-            if (Array.isArray(promises)) {
-                this.ensureArray(promises).forEach((p, i) => {
-                    this.setText(`[data-cms="about.promise.${i}"]`, typeof p === 'string' ? p : p.text);
-                });
+            if (Array.isArray(promises) && promises.length > 0) {
+                const container = document.getElementById('promisesContainer');
+                if (container) {
+                    container.innerHTML = promises.map((p, i) => {
+                        const text = typeof p === 'string' ? p : p.text;
+                        return `
+                            <div class="flex items-start gap-3 animate-on-scroll">
+                                <span class="text-gold text-xl">✓</span>
+                                <p class="text-textMedium">${text}</p>
+                            </div>
+                        `;
+                    }).join('');
+                    // Re-observe new elements for scroll animation
+                    setTimeout(() => {
+                        container.querySelectorAll('.animate-on-scroll').forEach(el => {
+                            if (window._scrollObserver) {
+                                window._scrollObserver.observe(el);
+                            }
+                        });
+                    }, 100);
+                }
             }
         }
     }
