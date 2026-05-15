@@ -1233,6 +1233,9 @@ function initCraftCarousel(images) {
         craftCarouselInterval = null;
     }
     
+    const isMobile = window.innerWidth < 768;
+    const slidesVisible = isMobile ? 2 : 3;
+    
     // Build slides: [original] + [clone] for seamless loop
     const allImages = [...images, ...images];
     let html = '';
@@ -1243,43 +1246,37 @@ function initCraftCarousel(images) {
     });
     track.innerHTML = html;
     
-    // Use pixel-based scrolling for precision
-    const isMobile = window.innerWidth < 768;
-    const slidesVisible = isMobile ? 2 : 3;
-    const gap = 16; // 8px padding each side = 16px gap
-    const containerWidth = container.offsetWidth;
-    const slideWidth = (containerWidth - gap * (slidesVisible - 1)) / slidesVisible;
-    const totalOriginalWidth = images.length * (slideWidth + gap);
-    
-    // Set slide widths explicitly
-    const slides = track.querySelectorAll('.craft-slide');
-    slides.forEach(s => {
-        s.style.width = slideWidth + 'px';
-        s.style.marginRight = gap + 'px';
-        s.style.flex = 'none';
-    });
-    
-    // Start at position 0 (showing original images)
-    let currentPos = 0;
-    track.style.transition = 'none';
-    track.style.transform = `translateX(0px)`;
-    
-    function scrollNext() {
-        currentPos += (slideWidth + gap);
-        track.style.transition = 'transform 0.6s ease';
-        track.style.transform = `translateX(-${currentPos}px)`;
+    // Wait for layout to settle, then calculate slide width
+    requestAnimationFrame(() => {
+        const slides = track.querySelectorAll('.craft-slide');
+        if (slides.length === 0) return;
         
-        // When we've scrolled past all original images, seamless reset
-        if (currentPos >= totalOriginalWidth) {
-            setTimeout(() => {
-                track.style.transition = 'none';
-                currentPos = 0;
-                track.style.transform = `translateX(0px)`;
-            }, 620);
+        const slideStyle = window.getComputedStyle(slides[0]);
+        const slideWidth = slides[0].offsetWidth + parseFloat(slideStyle.marginRight || 0);
+        const totalOriginalWidth = images.length * slideWidth;
+        
+        // Start at 0
+        let currentPos = 0;
+        track.style.transition = 'none';
+        track.style.transform = `translateX(0px)`;
+        
+        function scrollNext() {
+            currentPos += slideWidth;
+            track.style.transition = 'transform 0.6s ease';
+            track.style.transform = `translateX(-${currentPos}px)`;
+            
+            // When we've scrolled past all original images, seamless reset
+            if (currentPos >= totalOriginalWidth) {
+                setTimeout(() => {
+                    track.style.transition = 'none';
+                    currentPos = currentPos - totalOriginalWidth;
+                    track.style.transform = `translateX(-${currentPos}px)`;
+                }, 620);
+            }
         }
-    }
-    
-    craftCarouselInterval = setInterval(scrollNext, 3000);
+        
+        craftCarouselInterval = setInterval(scrollNext, 3000);
+    });
     
     // Handle resize
     if (craftResizeHandler) {
