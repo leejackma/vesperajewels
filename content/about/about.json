@@ -8,8 +8,8 @@
     "From engagement rings to luxury timepieces, each creation tells a story of passion, precision, and timeless beauty."
   ],
   "story_image": "/about/story_image_1778837298873.jpg",
-  "process_title": "How We Create Your Jewelry 99999",
-  "process_label": "THE PROCESS 99999",
+  "process_title": "How We Create Your Jewelry",
+  "process_label": "THE PROCESS",
   "process_steps": [
     {
       "order": 1,
@@ -68,25 +68,25 @@
     },
     {
       "order": 12,
-      "title": "Electroplate  999999",
+      "title": "Electroplate",
       "image": "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=400&h=300&fit=crop"
     },
     {
       "order": 13,
-      "title": "Quality Check 999999",
+      "title": "Quality Check",
       "image": "/assets/uploads/process/step_1778848682844.jpg"
     }
   ],
-  "promises_title": "The Vespera Jewels Promise 99999",
-  "promises_label": "OUR COMMITMENT 99999",
+  "promises_title": "The Vespera Jewels Promise",
+  "promises_label": "OUR COMMITMENT",
   "promises": [
-    "Wide selection of quality products 9999999",
-    "Always competitive prices99999",
-    "Knowledgeable product support99999",
+    "Wide selection of quality products",
+    "Always competitive prices",
+    "Knowledgeable product support",
     "Fast shipping with professional packaging",
-    "Friendly customer service888888",
-    "Respect for your privacy8888",
-    "30-day return/exchange policy8888"
+    "Friendly customer service",
+    "Respect for your privacy",
+    "30-day return/exchange policy"
   ],
   "file-img-story_image-1778848649939": "",
   "file-img-story_image-1778851606403": "",
