@@ -4,22 +4,22 @@
   "hero_subtitle": "Highest Quality/ Lowest Prices/ Safe Transaction",
   "hero_description": "",
   "hero_cta": "Explore Collection",
-  "hero_image": "/home/hero_image_1778831753047.jpg",
+  "hero_image": "/home/hero_image_1778836217176.jpg",
   "featured_title": "Featured Products",
   "featured_subtitle": "Explore our curated collection",
   "brand_promises": [
     {
-      "icon": "ð",
+      "icon": "Ã°ÂÂÂ",
       "title": "Diamond Jewelry",
       "description": "Exquisite diamond pieces certified for quality and brilliance. Each diamond is carefully selected for its exceptional cut, clarity, and carat."
     },
     {
-      "icon": "ð¥",
+      "icon": "Ã°ÂÂ¥Â",
       "title": "Solid 18K Gold",
       "description": "Real 18K solid gold, never plated. Our pieces are crafted to last generations, maintaining their beauty and value over time."
     },
     {
-      "icon": "ð",
+      "icon": "Ã°ÂÂÂ",
       "title": "Mirror Quality",
       "description": "Every piece undergoes rigorous quality inspection. We guarantee mirror-finish surfaces and impeccable detailing on all our jewelry."
     }
@@ -35,5 +35,9 @@
   "file-img-hero_image-1778831749234": "",
   "file-img-craft_image_1-1778831749234": "",
   "file-img-craft_image_2-1778831749234": "",
-  "file-img-craft_image_3-1778831749234": ""
+  "file-img-craft_image_3-1778831749234": "",
+  "file-img-hero_image-1778836211827": "",
+  "file-img-craft_image_1-1778836211827": "",
+  "file-img-craft_image_2-1778836211827": "",
+  "file-img-craft_image_3-1778836211827": ""
 }
