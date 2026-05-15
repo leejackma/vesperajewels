@@ -1240,8 +1240,12 @@ function initCraftCarousel(images) {
     const allImages = [...images, ...images];
     let html = '';
     allImages.forEach((imgSrc, i) => {
-        const src = imgSrc.startsWith('http') ? imgSrc : 
-                    imgSrc.startsWith('/') ? convertImagePath(imgSrc) : imgSrc;
+        let src = imgSrc;
+        if (imgSrc.startsWith('http://') || imgSrc.startsWith('https://')) {
+            src = imgSrc;
+        } else if (imgSrc.startsWith('/')) {
+            src = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main' + imgSrc;
+        }
         html += `<div class="craft-slide"><img src="${src}" alt="Craft ${i+1}" loading="lazy"></div>`;
     });
     track.innerHTML = html;
