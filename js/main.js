@@ -285,17 +285,65 @@ document.addEventListener('DOMContentLoaded', function() {
         const result = {};
         const lines = text.split('\n');
         let inFrontmatter = false;
+        let inArray = false;
+        let arrayKey = null;
+        let arrayItems = [];
 
         for (const line of lines) {
             if (line.trim() === '---') {
                 if (inFrontmatter) {
+                    // Close any open array before breaking
+                    if (inArray && arrayKey) {
+                        result[arrayKey] = arrayItems;
+                    }
                     break;
                 }
                 inFrontmatter = true;
                 continue;
             }
 
-            if (inFrontmatter && line.includes(':')) {
+            if (!inFrontmatter) continue;
+
+            // Array item with value: "  - value" or "  - \"quoted\""
+            const arrayItemMatch = line.match(/^\s+-\s+(.+)$/);
+            if (arrayItemMatch && inArray) {
+                let val = arrayItemMatch[1].trim();
+                if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                    val = val.slice(1, -1);
+                }
+                arrayItems.push(val);
+                continue;
+            }
+
+            // Empty array item (dash only): "  -"
+            if (line.match(/^\s+-\s*$/) && inArray) {
+                arrayItems.push({});
+                continue;
+            }
+
+            // Key with no value (potential array start): "images:"
+            const arrayStartMatch = line.match(/^(\w+):\s*$/);
+            if (arrayStartMatch) {
+                // Close previous array if any
+                if (inArray && arrayKey) {
+                    result[arrayKey] = arrayItems;
+                }
+                arrayKey = arrayStartMatch[1];
+                inArray = true;
+                arrayItems = [];
+                result[arrayKey] = [];
+                continue;
+            }
+
+            // Key-value pair: "title: value"
+            if (line.includes(':')) {
+                // Close previous array if any
+                if (inArray && arrayKey) {
+                    result[arrayKey] = arrayItems;
+                    inArray = false;
+                    arrayKey = null;
+                    arrayItems = [];
+                }
                 const colonIndex = line.indexOf(':');
                 const key = line.substring(0, colonIndex).trim();
                 let value = line.substring(colonIndex + 1).trim();
