@@ -892,3 +892,38 @@ footer li {
 .partner-image-carousel .carousel-track img {
     scroll-snap-align: start;
 }
+
+/* Hero background image - responsive adaptation */
+#heroBgImg {
+    object-fit: cover;
+    object-position: center center;
+    width: 100%;
+    height: 100%;
+}
+
+/* Desktop: focus on center of image */
+@media (min-width: 1024px) {
+    #heroBgImg {
+        object-position: center center;
+    }
+}
+
+/* Tablet: slightly adjust position */
+@media (min-width: 768px) and (max-width: 1023px) {
+    #heroBgImg {
+        object-position: center 30%;
+    }
+}
+
+/* Mobile: focus on center-top to show main subject */
+@media (max-width: 767px) {
+    #heroBgImg {
+        object-position: center 25%;
+    }
+    
+    /* Ensure hero section has minimum height on mobile */
+    #home .relative.h-screen {
+        min-height: 100svh;
+        min-height: 100vh;
+    }
+}
