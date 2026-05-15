@@ -245,21 +245,25 @@ class ContentLoader {
         this.setText('[data-cms="about.process_label"]', about.process_label);
         this.setText('[data-cms="about.process_title"]', about.process_title);
         
-        // Handle process_steps
-        if (about.process_steps) {
-            let processSteps = about.process_steps;
-            if (typeof processSteps === 'string') {
-                try {
-                    processSteps = JSON.parse(processSteps);
-                } catch (e) {
-                    processSteps = [];
-                }
-            }
-            if (Array.isArray(processSteps)) {
-                this.ensureArray(processSteps).forEach((s, i) => {
-                    this.setText(`[data-cms="about.process.${i}.number"]`, s.number);
-                    this.setText(`[data-cms="about.process.${i}.title"]`, s.title);
-                });
+        // Render process steps from about.json process_steps array
+        if (about.process_steps && Array.isArray(about.process_steps) && about.process_steps.length > 0) {
+            const container = document.getElementById('processStepsContainer');
+            if (container) {
+                const GITHUB_RAW = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main';
+                container.innerHTML = about.process_steps.map((step, i) => {
+                    let imgSrc = step.image || '';
+                    if (imgSrc.startsWith('/')) {
+                        imgSrc = GITHUB_RAW + imgSrc;
+                    }
+                    return `
+                        <div class="process-card animate-on-scroll">
+                            <div class="process-card-image">
+                                <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="${imgSrc}" alt="${i + 1} ${step.title || ''}" loading="lazy">
+                            </div>
+                            <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">${i + 1} ${step.title || ''}</p>
+                        </div>
+                    `;
+                }).join('');
             }
         }
 

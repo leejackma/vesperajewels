@@ -4006,6 +4006,115 @@
             renderCraftImagesList();
         }
 
+// ===== Process Steps Editor =====
+let processStepsData = [];
+
+function renderProcessStepsList() {
+    const container = document.getElementById('processStepsList');
+    if (!container) return;
+    
+    if (processStepsData.length === 0) {
+        container.innerHTML = '<p style="color:#8A8A8A;font-size:13px;padding:8px 0;">暂无步骤，点击下方按钮添加</p>';
+        return;
+    }
+    
+    container.innerHTML = processStepsData.map((step, i) => `
+        <div style="display:flex;align-items:center;gap:12px;margin-bottom:10px;padding:10px;border:1px solid #E8E4DE;border-radius:8px;background:#fff;">
+            <span style="width:28px;height:28px;border-radius:50%;background:#C5A467;color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;">${i + 1}</span>
+            <img src="${step.image ? (step.image.startsWith('/') ? 'https://raw.githubusercontent.com/leejackma/vesperajewels/main' + step.image : step.image) : ''}" 
+                 style="width:50px;height:50px;object-fit:cover;border-radius:4px;background:#F5F0EB;flex-shrink:0;">
+            <span style="flex:1;font-size:14px;color:#333;font-weight:500;">${step.title || '未命名步骤'}</span>
+            <button type="button" class="btn-save" style="font-size:12px;padding:4px 12px;" onclick="editProcessStep(${i})">编辑</button>
+            <button type="button" style="font-size:12px;padding:4px 8px;background:#E8E4DE;border:none;border-radius:4px;cursor:pointer;" onclick="moveProcessStep(${i}, -1)" ${i === 0 ? 'disabled' : ''}>↑</button>
+            <button type="button" style="font-size:12px;padding:4px 8px;background:#E8E4DE;border:none;border-radius:4px;cursor:pointer;" onclick="moveProcessStep(${i}, 1)" ${i === processStepsData.length - 1 ? 'disabled' : ''}>↓</button>
+            <button type="button" class="btn-small btn-remove" onclick="removeProcessStep(${i})">删除</button>
+        </div>
+    `).join('');
+}
+
+function addProcessStep() {
+    processStepsData.push({
+        order: processStepsData.length + 1,
+        title: '',
+        image: ''
+    });
+    renderProcessStepsList();
+    editProcessStep(processStepsData.length - 1);
+}
+
+function editProcessStep(index) {
+    const step = processStepsData[index];
+    
+    // Remove existing modal if any
+    const oldModal = document.getElementById('processStepModal');
+    if (oldModal) oldModal.remove();
+    
+    const modal = document.createElement('div');
+    modal.id = 'processStepModal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.5);display:flex;align-items:center;justify-content:center;z-index:10000;';
+    modal.innerHTML = `
+        <div style="background:#fff;border-radius:12px;padding:24px;width:90%;max-width:500px;max-height:80vh;overflow-y:auto;">
+            <h3 style="font-size:18px;margin-bottom:16px;color:#1a1a1a;">编辑步骤 ${index + 1}</h3>
+            
+            <div class="form-group">
+                <label>步骤名称</label>
+                <input type="text" id="stepTitle" value="${step.title || ''}" style="width:100%;padding:8px 12px;border:1px solid #E8E4DE;border-radius:6px;">
+            </div>
+            
+            <div class="form-group">
+                <label>步骤图片</label>
+                ${step.image ? `<img src="${step.image.startsWith('/') ? 'https://raw.githubusercontent.com/leejackma/vesperajewels/main' + step.image : step.image}" style="width:100%;max-height:200px;object-fit:cover;border-radius:6px;margin-bottom:8px;">` : ''}
+                <input type="file" id="stepImageInput" accept="image/*" style="width:100%;">
+            </div>
+            
+            <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+                <button type="button" class="btn-small" onclick="document.getElementById('processStepModal').remove()">取消</button>
+                <button type="button" class="btn-save" onclick="saveProcessStep(${index})">保存</button>
+            </div>
+        </div>
+    `;
+    document.body.appendChild(modal);
+    modal.addEventListener('click', (e) => { if (e.target === modal) modal.remove(); });
+}
+
+async function saveProcessStep(index) {
+    const title = document.getElementById('stepTitle').value.trim();
+    const fileInput = document.getElementById('stepImageInput');
+    
+    processStepsData[index].title = title;
+    processStepsData[index].order = index + 1;
+    
+    // Handle image upload
+    if (fileInput && fileInput.files && fileInput.files[0]) {
+        try {
+            const result = await uploadImageToGitHub(fileInput.files[0], 'assets/uploads/process', 'step', 'about');
+            if (result && result.path) {
+                processStepsData[index].image = '/assets/uploads/process/' + result.path.split('/').pop();
+            }
+        } catch(err) {
+            showToast('图片上传失败: ' + err.message, 'error');
+        }
+    }
+    
+    document.getElementById('processStepModal').remove();
+    renderProcessStepsList();
+}
+
+function removeProcessStep(index) {
+    processStepsData.splice(index, 1);
+    // Re-number
+    processStepsData.forEach((s, i) => s.order = i + 1);
+    renderProcessStepsList();
+}
+
+function moveProcessStep(index, direction) {
+    const newIndex = index + direction;
+    if (newIndex < 0 || newIndex >= processStepsData.length) return;
+    [processStepsData[index], processStepsData[newIndex]] = [processStepsData[newIndex], processStepsData[index]];
+    processStepsData.forEach((s, i) => s.order = i + 1);
+    renderProcessStepsList();
+}
+
 // ===== Order Steps Editor (visual editor) =====
 function renderAboutEditor(container, data) {
             container.innerHTML = `
@@ -4023,8 +4132,9 @@ function renderAboutEditor(container, data) {
                     ${createFormField('流程标签', 'process_label', data.process_label || '')}
                     ${createFormField('流程标题', 'process_title', data.process_title || '')}
                     <div class="form-group full-width">
-                        <label>流程步骤（JSON 数组）</label>
-                        <textarea id="process_steps" rows="8" style="font-family:monospace;font-size:13px;">${data.process_steps ? JSON.stringify(data.process_steps, null, 2) : '[]'}</textarea>
+                        <label>流程步骤</label>
+                        <div id="processStepsList" style="margin-bottom:12px;"></div>
+                        <button type="button" class="btn-save" style="font-size:13px;padding:6px 16px;" onclick="addProcessStep()">+ 添加步骤</button>
                     </div>
 
                     <div class="section-divider"><h3 class="section-title">承诺</h3></div>
@@ -4036,6 +4146,9 @@ function renderAboutEditor(container, data) {
                     </div>
                 </div>
             `;
+            // Initialize process steps data and render list
+            processStepsData = Array.isArray(data.process_steps) ? data.process_steps : [];
+            renderProcessStepsList();
         }
 
         function renderContactEditor(container, data) {
@@ -5060,6 +5173,11 @@ function renderAboutEditor(container, data) {
                             newData[name] = input.value;
                         }
                     });
+                    
+                    // For about section, use processStepsData directly for process_steps
+                    if (currentSection === 'about') {
+                        newData.process_steps = processStepsData;
+                    }
 
                     // Determine JSON file path based on section
                     let jsonPath = file.path;

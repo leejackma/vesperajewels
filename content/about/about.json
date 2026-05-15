@@ -16,7 +16,71 @@
   "process_title": "How We Create Your Jewelry",
   "process_label": "THE PROCESS",
   "process_steps": [
-    "number: \"1"
+    {
+      "order": 1,
+      "title": "Design",
+      "image": "https://s.coze.cn/image/CpKwiIkmZeg/"
+    },
+    {
+      "order": 2,
+      "title": "Select Materials",
+      "image": "https://s.coze.cn/image/dSJg0VBfymo/"
+    },
+    {
+      "order": 3,
+      "title": "Carve Wax",
+      "image": "https://s.coze.cn/image/RgfsONBe-OE/"
+    },
+    {
+      "order": 4,
+      "title": "Make Mold",
+      "image": "https://s.coze.cn/image/IJgHawiH84w/"
+    },
+    {
+      "order": 5,
+      "title": "Pour Gold",
+      "image": "https://s.coze.cn/image/S11fvRilCsI/"
+    },
+    {
+      "order": 6,
+      "title": "Polish",
+      "image": "https://s.coze.cn/image/ZEUAQ3QwTZE/"
+    },
+    {
+      "order": 7,
+      "title": "Set Stone",
+      "image": "https://s.coze.cn/image/LhqzFmGyuHc/"
+    },
+    {
+      "order": 8,
+      "title": "Solder",
+      "image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=400&h=300&fit=crop"
+    },
+    {
+      "order": 9,
+      "title": "Forming",
+      "image": "https://images.unsplash.com/photo-1515562141589-67f0d9200154?w=400&h=300&fit=crop"
+    },
+    {
+      "order": 10,
+      "title": "Filing",
+      "image": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=300&fit=crop"
+    },
+    {
+      "order": 11,
+      "title": "Cleaning",
+      "image": "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=400&h=300&fit=crop"
+    },
+    {
+      "order": 12,
+      "title": "Electroplate",
+      "image": "https://images.unsplash.com/photo-1602751584552-8ba73aad10e1?w=400&h=300&fit=crop"
+    },
+    {
+      "order": 13,
+      "title": "Quality Check",
+      "image": "https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=400&h=300&fit=crop"
+    }
   ],
   "promises_title": "The Vespera Jewels Promise",
   "promises_label": "OUR COMMITMENT",
