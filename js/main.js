@@ -1220,10 +1220,12 @@ document.addEventListener('keydown', function(e) {
 // Craft Images Carousel
 // ============================================
 let craftCarouselInterval = null;
+let craftResizeHandler = null;
 
 function initCraftCarousel(images) {
     const track = document.getElementById('craftCarouselTrack');
-    if (!track || !images || images.length === 0) return;
+    const container = document.getElementById('craftCarousel');
+    if (!track || !container || !images || images.length === 0) return;
     
     // Clear existing interval
     if (craftCarouselInterval) {
@@ -1231,12 +1233,8 @@ function initCraftCarousel(images) {
         craftCarouselInterval = null;
     }
     
-    // Determine slides visible at once
-    const isMobile = window.innerWidth < 768;
-    const slidesVisible = isMobile ? 2 : 3;
-    
-    // Build slides HTML - duplicate images for seamless loop
-    const allImages = [...images, ...images, ...images]; // triple for seamless loop
+    // Build slides: [original] + [clone] for seamless loop
+    const allImages = [...images, ...images];
     let html = '';
     allImages.forEach((imgSrc, i) => {
         const src = imgSrc.startsWith('http') ? imgSrc : 
@@ -1245,43 +1243,54 @@ function initCraftCarousel(images) {
     });
     track.innerHTML = html;
     
-    let currentOffset = 0;
-    const slideWidth = 100 / slidesVisible; // percentage
-    const totalOriginalSlides = images.length;
-    const maxOffset = totalOriginalSlides * slideWidth;
+    // Use pixel-based scrolling for precision
+    const isMobile = window.innerWidth < 768;
+    const slidesVisible = isMobile ? 2 : 3;
+    const gap = 16; // 8px padding each side = 16px gap
+    const containerWidth = container.offsetWidth;
+    const slideWidth = (containerWidth - gap * (slidesVisible - 1)) / slidesVisible;
+    const totalOriginalWidth = images.length * (slideWidth + gap);
     
-    // Start from the first copy set (after prepending copies)
-    currentOffset = maxOffset; // start at second copy
-    track.style.transform = `translateX(-${currentOffset}%)`;
+    // Set slide widths explicitly
+    const slides = track.querySelectorAll('.craft-slide');
+    slides.forEach(s => {
+        s.style.width = slideWidth + 'px';
+        s.style.marginRight = gap + 'px';
+        s.style.flex = 'none';
+    });
+    
+    // Start at position 0 (showing original images)
+    let currentPos = 0;
+    track.style.transition = 'none';
+    track.style.transform = `translateX(0px)`;
     
     function scrollNext() {
-        currentOffset += slideWidth;
+        currentPos += (slideWidth + gap);
         track.style.transition = 'transform 0.6s ease';
-        track.style.transform = `translateX(-${currentOffset}%)`;
+        track.style.transform = `translateX(-${currentPos}px)`;
         
-        // When we reach the end of second copy, jump to start of second copy (seamless)
-        if (currentOffset >= maxOffset * 2) {
+        // When we've scrolled past all original images, seamless reset
+        if (currentPos >= totalOriginalWidth) {
             setTimeout(() => {
                 track.style.transition = 'none';
-                currentOffset = maxOffset;
-                track.style.transform = `translateX(-${currentOffset}%)`;
-            }, 650);
+                currentPos = 0;
+                track.style.transform = `translateX(0px)`;
+            }, 620);
         }
     }
     
     craftCarouselInterval = setInterval(scrollNext, 3000);
     
     // Handle resize
-    const resizeHandler = () => {
+    if (craftResizeHandler) {
+        window.removeEventListener('resize', craftResizeHandler);
+    }
+    craftResizeHandler = () => {
         const newMobile = window.innerWidth < 768;
         const newVisible = newMobile ? 2 : 3;
-        // Rebuild if visibility changed
         if (newVisible !== slidesVisible) {
             initCraftCarousel(images);
         }
     };
-    
-    // Remove old listener and add new one
-    window.removeEventListener('resize', resizeHandler);
-    window.addEventListener('resize', resizeHandler);
+    window.addEventListener('resize', craftResizeHandler);
 }
