@@ -1,15 +1,12 @@
 {
-  "name": "Serpenti Diamond rings",
-  "price": "$4,600",
-  "category": "rings",
-  "description": "18 kt yellow gold ring set with narutal emerald eyes,emeralds and full pavé diamonds.Size 51, weight 22 grams, diamond 1.5 carats.（Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.）",
+  "name": "Diamond Drop Earrings",
+  "subtitle": "Stunning diamond drop earrings in 18K gold setting",
+  "price": "$99999",
+  "category": "earrings",
+  "description": "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.",
   "images": [
-    "/assets/uploads/jewelry/product_1778816654487_1778816654501.jpg",
-    "/assets/uploads/jewelry/product_1778816664025_1778816664035.jpg",
-    "/assets/uploads/jewelry/product_1778816669163_1778816669177.jpg",
-    "/assets/uploads/jewelry/product_1778816678757_1778816678770.jpg",
-    "/assets/uploads/jewelry/product_1778816684695_1778816684707.jpg",
-    "/assets/uploads/jewelry/product_1778816700384_1778816700398.jpg"
+    "/assets/uploads/jewelry/product_1778779576506_1778779576509.jpg",
+    "/assets/uploads/jewelry/product_1778779584920_1778779584922.jpg"
   ],
   "order": 1,
   "published": true

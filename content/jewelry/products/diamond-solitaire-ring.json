@@ -1,15 +1,11 @@
 {
-  "name": "Fiorever Diamond Rings",
-  "price": "$2,100",
+  "name": "Diamond Solitaire Ring",
+  "subtitle": "Exquisite solitaire diamond set in 18K white gold",
+  "price": "$8888",
   "category": "rings",
-  "description": "Fiorever 18 kt rose gold ring set with a brilliant-cut diamond, a fancy-cut and a pear-shaped rubellite and pavé diamonds.Size 55, weight 10 grams, diamond 0.65 carats.（Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.）",
+  "description": "Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.",
   "images": [
-    "/assets/uploads/jewelry/product_1778816965126_1778816965139.jpg",
-    "/assets/uploads/jewelry/product_1778816927544_1778816927555.jpg",
-    "/assets/uploads/jewelry/product_1778816932764_1778816932776.jpg",
-    "/assets/uploads/jewelry/product_1778816935625_1778816935636.jpg",
-    "/assets/uploads/jewelry/product_1778816945086_1778816945098.jpg",
-    "/assets/uploads/jewelry/product_1778816953966_1778816953976.jpg"
+    "/assets/uploads/jewelry/product_1778780053920_1778780053922.jpg"
   ],
   "order": 1,
   "published": true

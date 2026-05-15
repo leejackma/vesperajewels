@@ -222,6 +222,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             .map((item, index) => ({
                                 name: item.name || '',
                                 price: item.price || '',
+                                subtitle: item.subtitle || item.description?.substring(0, 50) || '',
                                 desc: item.description || '',
                                 category: item.category ? item.category.toLowerCase() : '',
                                 categoryDisplay: item.category ? item.category.toUpperCase() : '',
@@ -250,6 +251,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             .map((item) => ({
                                 name: item.name || '',
                                 price: item.price || '',
+                                subtitle: item.subtitle || item.description?.substring(0, 50) || '',
                                 desc: item.description || '',
                                 category: item.category || '',
                                 image: convertImagePath(item.image || (item.images?.[0] || '')),
@@ -318,7 +320,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div class="p-4">
                                 <h3 class="font-playfair text-lg text-[#1a1a1a]">${escapeHtml(product.name)}</h3>
-                                <p class="text-sm text-gray-500 mt-1">${escapeHtml(product.desc)}</p>
+                                ${product.subtitle ? `<p class="text-sm text-gray-500 mt-1">${escapeHtml(product.subtitle)}</p>` : ''}
                                 <p class="text-[#C5A467] font-semibold mt-2">${escapeHtml(product.price)}</p>
                             </div>
                         </div>
@@ -358,7 +360,7 @@ document.addEventListener('DOMContentLoaded', function() {
                             </div>
                             <div class="p-4">
                                 <h3 class="font-playfair text-lg text-[#1a1a1a]">${escapeHtml(product.name)}</h3>
-                                <p class="text-sm text-gray-500 mt-1">${escapeHtml(product.desc)}</p>
+                                ${product.subtitle ? `<p class="text-sm text-gray-500 mt-1">${escapeHtml(product.subtitle)}</p>` : ''}
                                 <p class="text-[#C5A467] font-semibold mt-2">${escapeHtml(product.price)}</p>
                             </div>
                         </div>
@@ -556,6 +558,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const modal = document.getElementById('productModal');
         const modalImage = document.getElementById('modalImage');
         const modalTitle = document.getElementById('modalTitle');
+        const modalSubtitle = document.getElementById('modalSubtitle');
         const modalPrice = document.getElementById('modalPrice');
         const modalDescription = document.getElementById('modalDescription');
         const modalCategory = document.getElementById('modalCategory');
@@ -567,6 +570,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const product = products[id];
             modalImage.src = product.image || '';
             modalTitle.textContent = product.name || 'Product';
+            modalSubtitle.textContent = product.subtitle || '';
             modalPrice.textContent = product.price || '';
             modalDescription.textContent = product.desc || '';
             modalCategory.textContent = product.categoryDisplay || product.category || '';
@@ -576,6 +580,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Show "no product" message
             modalImage.src = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=800&q=80';
             modalTitle.textContent = '暂无产品信息';
+            modalSubtitle.textContent = '';
             modalPrice.textContent = '';
             modalDescription.textContent = '';
             modalCategory.textContent = '';

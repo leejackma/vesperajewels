@@ -3583,12 +3583,25 @@
                 }
             } else {
                 // Jewelry/Watch product
-                html += createFormField('名称', 'name', data.name || '');
-                html += createFormField('分类', 'category', data.category || '', 'select', ['rings','necklaces','earrings','bracelets','watches']);
-                html += createFormField('价格', 'price', data.price || '');
+                // 图片区域
+                html += '<div class="section-divider"><h3 class="section-title">产品图片</h3></div>';
                 html += createImageUploadComponent('image', data.image || '', path.includes('/jewelry/') ? 'jewelry-products' : 'watch-products', 'image');
+                
+                // 基本信息
+                html += '<div class="section-divider"><h3 class="section-title">基本信息</h3></div>';
+                html += createFormField('主标题', 'name', data.name || '');
+                html += createFormField('副标题', 'subtitle', data.subtitle || '');
+                html += createFormField('价格', 'price', data.price || '');
+                html += createFormField('分类', 'category', data.category || '', 'select', ['rings','necklaces','earrings','bracelets','watches']);
+                
+                // 详细信息
+                html += '<div class="section-divider"><h3 class="section-title">详细信息（仅在产品详情页显示）</h3></div>';
+                html += createFormField('产品详情', 'description', data.description || '', 'textarea');
+                
+                // 其他设置
+                html += '<div class="section-divider"><h3 class="section-title">其他设置</h3></div>';
                 html += createFormField('标签', 'badge', data.badge || '');
-                html += createFormField('描述', 'description', data.description || '', 'textarea');
+                html += createFormField('排序', 'order', data.order || 1, 'number');
                 html += `
                     <div class="form-group">
                         <label>推荐</label>
@@ -3691,11 +3704,13 @@
                 frontmatter = {
                     title: formData.get('name'),
                     name: formData.get('name'),
+                    subtitle: formData.get('subtitle') || '',
                     category: formData.get('category'),
                     price: formData.get('price'),
                     description: formData.get('description'),
                     image: formData.get('image'),
                     badge: formData.get('badge'),
+                    order: parseInt(formData.get('order')) || 1,
                     featured: formData.get('featured') === 'true',
                     published: formData.get('published') === 'true'
                 };

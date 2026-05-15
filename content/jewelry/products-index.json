@@ -1,6 +1,7 @@
 [
   {
     "name": "Diamond Drop Earrings",
+    "subtitle": "Stunning diamond drop earrings in 18K gold setting",
     "price": "$99999",
     "category": "earrings",
     "description": "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.",
@@ -14,20 +15,8 @@
     "_path": "content/jewelry/products/diamond-drop-earrings.json"
   },
   {
-    "name": "Diamond Pendant",
-    "price": "$8888",
-    "category": "necklaces",
-    "description": "Elegant diamond pendant on 18K gold chain. Features a sparkling center stone with pavÃÂÃÂ© details.",
-    "images": [
-      "/assets/uploads/jewelry/product_1778780094778_1778780094780.jpg"
-    ],
-    "order": 1,
-    "published": true,
-    "_slug": "diamond-pendant",
-    "_path": "content/jewelry/products/diamond-pendant.json"
-  },
-  {
     "name": "Diamond Solitaire Ring",
+    "subtitle": "Exquisite solitaire diamond set in 18K white gold",
     "price": "$8888",
     "category": "rings",
     "description": "Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.",
@@ -41,6 +30,7 @@
   },
   {
     "name": "Gold Band Ring",
+    "subtitle": "Classic solid 18K gold band with polished finish",
     "price": "$1,200",
     "category": "rings",
     "description": "Classic solid 18K gold band. Comfortable fit with polished finish suitable for everyday wear.",
@@ -54,6 +44,7 @@
   },
   {
     "name": "Gold Chain Bracelet",
+    "subtitle": "Elegant solid gold chain bracelet with lobster clasp",
     "category": "bracelets",
     "price": "$1,450",
     "description": "Elegant solid gold chain bracelet with lobster clasp. Perfect for stacking or wearing alone.",
@@ -66,6 +57,7 @@
   },
   {
     "name": "Gold Hoop Earrings",
+    "subtitle": "Classic gold hoop earrings in solid 18K gold",
     "category": "earrings",
     "price": "$890",
     "description": "Classic gold hoop earrings in solid 18K gold. Lightweight and comfortable for all-day wear.",
@@ -78,6 +70,7 @@
   },
   {
     "name": "Pearl Strand Necklace",
+    "subtitle": "Lustrous freshwater pearls strung on silk thread",
     "price": "$3,888",
     "category": "necklaces",
     "description": "Lustrous freshwater pearls strung on silk thread. Each pearl is carefully selected for its uniform size and radiant sheen.",
@@ -91,6 +84,7 @@
   },
   {
     "name": "Diamond Tennis Bracelet",
+    "subtitle": "Luxurious tennis bracelet with brilliant diamonds",
     "price": "$5,8009999999",
     "category": "bracelets",
     "description": "Luxurious tennis bracelet featuring brilliant diamonds set in platinum. A statement piece for any occasion.",
