@@ -17,16 +17,12 @@
       "id": "18k-gold-watch-bracelet"
     },
     {
-      "id": "diamond-watches",
-      "name": "diamond Watches"
-    },
-    {
-      "id": "18kgoldwatch",
-      "name": "18Kgoldwatch"
+      "id": "diamond-watch",
+      "name": "Diamond Watch"
     },
     {
       "id": "diamond-bezel",
-      "name": "diamond bezel"
+      "name": "Diamond Bezel"
     }
   ]
 }
