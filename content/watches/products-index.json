@@ -15,6 +15,27 @@
     "_path": "content/watches/products/18kwatch.json"
   },
   {
+    "name": "AP 18K rose gold bracelet",
+    "subtitle": "Made of solid 18K gold",
+    "price": "$14,700",
+    "category": "18k-gold-watch-bracelet",
+    "description": "18Kwatch18Kwatch18Kwatch18Kwatch18Kwatch18Kwatch18Kwatch18Kwatch",
+    "images": [
+      "/assets/uploads/watches/product_1778821127952_1778821127959.jpg",
+      "/assets/uploads/watches/product_1778821134891_1778821134896.jpg",
+      "/assets/uploads/watches/product_1778821143621_1778821143627.jpg",
+      "/assets/uploads/watches/product_1778821147925_1778821147929.jpg",
+      "/assets/uploads/watches/product_1778821150934_1778821150941.jpg",
+      "/assets/uploads/watches/product_1778821158071_1778821158076.jpg",
+      "/assets/uploads/watches/product_1778821160801_1778821160807.jpg",
+      "/assets/uploads/watches/product_1778821164765_1778821164772.jpg"
+    ],
+    "order": 2,
+    "published": true,
+    "_slug": "ap-18k-rose-gold-bracelet",
+    "_path": "content/watches/products/ap-18k-rose-gold-bracelet.json"
+  },
+  {
     "name": "Diamond watch",
     "subtitle": "Diamond-encrusted luxury timepiece",
     "price": "$99999",
