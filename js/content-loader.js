@@ -71,7 +71,7 @@ class ContentLoader {
 
     async loadSection(section) {
         const paths = {
-            home: 'content/home/home.json',
+            home: 'GITHUB_RAW:content/home/home.json',
             about: 'content/about/about.json',
             jewelry: 'content/jewelry/jewelry.json',
             watches: 'content/watches/watches.json',
@@ -80,7 +80,14 @@ class ContentLoader {
         };
         
         try {
-            const response = await fetch(cb(paths[section]));
+            const path = paths[section];
+            let url;
+            if (path.startsWith('GITHUB_RAW:')) {
+                url = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main/' + path.replace('GITHUB_RAW:', '');
+            } else {
+                url = cb(path);
+            }
+            const response = await fetch(url);
             if (response.ok) {
                 this.contentCache[section] = await response.json();
             }
