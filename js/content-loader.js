@@ -219,6 +219,7 @@ class ContentLoader {
 
     renderAbout() {
         const about = this.contentCache.about;
+        console.log('[DEBUG-CL] renderAbout called, about:', about ? 'loaded' : 'NULL');
         if (!about) return;
 
         this.setText('[data-cms="about.section_label"]', about.section_label);
@@ -251,24 +252,33 @@ class ContentLoader {
         this.setText('[data-cms="about.process_title"]', about.process_title);
         
         // Render process steps from about.json process_steps array
+        console.log('[DEBUG-CL] process_steps:', about.process_steps ? about.process_steps.length : 'MISSING');
+        const container = document.getElementById('processStepsContainer');
+        console.log('[DEBUG-CL] processStepsContainer:', container ? 'found' : 'NOT FOUND');
         if (about.process_steps && Array.isArray(about.process_steps) && about.process_steps.length > 0) {
-            const container = document.getElementById('processStepsContainer');
             if (container) {
                 const GITHUB_RAW = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main';
-                container.innerHTML = about.process_steps.map((step, i) => {
-                    let imgSrc = step.image || '';
-                    if (imgSrc.startsWith('/')) {
-                        imgSrc = GITHUB_RAW + imgSrc;
-                    }
-                    return `
-                        <div class="process-card animate-on-scroll">
-                            <div class="process-card-image">
-                                <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="${imgSrc}" alt="${i + 1} ${step.title || ''}" loading="lazy">
+                try {
+                    const html = about.process_steps.map((step, i) => {
+                        let imgSrc = step.image || '';
+                        if (imgSrc.startsWith('/')) {
+                            imgSrc = GITHUB_RAW + imgSrc;
+                        }
+                        return `
+                            <div class="process-card animate-on-scroll">
+                                <div class="process-card-image">
+                                    <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="${imgSrc}" alt="${i + 1} ${step.title || ''}" loading="lazy">
+                                </div>
+                                <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">${i + 1} ${step.title || ''}</p>
                             </div>
-                            <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">${i + 1} ${step.title || ''}</p>
-                        </div>
-                    `;
-                }).join('');
+                        `;
+                    }).join('');
+                    console.log('[DEBUG-CL] Setting processSteps innerHTML, length:', html.length);
+                    container.innerHTML = html;
+                    console.log('[DEBUG-CL] processSteps children:', container.children.length);
+                } catch(e) {
+                    console.error('[DEBUG-CL] Error rendering process steps:', e);
+                }
             }
         }
 
