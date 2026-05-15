@@ -3813,6 +3813,11 @@
                 }
 
                 showToast('删除成功！');
+                // Rebuild products index if deleting a product
+                if (path.includes('/products/')) {
+                    const productType = path.includes('/watches/') ? 'watch' : 'jewelry';
+                    await rebuildProductsIndex(productType);
+                }
                 await loadSection(currentSection);
             } catch (error) {
                 showToast('删除失败: ' + error.message, 'error');

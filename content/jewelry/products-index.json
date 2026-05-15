@@ -1,90 +1,26 @@
 [
   {
-    "name": "Diamond Drop Earrings",
-    "subtitle": "Stunning diamond drop earrings in 18K gold setting",
-    "price": "$99999",
-    "category": "earrings",
-    "description": "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.",
-    "images": [
-      "/assets/uploads/jewelry/product_1778779576506_1778779576509.jpg",
-      "/assets/uploads/jewelry/product_1778779584920_1778779584922.jpg"
-    ],
-    "order": 1,
-    "published": true,
-    "_slug": "diamond-drop-earrings",
-    "_path": "content/jewelry/products/diamond-drop-earrings.json"
-  },
-  {
-    "name": "Diamond Solitaire Ring",
-    "subtitle": "Exquisite solitaire diamond set in 18K white gold",
-    "price": "$8888",
-    "category": "rings",
-    "description": "Exquisite solitaire diamond set in 18K white gold. This timeless piece features a brilliant-cut diamond of exceptional clarity.",
-    "images": [
-      "/assets/uploads/jewelry/product_1778780053920_1778780053922.jpg"
-    ],
-    "order": 1,
-    "published": true,
-    "_slug": "diamond-solitaire-ring",
-    "_path": "content/jewelry/products/diamond-solitaire-ring.json"
-  },
-  {
-    "name": "Gold Band Ring",
-    "subtitle": "Classic solid 18K gold band with polished finish",
+    "name": "Fiorever Diamond Ring",
+    "subtitle": "18 kt rose gold ring set with a brilliant-cut diamond, a fancy-cut and a pear-shaped rubellite and pavé diamonds",
     "price": "$1,200",
     "category": "rings",
-    "description": "Classic solid 18K gold band. Comfortable fit with polished finish suitable for everyday wear.",
+    "description": "Material​: 18kt rose gold, Weight 10grams, Diamonds: 0.62 carats, Gemstone: Narutal Diamonds, Pink Rubellite\nColor​: Pink, Size: 55.(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
     "images": [
-      "/assets/uploads/jewelry/product_1778780770046_1778780770049.jpg"
+      "/assets/uploads/jewelry/product_1778827293423_1778827293436.jpg",
+      "/assets/uploads/jewelry/product_1778827304665_1778827304677.jpg",
+      "/assets/uploads/jewelry/product_1778827307461_1778827307473.jpg",
+      "/assets/uploads/jewelry/product_1778827316017_1778827316028.jpg",
+      "/assets/uploads/jewelry/product_1778827320428_1778827320440.jpg",
+      "/assets/uploads/jewelry/product_1778827328212_1778827328223.jpg"
     ],
     "order": 1,
     "published": true,
-    "_slug": "gold-band-ring",
-    "_path": "content/jewelry/products/gold-band-ring.json"
-  },
-  {
-    "name": "Gold Chain Bracelet",
-    "subtitle": "Elegant solid gold chain bracelet with lobster clasp",
-    "category": "bracelets",
-    "price": "$1,450",
-    "description": "Elegant solid gold chain bracelet with lobster clasp. Perfect for stacking or wearing alone.",
-    "image": "/assets/uploads/bracelet2.jpg",
-    "badge": "",
-    "featured": "false",
-    "published": true,
-    "_slug": "gold-chain-bracelet",
-    "_path": "content/jewelry/products/gold-chain-bracelet.json"
-  },
-  {
-    "name": "Gold Hoop Earrings",
-    "subtitle": "Classic gold hoop earrings in solid 18K gold",
-    "category": "earrings",
-    "price": "$890",
-    "description": "Classic gold hoop earrings in solid 18K gold. Lightweight and comfortable for all-day wear.",
-    "image": "/assets/uploads/earring2.jpg",
-    "badge": "",
-    "featured": "false",
-    "published": true,
-    "_slug": "gold-hoop-earrings",
-    "_path": "content/jewelry/products/gold-hoop-earrings.json"
-  },
-  {
-    "name": "Pearl Strand Necklace",
-    "subtitle": "Lustrous freshwater pearls strung on silk thread",
-    "price": "$3,888",
-    "category": "necklaces",
-    "description": "Lustrous freshwater pearls strung on silk thread. Each pearl is carefully selected for its uniform size and radiant sheen.",
-    "images": [
-      "/assets/uploads/jewelry/product_1778780845408_1778780845410.jpg"
-    ],
-    "order": 1,
-    "published": true,
-    "_slug": "pearl-necklace",
-    "_path": "content/jewelry/products/pearl-necklace.json"
+    "_slug": "fiorever-diamond-ring",
+    "_path": "content/jewelry/products/fiorever-diamond-ring.json"
   },
   {
     "name": "Serpenti Diamond Ring",
-    "subtitle": "18 kt yellow gold ring set with emeralds and full pavÃ© diamonds",
+    "subtitle": "18 kt yellow gold ring set with emeralds and full pavÃÂ© diamonds",
     "price": "$4,600",
     "category": "rings",
     "description": "Material: 18 kt yellow gold, \nWeight: 22.5 grams, \nDiamonds: 1.5 carats,\nGemstone: Natural Diamonds, Emeralds, \nSize: 51\n(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
@@ -96,23 +32,9 @@
       "/assets/uploads/jewelry/product_1778819507943_1778819507955.jpg",
       "/assets/uploads/jewelry/product_1778819519773_1778819519785.jpg"
     ],
-    "order": 2,
+    "order": 1,
     "published": true,
     "_slug": "serpenti-diamond-ring",
     "_path": "content/jewelry/products/serpenti-diamond-ring.json"
-  },
-  {
-    "name": "Diamond Tennis Bracelet",
-    "subtitle": "Luxurious tennis bracelet with brilliant diamonds",
-    "price": "$5,8009999999",
-    "category": "bracelets",
-    "description": "Luxurious tennis bracelet featuring brilliant diamonds set in platinum. A statement piece for any occasion.",
-    "images": [
-      "/assets/uploads/jewelry/product_1778780811498_1778780811500.jpg"
-    ],
-    "order": 1,
-    "published": true,
-    "_slug": "tennis-bracelet",
-    "_path": "content/jewelry/products/tennis-bracelet.json"
   }
 ]

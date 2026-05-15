@@ -1,20 +1,5 @@
 [
   {
-    "name": "18Kwatch",
-    "subtitle": "18K gold luxury watch",
-    "price": "$7,777",
-    "category": "18kgoldwatch",
-    "description": "18Kwatch18Kwatch18Kwatch18Kwatch18Kwatch18Kwatch18Kwatch18Kwatch",
-    "images": [
-      "/assets/uploads/watches/product_1778782541887_1778782541890.jpg",
-      "/assets/uploads/watches/product_1778782550008_1778782550011.jpg"
-    ],
-    "order": 1,
-    "published": true,
-    "_slug": "18kwatch",
-    "_path": "content/watches/products/18kwatch.json"
-  },
-  {
     "name": "AP 18K rose gold bracelet",
     "subtitle": "Made of solid 18K gold",
     "price": "$14,700",
@@ -36,18 +21,25 @@
     "_path": "content/watches/products/ap-18k-rose-gold-bracelet.json"
   },
   {
-    "name": "Diamond watch",
-    "subtitle": "Diamond-encrusted luxury timepiece",
-    "price": "$99999",
-    "category": "diamond-watches",
-    "description": "https://vesperajewels.com/https://vesperajewels.com/https://vesperajewels.com/https://vesperajewels.com/",
+    "name": "PP 18K rose gold bracelet",
+    "subtitle": "Made of solid 18K gold",
+    "price": "$15,500",
+    "category": "18k-gold-watch-bracelet",
+    "description": "This watch bracelet is crafted from solid 18K rose gold. \nThe color is 100% accurate, with no color discrepancies. \nThe engraved stamp is perfect and fits perfectly onto the watch case. \nCompatible watch models: PP5712r,PP5711R,PP5712R,PP5980.\nPP new fold‑over clasp with adjustable extension.",
     "images": [
-      "/assets/uploads/watches/product_1778780903801_1778780903804.jpg"
+      "/assets/uploads/watches/product_1778826580146_1778826580151.jpg",
+      "/assets/uploads/watches/product_1778826590085_1778826590091.jpg",
+      "/assets/uploads/watches/product_1778826597830_1778826597834.jpg",
+      "/assets/uploads/watches/product_1778826607506_1778826607512.jpg",
+      "/assets/uploads/watches/product_1778826611158_1778826611162.jpg",
+      "/assets/uploads/watches/product_1778826615464_1778826615469.jpg",
+      "/assets/uploads/watches/product_1778826618552_1778826618557.jpg",
+      "/assets/uploads/watches/product_1778826631977_1778826631984.jpg"
     ],
     "order": 1,
     "published": true,
-    "_slug": "diamond-watch",
-    "_path": "content/watches/products/diamond-watch.json"
+    "_slug": "pp-18k-rose-gold-bracelet",
+    "_path": "content/watches/products/pp-18k-rose-gold-bracelet.json"
   },
   {
     "name": "PP 18K rose gold watch case",
