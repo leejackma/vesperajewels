@@ -4007,6 +4007,78 @@
         }
 
 // ===== Order Steps Editor (visual editor) =====
+function renderAboutEditor(container, data) {
+            container.innerHTML = `
+                <div class="form-grid">
+                    <div class="section-divider"><h3 class="section-title">板块信息</h3></div>
+                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
+                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
+
+                    <div class="section-divider"><h3 class="section-title">品牌故事</h3></div>
+                    ${createImageUploadComponent('story_image', data.story_image || '', 'about', 'story_image')}
+                    <div class="form-group full-width">
+                        <label>故事段落（JSON 数组）</label>
+                        <textarea id="story_paragraphs" rows="6" style="font-family:monospace;font-size:13px;">${data.story_paragraphs ? JSON.stringify(data.story_paragraphs, null, 2) : '[]'}</textarea>
+                    <div class="section-divider"><h3 class="section-title">流程步骤</h3></div>
+                    ${createFormField('流程标签', 'process_label', data.process_label || '')}
+                    ${createFormField('流程标题', 'process_title', data.process_title || '')}
+                    <div class="form-group full-width">
+                        <label>流程步骤（JSON 数组）</label>
+                        <textarea id="process_steps" rows="8" style="font-family:monospace;font-size:13px;">${data.process_steps ? JSON.stringify(data.process_steps, null, 2) : '[]'}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">承诺</h3></div>
+                    ${createFormField('承诺标签', 'promises_label', data.promises_label || '')}
+                    ${createFormField('承诺标题', 'promises_title', data.promises_title || '')}
+                    <div class="form-group full-width">
+                        <label>承诺列表（JSON 字符串数组）</label>
+                        <textarea id="promises" rows="8" style="font-family:monospace;font-size:13px;">${data.promises ? JSON.stringify(data.promises, null, 2) : '[]'}</textarea>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderContactEditor(container, data) {
+            // Add styles for social media inputs
+            addSocialMediaStyles();
+            
+            container.innerHTML = `
+                <div class="form-grid">
+                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
+                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
+                    
+                    <div class="section-divider"><h3 class="section-title">简介</h3></div>
+                    <div class="form-group full-width">
+                        <label>简介文字</label>
+                        <textarea name="intro" rows="3">${data.intro || ''}</textarea>
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">联系方式</h3></div>
+                    ${(() => { const ci = Array.isArray(data.contact_items) ? data.contact_items : []; return ''; })()}
+                    ${createFormField('门店标题', 'contact_address_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'address'))?.title || '')}
+                    ${createFormField('门店地址', 'contact_address_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'address'))?.content || '')}
+                    ${createFormField('电话标题', 'contact_phone_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'phone'))?.title || '')}
+                    ${createFormField('电话号码', 'contact_phone_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'phone'))?.content || '')}
+                    ${createFormField('邮箱标题', 'contact_email_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'email'))?.title || '')}
+                    ${createFormField('邮箱地址', 'contact_email_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'email'))?.content || '')}
+
+                    <div class="section-divider"><h3 class="section-title">社交链接</h3></div>
+                    ${createFormField('社交链接标题', 'social_title', data.social_title || '')}
+                    <div class="form-group full-width">
+                        <label>社交媒体链接</label>
+                        ${createSocialMediaInputs(data.social_links || [])}
+                    </div>
+
+                    <div class="section-divider"><h3 class="section-title">表单</h3></div>
+                    ${createFormField('表单标题', 'form_title', data.form_title || '')}
+                    ${createFormField('成功标题', 'form_success_title', data.form_success_title || '')}
+                    <div class="form-group full-width">
+                        <label>成功消息</label>
+                        <textarea name="form_success_message" rows="2">${data.form_success_message || ''}</textarea>
+                    </div>
+                </div>
+            `;
+        }
         let orderStepsData = [];
         let orderJsonPath = '';
         let orderSectionMeta = { section_label: '', section_title: '', section_subtitle: '', cta_title: '', cta_subtitle: '', cta_whatsapp: '', cta_email: '', cta_form: '' };
