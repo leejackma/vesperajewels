@@ -3931,7 +3931,8 @@
         }
 
         function renderHomeEditor(container, data) {
-            brandPromisesData = Array.isArray(data.brand_promises) ? data.brand_promises : [];
+            // Initialize craft images from new format or fallback from old format
+            craftImages = data.craft_images || [data.craft_image_1, data.craft_image_2, data.craft_image_3].filter(Boolean);
             
             container.innerHTML = `
                 <div class="form-grid">
@@ -3944,215 +3945,68 @@
                     ${createFormField('推荐标题', 'featured_title', data.featured_title || '')}
                     ${createFormField('推荐副标题', 'featured_subtitle', data.featured_subtitle || '')}
 
-                    <div class="section-divider"><h3 class="section-title">品牌承诺</h3></div>
-                    ${createFormField('板块标签', 'promises_label', data.promises_label || '')}
-                    ${createFormField('板块标题', 'promises_title', data.promises_title || '')}
-                    <div class="form-group full-width">
-                        <label>承诺模块</label>
-                        <div id="brandPromisesList"></div>
-                        <button class="btn-save" onclick="addBrandPromise()" style="margin-top:12px;">+ 添加模块</button>
+                    <div class="section-divider"><h3 class="section-title">工艺区域</h3></div>
+                    ${createFormField('工艺标签', 'craft_label', data.craft_label || '')}
+                    ${createFormField('工艺标题', 'craft_title', data.craft_title || '')}
+                    
+                    <div class="form-group">
+                        <label>工艺图片（滚动轮播）</label>
+                        <div id="craftImagesList" style="margin-bottom:12px;"></div>
+                        <button type="button" class="btn-save" style="font-size:13px;padding:6px 16px;" onclick="addCraftImage()">+ 添加图片</button>
                     </div>
                 </div>
             `;
-            renderBrandPromisesList();
+            renderCraftImagesList();
         }
 
-        // ===== Brand Promises Editor =====
-        let brandPromisesData = [];
+        // ===== Craft Images Editor =====
+        let craftImages = [];
 
-        function renderBrandPromisesList() {
-            const listContainer = document.getElementById('brandPromisesList');
-            if (!listContainer) return;
+        function renderCraftImagesList() {
+            const container = document.getElementById('craftImagesList');
+            if (!container) return;
             
-            if (brandPromisesData.length === 0) {
-                listContainer.innerHTML = '<p style="color:#8A8A8A;font-size:13px;padding:8px 0;">暂无模块，点击下方按钮添加</p>';
+            if (craftImages.length === 0) {
+                container.innerHTML = '<p style="color:#8A8A8A;font-size:13px;">暂无图片，点击下方按钮添加</p>';
                 return;
             }
             
-            let html = '';
-            brandPromisesData.forEach((item, index) => {
-                html += `
-                    <div style="background:#fff;border:1px solid #E8E4DE;border-radius:12px;padding:16px 20px;margin-bottom:12px;">
-                        <div style="display:flex;justify-content:space-between;align-items:start;">
-                            <div style="flex:1;">
-                                <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px;">
-                                    <span style="font-size:24px;">${item.icon || '📦'}</span>
-                                    <span style="font-weight:500;color:#1a1a1a;">${item.title || '未命名'}</span>
-                                </div>
-                                <div style="font-size:13px;color:#8A8A8A;margin-top:2px;max-width:400px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${item.description || ''}</div>
-                            </div>
-                            <div style="display:flex;gap:8px;flex-shrink:0;margin-left:12px;">
-                                <button class="btn-small btn-edit" onclick="editBrandPromise(${index})">编辑</button>
-                                <button class="btn-small btn-remove" onclick="deleteBrandPromise(${index})">删除</button>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            });
-            listContainer.innerHTML = html;
-        }
-
-        function addBrandPromise() {
-            brandPromisesData.push({
-                icon: '📦',
-                title: '新模块',
-                description: '模块描述'
-            });
-            renderBrandPromisesList();
-            editBrandPromise(brandPromisesData.length - 1);
-        }
-
-        function editBrandPromise(index) {
-            const item = brandPromisesData[index];
-            if (!item) return;
-            
-            const modal = document.createElement('div');
-            modal.className = 'modal-overlay';
-            modal.id = 'brandPromiseModal';
-            modal.innerHTML = `
-                <div class="modal-content" style="max-width:500px;">
-                    <div class="modal-header">
-                        <h3 style="font-family:Playfair Display,serif;color:#C5A467;">编辑承诺模块 ${index + 1}</h3>
-                        <button class="modal-close" onclick="closeBrandPromiseModal()">&times;</button>
-                    </div>
-                    <div class="modal-body">
-                        <div class="form-grid">
-                            <div class="form-group">
-                                <label>图标 Emoji</label>
-                                <input type="text" id="editPromiseIcon" value="${(item.icon || '').replace(/"/g, '&quot;')}" placeholder="如 💍 🥇 🔍">
-                            </div>
-                            <div class="form-group">
-                                <label>标题</label>
-                                <input type="text" id="editPromiseTitle" value="${(item.title || '').replace(/"/g, '&quot;')}" placeholder="模块标题">
-                            </div>
-                            <div class="form-group full-width">
-                                <label>描述</label>
-                                <textarea id="editPromiseDesc" rows="4" placeholder="模块描述">${(item.description || '').replace(/</g, '&lt;')}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button class="btn-cancel" onclick="closeBrandPromiseModal()">取消</button>
-                        <button class="btn-save" onclick="saveBrandPromise(${index})">保存</button>
-                    </div>
+            container.innerHTML = craftImages.map((img, i) => `
+                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px;border:1px solid #E8E4DE;border-radius:6px;background:#fff;">
+                    <img src="${img.startsWith('/') ? 'https://raw.githubusercontent.com/leejackma/vesperajewels/main' + img : img}" 
+                         style="width:60px;height:60px;object-fit:cover;border-radius:4px;">
+                    <span style="flex:1;font-size:12px;word-break:break-all;color:#333;">${img}</span>
+                    <button type="button" class="btn-small btn-remove" onclick="removeCraftImage(${i})">删除</button>
                 </div>
-            `;
-            document.body.appendChild(modal);
-            modal.classList.add('active');
-            document.body.style.overflow = 'hidden';
+            `).join('');
         }
 
-        function closeBrandPromiseModal() {
-            const modal = document.getElementById('brandPromiseModal');
-            if (modal) modal.remove();
-            document.body.style.overflow = '';
+        function addCraftImage() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.accept = 'image/*';
+            input.onchange = async (e) => {
+                const file = e.target.files[0];
+                if (!file) return;
+                try {
+                    const result = await uploadImageToGitHub(file, 'assets/uploads/home', 'craft_image', 'home');
+                    if (result && result.path) {
+                        craftImages.push('/assets/uploads/home/' + result.path.split('/').pop());
+                        renderCraftImagesList();
+                    }
+                } catch(err) {
+                    showToast('上传失败: ' + err.message, 'error');
+                }
+            };
+            input.click();
         }
 
-        async function saveBrandPromise(index) {
-            const item = brandPromisesData[index];
-            if (!item) return;
-            
-            item.icon = document.getElementById('editPromiseIcon').value.trim() || '📦';
-            item.title = document.getElementById('editPromiseTitle').value.trim();
-            item.description = document.getElementById('editPromiseDesc').value.trim();
-            
-            closeBrandPromiseModal();
-            renderBrandPromisesList();
-            showToast('模块已更新，请点击页面底部保存按钮提交更改', 'success');
+        function removeCraftImage(index) {
+            craftImages.splice(index, 1);
+            renderCraftImagesList();
         }
 
-        function deleteBrandPromise(index) {
-            const item = brandPromisesData[index];
-            if (!confirm(`确定要删除模块"${item.title || '此模块'}"吗？`)) return;
-            brandPromisesData.splice(index, 1);
-            renderBrandPromisesList();
-            showToast('模块已删除，请点击页面底部保存按钮提交更改', 'success');
-        }
-
-        function renderAboutEditor(container, data) {
-            container.innerHTML = `
-                <div class="form-grid">
-                    <div class="section-divider"><h3 class="section-title">板块信息</h3></div>
-                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
-                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
-
-                    <div class="section-divider"><h3 class="section-title">品牌故事</h3></div>
-                    ${createImageUploadComponent('story_image', data.story_image || '', 'about', 'story_image')}
-                    <div class="form-group full-width">
-                        <label>故事段落（JSON 数组）</label>
-                        <textarea id="story_paragraphs" rows="6" style="font-family:monospace;font-size:13px;">${data.story_paragraphs ? JSON.stringify(data.story_paragraphs, null, 2) : '[]'}</textarea>
-                    </div>
-
-                    <div class="section-divider"><h3 class="section-title">亮点</h3></div>
-                    ${createFormField('亮点标签', 'highlights_label', data.highlights_label || '')}
-                    ${createFormField('亮点标题', 'highlights_title', data.highlights_title || '')}
-                    <div class="form-group full-width">
-                        <label>亮点项目（JSON 数组）</label>
-                        <textarea id="highlights" rows="8" style="font-family:monospace;font-size:13px;">${data.highlights ? JSON.stringify(data.highlights, null, 2) : '[]'}</textarea>
-                    </div>
-
-                    <div class="section-divider"><h3 class="section-title">流程步骤</h3></div>
-                    ${createFormField('流程标签', 'process_label', data.process_label || '')}
-                    ${createFormField('流程标题', 'process_title', data.process_title || '')}
-                    <div class="form-group full-width">
-                        <label>流程步骤（JSON 数组）</label>
-                        <textarea id="process_steps" rows="8" style="font-family:monospace;font-size:13px;">${data.process_steps ? JSON.stringify(data.process_steps, null, 2) : '[]'}</textarea>
-                    </div>
-
-                    <div class="section-divider"><h3 class="section-title">承诺</h3></div>
-                    ${createFormField('承诺标签', 'promises_label', data.promises_label || '')}
-                    ${createFormField('承诺标题', 'promises_title', data.promises_title || '')}
-                    <div class="form-group full-width">
-                        <label>承诺列表（JSON 字符串数组）</label>
-                        <textarea id="promises" rows="8" style="font-family:monospace;font-size:13px;">${data.promises ? JSON.stringify(data.promises, null, 2) : '[]'}</textarea>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderContactEditor(container, data) {
-            // Add styles for social media inputs
-            addSocialMediaStyles();
-            
-            container.innerHTML = `
-                <div class="form-grid">
-                    ${createFormField('板块标签', 'section_label', data.section_label || '')}
-                    ${createFormField('板块标题', 'section_title', data.section_title || '')}
-                    
-                    <div class="section-divider"><h3 class="section-title">简介</h3></div>
-                    <div class="form-group full-width">
-                        <label>简介文字</label>
-                        <textarea name="intro" rows="3">${data.intro || ''}</textarea>
-                    </div>
-
-                    <div class="section-divider"><h3 class="section-title">联系方式</h3></div>
-                    ${(() => { const ci = Array.isArray(data.contact_items) ? data.contact_items : []; return ''; })()}
-                    ${createFormField('门店标题', 'contact_address_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'address'))?.title || '')}
-                    ${createFormField('门店地址', 'contact_address_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'address'))?.content || '')}
-                    ${createFormField('电话标题', 'contact_phone_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'phone'))?.title || '')}
-                    ${createFormField('电话号码', 'contact_phone_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'phone'))?.content || '')}
-                    ${createFormField('邮箱标题', 'contact_email_title', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'email'))?.title || '')}
-                    ${createFormField('邮箱地址', 'contact_email_content', (Array.isArray(data.contact_items) && data.contact_items.find(c => c.type === 'email'))?.content || '')}
-
-                    <div class="section-divider"><h3 class="section-title">社交链接</h3></div>
-                    ${createFormField('社交链接标题', 'social_title', data.social_title || '')}
-                    <div class="form-group full-width">
-                        <label>社交媒体链接</label>
-                        ${createSocialMediaInputs(data.social_links || [])}
-                    </div>
-
-                    <div class="section-divider"><h3 class="section-title">表单</h3></div>
-                    ${createFormField('表单标题', 'form_title', data.form_title || '')}
-                    ${createFormField('成功标题', 'form_success_title', data.form_success_title || '')}
-                    <div class="form-group full-width">
-                        <label>成功消息</label>
-                        <textarea name="form_success_message" rows="2">${data.form_success_message || ''}</textarea>
-                    </div>
-                </div>
-            `;
-        }
-
-        // ===== Order Steps Editor (visual editor) =====
+// ===== Order Steps Editor (visual editor) =====
         let orderStepsData = [];
         let orderJsonPath = '';
         let orderSectionMeta = { section_label: '', section_title: '', section_subtitle: '', cta_title: '', cta_subtitle: '', cta_whatsapp: '', cta_email: '', cta_form: '' };
@@ -5072,9 +4926,13 @@
                     // Collect form values
                     const inputs = document.querySelectorAll('#tab-0 input, #tab-0 textarea');
                     
-                    // For home section, use brandPromisesData directly
+                    // For home section, use craftImages directly
                     if (currentSection === 'home') {
-                        newData.brand_promises = brandPromisesData;
+                        newData.craft_images = craftImages;
+                        // Remove old format fields
+                        delete newData.craft_image_1;
+                        delete newData.craft_image_2;
+                        delete newData.craft_image_3;
                     }
                     
                     // For contact section, build social_links and contact_items from individual inputs
