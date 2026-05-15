@@ -371,6 +371,22 @@
                         <!-- Images inserted dynamically by JS -->
                     </div>
                 </div>
+                <script>
+                // Debug: check if carousel elements exist after page load
+                window.addEventListener('load', function() {
+                    setTimeout(function() {
+                        var track = document.getElementById('craftCarouselTrack');
+                        var slides = track ? track.querySelectorAll('.craft-slide') : [];
+                        console.log('[DEBUG] craftCarouselTrack found:', !!track);
+                        console.log('[DEBUG] craft-slide count:', slides.length);
+                        if (slides.length > 0) {
+                            console.log('[DEBUG] first slide img src:', slides[0].querySelector('img')?.src);
+                            console.log('[DEBUG] first slide offsetWidth:', slides[0].offsetWidth);
+                        }
+                        console.log('[DEBUG] initCraftCarousel exists:', typeof initCraftCarousel);
+                    }, 3000);
+                });
+                </script>
             </div>
         </div>
         </section>
