@@ -10,21 +10,91 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+// Global utilities (used by both DOMContentLoaded callbacks and global functions)
 function cacheBust(url) {
-        const sep = url.includes('?') ? '&' : '?';
-        return url + sep + '_t=' + Date.now();
+    const sep = url.includes('?') ? '&' : '?';
+    return url + sep + '_t=' + Date.now();
+}
+
+const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main';
+
+function githubRawUrl(localPath) {
+    const cleanPath = localPath.startsWith('/') ? localPath.substring(1) : localPath;
+    return cacheBust(GITHUB_RAW_BASE + '/' + cleanPath);
+}
+
+// Frontmatter parser for markdown files (global scope for use by loadPartnerCases)
+function parseFrontmatter(text) {
+    const result = {};
+    const lines = text.split('\n');
+    let inFrontmatter = false;
+    let inArray = false;
+    let arrayKey = null;
+    let arrayItems = [];
+
+    for (const line of lines) {
+        if (line.trim() === '---') {
+            if (inFrontmatter) {
+                if (inArray && arrayKey) {
+                    result[arrayKey] = arrayItems;
+                }
+                break;
+            }
+            inFrontmatter = true;
+            continue;
+        }
+
+        if (!inFrontmatter) continue;
+
+        const arrayItemMatch = line.match(/^\s+-\s+(.+)$/);
+        if (arrayItemMatch && inArray) {
+            let val = arrayItemMatch[1].trim();
+            if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                val = val.slice(1, -1);
+            }
+            arrayItems.push(val);
+            continue;
+        }
+
+        if (line.match(/^\s+-\s*$/) && inArray) {
+            arrayItems.push({});
+            continue;
+        }
+
+        const arrayStartMatch = line.match(/^(\w+):\s*$/);
+        if (arrayStartMatch) {
+            if (inArray && arrayKey) {
+                result[arrayKey] = arrayItems;
+            }
+            arrayKey = arrayStartMatch[1];
+            inArray = true;
+            arrayItems = [];
+            result[arrayKey] = [];
+            continue;
+        }
+
+        if (line.includes(':')) {
+            if (inArray && arrayKey) {
+                result[arrayKey] = arrayItems;
+                inArray = false;
+                arrayKey = null;
+                arrayItems = [];
+            }
+            const colonIndex = line.indexOf(':');
+            const key = line.substring(0, colonIndex).trim();
+            let value = line.substring(colonIndex + 1).trim();
+            
+            if ((value.startsWith('"') && value.endsWith('"')) ||
+                (value.startsWith("'") && value.endsWith("'"))) {
+                value = value.slice(1, -1);
+            }
+            
+            result[key] = value;
+        }
     }
-    
-    // Convert content paths to GitHub raw URLs for instant updates
-    // Backend saves go to GitHub immediately, but Cloudflare Pages takes 1-3 min to rebuild
-    // By fetching from GitHub raw directly, product data updates are reflected instantly
-    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main';
-    
-    function githubRawUrl(localPath) {
-        // Remove leading slash if present
-        const cleanPath = localPath.startsWith('/') ? localPath.substring(1) : localPath;
-        return cacheBust(GITHUB_RAW_BASE + '/' + cleanPath);
-    }
+
+    return result;
+}
 
     
 // ============================================
@@ -280,86 +350,7 @@ document.addEventListener('DOMContentLoaded', function() {
         watch: []
     };
 
-    // Simple frontmatter parser for markdown
-    function parseFrontmatter(text) {
-        const result = {};
-        const lines = text.split('\n');
-        let inFrontmatter = false;
-        let inArray = false;
-        let arrayKey = null;
-        let arrayItems = [];
-
-        for (const line of lines) {
-            if (line.trim() === '---') {
-                if (inFrontmatter) {
-                    // Close any open array before breaking
-                    if (inArray && arrayKey) {
-                        result[arrayKey] = arrayItems;
-                    }
-                    break;
-                }
-                inFrontmatter = true;
-                continue;
-            }
-
-            if (!inFrontmatter) continue;
-
-            // Array item with value: "  - value" or "  - \"quoted\""
-            const arrayItemMatch = line.match(/^\s+-\s+(.+)$/);
-            if (arrayItemMatch && inArray) {
-                let val = arrayItemMatch[1].trim();
-                if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
-                    val = val.slice(1, -1);
-                }
-                arrayItems.push(val);
-                continue;
-            }
-
-            // Empty array item (dash only): "  -"
-            if (line.match(/^\s+-\s*$/) && inArray) {
-                arrayItems.push({});
-                continue;
-            }
-
-            // Key with no value (potential array start): "images:"
-            const arrayStartMatch = line.match(/^(\w+):\s*$/);
-            if (arrayStartMatch) {
-                // Close previous array if any
-                if (inArray && arrayKey) {
-                    result[arrayKey] = arrayItems;
-                }
-                arrayKey = arrayStartMatch[1];
-                inArray = true;
-                arrayItems = [];
-                result[arrayKey] = [];
-                continue;
-            }
-
-            // Key-value pair: "title: value"
-            if (line.includes(':')) {
-                // Close previous array if any
-                if (inArray && arrayKey) {
-                    result[arrayKey] = arrayItems;
-                    inArray = false;
-                    arrayKey = null;
-                    arrayItems = [];
-                }
-                const colonIndex = line.indexOf(':');
-                const key = line.substring(0, colonIndex).trim();
-                let value = line.substring(colonIndex + 1).trim();
-                
-                // Remove quotes if present
-                if ((value.startsWith('"') && value.endsWith('"')) ||
-                    (value.startsWith("'") && value.endsWith("'"))) {
-                    value = value.slice(1, -1);
-                }
-                
-                result[key] = value;
-            }
-        }
-
-        return result;
-    }
+    // parseFrontmatter is now defined globally above
 
     // Load products from JSON files (new CMS format)
     async function loadProducts() {
