@@ -3400,6 +3400,14 @@
             try {
                 await saveJsonFile(path, productData, `保存产品: ${name}`);
                 
+                // Track saved product for index rebuild (handles GitHub API delay)
+                window._lastSavedProduct = {
+                    type: currentProductType,
+                    slug: slug,
+                    path: path,
+                    data: productData
+                };
+                
                 // Delete old file if slug changed
                 if (oldPathToDelete) {
                     try {
@@ -3444,18 +3452,43 @@
         async function rebuildProductsIndex(productType) {
             try {
                 const productDir = `content/${productType === 'watch' ? 'watches' : productType}/products`;
+                // Fetch directory listing from GitHub
                 const files = await fetchDirectory(productDir);
                 const jsonFiles = files.filter(f => f.name.endsWith('.json'));
                 const products = [];
+                
                 for (const file of jsonFiles) {
-                    const content = await fetchJsonFile(file.path);
-                    const data = content.data || content || {};
-                    products.push({
-                        ...data,
-                        _slug: file.name.replace('.json', ''),
-                        _path: file.path
-                    });
+                    try {
+                        const content = await fetchJsonFile(file.path);
+                        const data = content.data || content || {};
+                        products.push({
+                            ...data,
+                            _slug: file.name.replace('.json', ''),
+                            _path: file.path
+                        });
+                    } catch(e) {
+                        console.warn('读取产品文件失败:', file.path, e);
+                    }
                 }
+                
+                // Also check if the just-saved product is in the list
+                // (GitHub API may have a few seconds delay, so we manually add it if missing)
+                if (window._lastSavedProduct && window._lastSavedProduct.type === productType) {
+                    const saved = window._lastSavedProduct;
+                    const existingIdx = products.findIndex(p => p._slug === saved.slug);
+                    if (existingIdx >= 0) {
+                        // Update existing entry
+                        products[existingIdx] = { ...saved.data, _slug: saved.slug, _path: saved.path };
+                    } else {
+                        // Add new entry
+                        products.push({ ...saved.data, _slug: saved.slug, _path: saved.path });
+                    }
+                    window._lastSavedProduct = null;
+                }
+                
+                // Sort by order
+                products.sort((a, b) => (a.order || 999) - (b.order || 999));
+                
                 await saveJsonFile(`content/${productType === 'watch' ? 'watches' : productType}/products-index.json`, products, `更新产品索引`);
             } catch (e) {
                 console.error('重建产品索引失败:', e);
