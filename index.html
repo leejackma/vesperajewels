@@ -358,7 +358,7 @@
             </div>
         </div>
 
-        <!-- Factory Images -->
+        <!-- Factory Images Carousel -->
         <div class="py-20 bg-white">
             <div class="max-w-7xl mx-auto px-6 lg:px-12">
                 <div class="text-center mb-12 animate-on-scroll">
@@ -366,15 +366,9 @@
                     <h2 class="font-playfair text-3xl md:text-4xl mt-2" style="color: #C5A467" data-cms="home.craft_title">Factory &amp; Workshop</h2>
                 </div>
                 
-                <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
-                    <div class="animate-on-scroll overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=600&q=80" alt="Jewelry Crafting" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500" data-cms="home.craft_image_1">
-                    </div>
-                    <div class="animate-on-scroll overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1611591437281-460bfbe1220a?w=600&q=80" alt="Diamond Setting" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500" data-cms="home.craft_image_2">
-                    </div>
-                    <div class="animate-on-scroll overflow-hidden">
-                        <img src="https://images.unsplash.com/photo-1573408301185-9146fe634ad0?w=600&q=80" alt="Gold Working" class="w-full aspect-square object-cover hover:scale-105 transition-transform duration-500" data-cms="home.craft_image_3">
+                <div id="craftCarousel" class="relative overflow-hidden">
+                    <div id="craftCarouselTrack" class="flex" style="will-change:transform;">
+                        <!-- Images inserted dynamically by JS -->
                     </div>
                 </div>
             </div>

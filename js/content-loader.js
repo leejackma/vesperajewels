@@ -182,25 +182,12 @@ class ContentLoader {
         this.setText('[data-cms="home.craft_label"]', home.craft_label);
         this.setText('[data-cms="home.craft_title"]', home.craft_title);
 
-        // Craft images
-        if (home.craft_images && Array.isArray(home.craft_images) && home.craft_images.length > 0) {
-            home.craft_images.forEach((imgSrc, i) => {
-                if (i < 3) {
-                    const img = document.querySelector(`[data-cms="home.craft_image_${i+1}"]`);
-                    if (img) {
-                        img.src = imgSrc.startsWith('http') ? imgSrc : 
-                                  imgSrc.startsWith('/') ? 'https://raw.githubusercontent.com/leejackma/vesperajewels/main' + imgSrc : imgSrc;
-                    }
-                }
-            });
-        } else {
-            // Fallback to old format
-            ['craft_image_1', 'craft_image_2', 'craft_image_3'].forEach(key => {
-                if (home[key]) {
-                    const img = document.querySelector(`[data-cms="home.${key}"]`);
-                    if (img) img.src = home[key];
-                }
-            });
+        // Craft images carousel
+        const craftImages = (home.craft_images && Array.isArray(home.craft_images) && home.craft_images.length > 0)
+            ? home.craft_images
+            : [home.craft_image_1, home.craft_image_2, home.craft_image_3].filter(Boolean);
+        if (craftImages.length > 0 && typeof initCraftCarousel === 'function') {
+            initCraftCarousel(craftImages);
         }
 
         this.setText('[data-cms="home.featured_title"]', home.featured_title);
