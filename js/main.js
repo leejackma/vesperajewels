@@ -1215,3 +1215,73 @@ document.addEventListener('keydown', function(e) {
         navigateLightbox(1);
     }
 });
+
+// ============================================
+// Craft Images Carousel
+// ============================================
+let craftCarouselInterval = null;
+
+function initCraftCarousel(images) {
+    const track = document.getElementById('craftCarouselTrack');
+    if (!track || !images || images.length === 0) return;
+    
+    // Clear existing interval
+    if (craftCarouselInterval) {
+        clearInterval(craftCarouselInterval);
+        craftCarouselInterval = null;
+    }
+    
+    // Determine slides visible at once
+    const isMobile = window.innerWidth < 768;
+    const slidesVisible = isMobile ? 2 : 3;
+    
+    // Build slides HTML - duplicate images for seamless loop
+    const allImages = [...images, ...images, ...images]; // triple for seamless loop
+    let html = '';
+    allImages.forEach((imgSrc, i) => {
+        const src = imgSrc.startsWith('http') ? imgSrc : 
+                    imgSrc.startsWith('/') ? `https://raw.githubusercontent.com/leejackma/vesperajewels/main/assets/uploads${imgSrc}` : imgSrc;
+        html += `<div class="craft-slide"><img src="${src}" alt="Craft ${i+1}" loading="lazy"></div>`;
+    });
+    track.innerHTML = html;
+    
+    let currentOffset = 0;
+    const slideWidth = 100 / slidesVisible; // percentage
+    const totalOriginalSlides = images.length;
+    const maxOffset = totalOriginalSlides * slideWidth;
+    
+    // Start from the first copy set (after prepending copies)
+    currentOffset = maxOffset; // start at second copy
+    track.style.transform = `translateX(-${currentOffset}%)`;
+    
+    function scrollNext() {
+        currentOffset += slideWidth;
+        track.style.transition = 'transform 0.6s ease';
+        track.style.transform = `translateX(-${currentOffset}%)`;
+        
+        // When we reach the end of second copy, jump to start of second copy (seamless)
+        if (currentOffset >= maxOffset * 2) {
+            setTimeout(() => {
+                track.style.transition = 'none';
+                currentOffset = maxOffset;
+                track.style.transform = `translateX(-${currentOffset}%)`;
+            }, 650);
+        }
+    }
+    
+    craftCarouselInterval = setInterval(scrollNext, 3000);
+    
+    // Handle resize
+    const resizeHandler = () => {
+        const newMobile = window.innerWidth < 768;
+        const newVisible = newMobile ? 2 : 3;
+        // Rebuild if visibility changed
+        if (newVisible !== slidesVisible) {
+            initCraftCarousel(images);
+        }
+    };
+    
+    // Remove old listener and add new one
+    window.removeEventListener('resize', resizeHandler);
+    window.addEventListener('resize', resizeHandler);
+}

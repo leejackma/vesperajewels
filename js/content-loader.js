@@ -180,13 +180,18 @@ class ContentLoader {
         this.setText('[data-cms="home.craft_label"]', home.craft_label);
         this.setText('[data-cms="home.craft_title"]', home.craft_title);
 
-        // Craft images
-        ['craft_image_1', 'craft_image_2', 'craft_image_3'].forEach(key => {
-            if (home[key]) {
-                const img = document.querySelector(`[data-cms="home.${key}"]`);
-                if (img) img.src = home[key];
+        // Craft images carousel
+        if (home.craft_images && Array.isArray(home.craft_images) && home.craft_images.length > 0) {
+            if (typeof initCraftCarousel === 'function') {
+                initCraftCarousel(home.craft_images);
             }
-        });
+        } else {
+            // Fallback to old format
+            const fallbackImages = [home.craft_image_1, home.craft_image_2, home.craft_image_3].filter(Boolean);
+            if (fallbackImages.length > 0 && typeof initCraftCarousel === 'function') {
+                initCraftCarousel(fallbackImages);
+            }
+        }
 
         // Brand promises - dynamic rendering
         this.setText('[data-cms="home.promises_label"]', home.promises_label);

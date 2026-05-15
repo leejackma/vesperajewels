@@ -934,3 +934,40 @@ footer li {
         min-height: 100vh;
     }
 }
+
+
+/* ============================================
+   Craft Images Carousel
+   ============================================ */
+#craftCarousel {
+    position: relative;
+}
+
+#craftCarouselTrack {
+    display: flex;
+    transition: transform 0.6s ease;
+}
+
+#craftCarouselTrack .craft-slide {
+    flex: 0 0 calc(100% / 3);
+    padding: 0 8px;
+    box-sizing: border-box;
+}
+
+@media (max-width: 767px) {
+    #craftCarouselTrack .craft-slide {
+        flex: 0 0 calc(100% / 2);
+    }
+}
+
+#craftCarouselTrack .craft-slide img {
+    width: 100%;
+    aspect-ratio: 1;
+    object-fit: cover;
+    border-radius: 4px;
+    transition: transform 0.5s ease;
+}
+
+#craftCarouselTrack .craft-slide img:hover {
+    transform: scale(1.05);
+}
