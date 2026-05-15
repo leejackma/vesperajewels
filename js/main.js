@@ -446,10 +446,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update product cards on the page with dynamic data from JSON
     function updateProductCards() {
-        console.log('[DEBUG] updateProductCards called. jewelry:', dynamicProducts.jewelry.length, 'watch:', dynamicProducts.watch.length);
         // Update Jewelry cards
         const jewelryGrid = document.getElementById('jewelryGrid');
-        console.log('[DEBUG] jewelryGrid element:', jewelryGrid ? 'found' : 'NOT FOUND');
         if (jewelryGrid) {
             if (dynamicProducts.jewelry && dynamicProducts.jewelry.length > 0) {
                 const placeholderImg = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80';
@@ -488,9 +486,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                 });
-                console.log('[DEBUG] Setting jewelryGrid innerHTML, length:', html.length, 'first 200 chars:', html.substring(0, 200));
                 jewelryGrid.innerHTML = html;
-                console.log('[DEBUG] jewelryGrid children after set:', jewelryGrid.children.length);
             } else {
                 jewelryGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No jewelry products available.</p>';
             }
@@ -543,9 +539,7 @@ document.addEventListener('DOMContentLoaded', function() {
                         </div>
                     `;
                 });
-                console.log('[DEBUG] Setting watchGrid innerHTML, length:', html.length);
                 watchGrid.innerHTML = html;
-                console.log('[DEBUG] watchGrid children:', watchGrid.children.length);
             } else {
                 watchGrid.innerHTML = '<p class="col-span-full text-center text-gray-500 py-8">No watch products available.</p>';
             }
@@ -892,12 +886,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 
     // Load products on page load
-    console.log('[DEBUG] About to call loadProducts...');
-    loadProducts().then(() => {
-        console.log('[DEBUG] loadProducts completed. jewelry:', dynamicProducts.jewelry.length, 'watch:', dynamicProducts.watch.length, 'featured:', dynamicProducts.featured.length);
-    }).catch(err => {
-        console.error('[DEBUG] loadProducts ERROR:', err);
-    });
+    loadProducts();
 });
 
 // FAQ Accordion Toggle
