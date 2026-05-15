@@ -1240,7 +1240,7 @@ function initCraftCarousel(images) {
     let html = '';
     allImages.forEach((imgSrc, i) => {
         const src = imgSrc.startsWith('http') ? imgSrc : 
-                    imgSrc.startsWith('/') ? `https://raw.githubusercontent.com/leejackma/vesperajewels/main/assets/uploads${imgSrc}` : imgSrc;
+                    imgSrc.startsWith('/') ? `${GITHUB_RAW_BASE}${imgSrc}` : imgSrc;
         html += `<div class="craft-slide"><img src="${src}" alt="Craft ${i+1}" loading="lazy"></div>`;
     });
     track.innerHTML = html;
