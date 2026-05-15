@@ -2020,6 +2020,51 @@
             return html;
         }
 
+        // Partner Cases image management
+        let partnerImagesData = [];
+
+        function renderPartnerImages() {
+            // Sync current values from DOM before re-rendering
+            partnerImagesData = partnerImagesData.map((_, index) => {
+                const input = document.querySelector(`input[name="image_${index}"]`);
+                return input ? input.value : partnerImagesData[index];
+            });
+            
+            const container = document.getElementById('partnerImagesContainer');
+            if (!container) return;
+            
+            if (partnerImagesData.length === 0) {
+                container.innerHTML = '<p style="color:#999;font-size:13px;">暂无图片，点击下方按钮添加</p>';
+            } else {
+                container.innerHTML = partnerImagesData.map((img, index) => `
+                    <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;padding:8px;background:#f9f9f9;border-radius:4px;">
+                        <div style="flex:1;">
+                            ${createImageUploadComponent(`image_${index}`, img, 'partner', 'images')}
+                        </div>
+                        <button type="button" onclick="removePartnerImage(${index})" 
+                            style="padding:4px 8px;background:#ff4444;color:white;border:none;border-radius:4px;cursor:pointer;font-size:12px;margin-top:4px;">删除</button>
+                    </div>
+                `).join('');
+            }
+            
+            // Hide add button if at max
+            const addBtn = document.getElementById('addPartnerImageBtn');
+            if (addBtn) {
+                addBtn.style.display = partnerImagesData.length >= 10 ? 'none' : 'inline-block';
+            }
+        }
+
+        function addPartnerImage() {
+            if (partnerImagesData.length >= 10) return;
+            partnerImagesData.push('');
+            renderPartnerImages();
+        }
+
+        function removePartnerImage(index) {
+            partnerImagesData.splice(index, 1);
+            renderPartnerImages();
+        }
+
         // Social media platforms configuration
         const socialPlatforms = [
             { type: 'whatsapp', name: 'WhatsApp', icon: '📱', placeholder: '粘贴 WhatsApp 链接，如 https://wa.me/1234567890' },
@@ -3682,16 +3727,12 @@
                 html += createFormField('标题', 'title', data.title || '');
                 html += createFormField('描述', 'description', data.description || '', 'textarea');
                 html += createFormField('排序', 'order', data.order || 1, 'number');
-                // Images array for partner cases
-                if (data.images && data.images.length > 0) {
-                    html += `<div class="form-group full-width"><label>图片</label>`;
-                    data.images.forEach((img, i) => {
-                        html += createImageUploadComponent(`image_${i}`, img, 'partner', 'images');
-                    });
-                    html += `</div>`;
-                } else {
-                    html += createImageUploadComponent('image_0', '', 'partner', 'images');
-                }
+                // Images array for partner cases - up to 10 images
+                html += `<div class="form-group full-width">
+                    <label>图片（最多10张）</label>
+                    <div id="partnerImagesContainer"></div>
+                    <button type="button" onclick="addPartnerImage()" id="addPartnerImageBtn" style="margin-top:8px;padding:8px 16px;background:#C5A467;color:white;border:none;border-radius:4px;cursor:pointer;">+ 添加图片</button>
+                </div>`;
             } else {
                 // Jewelry/Watch product
                 // 图片区域
@@ -3733,6 +3774,12 @@
 
             html += '</div>';
             container.innerHTML = html;
+            
+            // Initialize partner images if in partner section
+            if (isPartner) {
+                partnerImagesData = Array.isArray(data.images) ? [...data.images] : [];
+                renderPartnerImages();
+            }
         }
 
         function createFormField(label, name, value, type = 'text', options = null) {
