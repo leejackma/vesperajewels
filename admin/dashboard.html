@@ -2270,6 +2270,18 @@
                     continue;
                 }
 
+                // Array item with value (e.g., "  - some value" or "  - \"quoted value\"")
+                const arrayItemMatch = line.match(/^\s+-\s+(.+)$/);
+                if (arrayItemMatch && inArray) {
+                    let val = arrayItemMatch[1].trim();
+                    // Remove surrounding quotes
+                    if ((val.startsWith('"') && val.endsWith('"')) || (val.startsWith("'") && val.endsWith("'"))) {
+                        val = val.slice(1, -1);
+                    }
+                    arrayItems.push(val);
+                    continue;
+                }
+
                 // Array start (key: with no value)
                 if (line.match(/^(\w+):\s*$/)) {
                     if (inArray && arrayKey) {
