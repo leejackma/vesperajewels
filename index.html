@@ -1184,8 +1184,20 @@
                 <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
             </button>
             <div class="grid md:grid-cols-2 h-full">
-                <div class="bg-cream flex items-center justify-center p-8">
-                    <img id="modalImage" src="" alt="Product" class="max-w-full max-h-[70vh] object-contain">
+                <div class="bg-cream flex flex-col items-center justify-center p-8">
+                    <img id="modalImage" src="" alt="Product" class="max-w-full max-h-[60vh] object-contain">
+                    <!-- Image navigation arrows -->
+                    <div id="modalImageNav" class="flex items-center gap-4 mt-4" style="display:none;">
+                        <button onclick="slideModalImage(-1)" class="w-10 h-10 bg-white hover:bg-gray-100 rounded-full flex items-center justify-center shadow-md">
+                            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                        </button>
+                        <span id="modalImageCounter" class="text-sm text-gray-500">1 / 1</span>
+                        <button onclick="slideModalImage(1)" class="w-10 h-10 bg-white hover:bg-gray-100 rounded-full flex items-center justify-center shadow-md">
+                            <svg class="w-5 h-5 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </button>
+                    </div>
+                    <!-- Thumbnail strip -->
+                    <div id="modalThumbnails" class="flex gap-2 mt-3 overflow-x-auto max-w-full" style="display:none;"></div>
                 </div>
                 <div class="p-8 md:p-12 flex flex-col justify-center">
                     <span class="text-sm tracking-[0.2em] text-gold mb-2" id="modalCategory">CATEGORY</span>

@@ -313,7 +313,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += `
                         <div class="product-card animate-on-scroll cursor-pointer" data-category="${escapeHtml(product.category)}" onclick="openProductModal('jewelry', ${index})">
                             <div class="relative overflow-hidden group">
-                                <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(product.name)}" class="w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105">
+                                <div class="card-image-slider" data-images='${JSON.stringify(product.images || [imgSrc])}' data-current="0">
+                                    <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(product.name)}" class="card-slider-img w-full aspect-square object-cover transition-transform duration-500 group-hover:scale-105">
+                                </div>
+                                ${(product.images && product.images.length > 1) ? `
+                                    <button class="card-slider-btn card-slider-prev absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10" onclick="event.stopPropagation(); slideCardImage(this, -1)">
+                                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                    </button>
+                                    <button class="card-slider-btn card-slider-next absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10" onclick="event.stopPropagation(); slideCardImage(this, 1)">
+                                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                    </button>
+                                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+                                        ${(product.images || []).map((_, i) => `<span class="card-slider-dot w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/50'}"></span>`).join('')}
+                                    </div>
+                                ` : ''}
                                 ${categoryDisplay ? `<div class="absolute top-3 left-3">
                                     <span class="bg-[#C5A467] text-white text-xs px-2 py-1">${escapeHtml(categoryDisplay)}</span>
                                 </div>` : ''}
@@ -353,7 +366,20 @@ document.addEventListener('DOMContentLoaded', function() {
                     html += `
                         <div class="watch-card animate-on-scroll cursor-pointer" data-category="${escapeHtml(product.category)}" onclick="openProductModal('watch', ${index})">
                             <div class="relative overflow-hidden group">
-                                <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(product.name)}" class="w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105">
+                                <div class="card-image-slider" data-images='${JSON.stringify(product.images || [imgSrc])}' data-current="0">
+                                    <img src="${escapeHtml(imgSrc)}" alt="${escapeHtml(product.name)}" class="card-slider-img w-full aspect-[4/3] object-cover transition-transform duration-500 group-hover:scale-105">
+                                </div>
+                                ${(product.images && product.images.length > 1) ? `
+                                    <button class="card-slider-btn card-slider-prev absolute left-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10" onclick="event.stopPropagation(); slideCardImage(this, -1)">
+                                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+                                    </button>
+                                    <button class="card-slider-btn card-slider-next absolute right-2 top-1/2 -translate-y-1/2 w-8 h-8 bg-white/80 hover:bg-white rounded-full flex items-center justify-center shadow-md opacity-0 group-hover:opacity-100 transition-opacity z-10" onclick="event.stopPropagation(); slideCardImage(this, 1)">
+                                        <svg class="w-4 h-4 text-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                                    </button>
+                                    <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-1 z-10">
+                                        ${(product.images || []).map((_, i) => `<span class="card-slider-dot w-1.5 h-1.5 rounded-full ${i === 0 ? 'bg-white' : 'bg-white/50'}"></span>`).join('')}
+                                    </div>
+                                ` : ''}
                                 ${badge ? `<div class="absolute top-3 left-3">
                                     <span class="bg-[#1a1a1a] text-white text-xs px-2 py-1">${escapeHtml(badge)}</span>
                                 </div>` : ''}
@@ -418,6 +444,36 @@ document.addEventListener('DOMContentLoaded', function() {
         // Re-attach filter event listeners
         attachFilterListeners();
     }
+
+    // Card image slider function
+    window.slideCardImage = function(btn, direction) {
+        const slider = btn.closest('.relative').querySelector('.card-image-slider');
+        if (!slider) return;
+        
+        const images = JSON.parse(slider.dataset.images);
+        let current = parseInt(slider.dataset.current) || 0;
+        current += direction;
+        
+        if (current < 0) current = images.length - 1;
+        if (current >= images.length) current = 0;
+        
+        slider.dataset.current = current;
+        const img = slider.querySelector('.card-slider-img');
+        if (img) {
+            img.style.opacity = '0';
+            img.style.transition = 'opacity 0.3s';
+            setTimeout(() => {
+                img.src = images[current];
+                img.style.opacity = '1';
+            }, 150);
+        }
+        
+        // Update dots
+        const dots = btn.closest('.relative').querySelectorAll('.card-slider-dot');
+        dots.forEach((dot, i) => {
+            dot.className = `card-slider-dot w-1.5 h-1.5 rounded-full ${i === current ? 'bg-white' : 'bg-white/50'}`;
+        });
+    };
 
     // Dynamically generate jewelry category filters
     function updateJewelryFilters() {
@@ -562,18 +618,53 @@ document.addEventListener('DOMContentLoaded', function() {
         const modalPrice = document.getElementById('modalPrice');
         const modalDescription = document.getElementById('modalDescription');
         const modalCategory = document.getElementById('modalCategory');
+        const modalImageNav = document.getElementById('modalImageNav');
+        const modalImageCounter = document.getElementById('modalImageCounter');
+        const modalThumbnails = document.getElementById('modalThumbnails');
         
         // Use dynamic products
         const products = dynamicProducts[type];
         
         if (products && products.length > 0 && id < products.length) {
             const product = products[id];
-            modalImage.src = product.image || '';
+            
+            // Set text fields
             modalTitle.textContent = product.name || 'Product';
-            modalSubtitle.textContent = product.subtitle || '';
             modalPrice.textContent = product.price || '';
             modalDescription.textContent = product.desc || '';
             modalCategory.textContent = product.categoryDisplay || product.category || '';
+            modalSubtitle.textContent = product.subtitle || '';
+            
+            // Setup image gallery
+            const images = product.images || [product.image || ''];
+            window._modalImages = images;
+            window._modalImageIndex = 0;
+            
+            if (images.length > 0) {
+                modalImage.src = images[0];
+            }
+            
+            // Show/hide navigation
+            if (images.length > 1) {
+                modalImageNav.style.display = 'flex';
+                modalImageCounter.textContent = `1 / ${images.length}`;
+                
+                // Build thumbnails
+                modalThumbnails.style.display = 'flex';
+                modalThumbnails.innerHTML = images.map((img, i) => 
+                    `<img src="${escapeHtml(img)}" alt="Thumbnail ${i+1}" class="w-14 h-14 object-cover cursor-pointer border-2 ${i === 0 ? 'border-[#C5A467]' : 'border-transparent'} hover:border-[#C5A467] transition-colors" onclick="setModalImage(${i})">`
+                ).join('');
+            } else {
+                modalImageNav.style.display = 'none';
+                modalThumbnails.style.display = 'none';
+            }
+            
+            // WhatsApp link
+            const whatsappBtn = document.getElementById('productWhatsappBtn');
+            if (whatsappBtn) {
+                whatsappBtn.href = `https://wa.me/1234567890?text=I'm interested in ${product.name || 'this product'}`;
+            }
+            
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         } else {
@@ -584,9 +675,41 @@ document.addEventListener('DOMContentLoaded', function() {
             modalPrice.textContent = '';
             modalDescription.textContent = '';
             modalCategory.textContent = '';
+            modalImageNav.style.display = 'none';
+            modalThumbnails.style.display = 'none';
             modal.classList.add('active');
             document.body.style.overflow = 'hidden';
         }
+    };
+    
+    window.slideModalImage = function(direction) {
+        const images = window._modalImages;
+        if (!images || images.length <= 1) return;
+        
+        let idx = window._modalImageIndex + direction;
+        if (idx < 0) idx = images.length - 1;
+        if (idx >= images.length) idx = 0;
+        
+        setModalImage(idx);
+    };
+    
+    window.setModalImage = function(index) {
+        const images = window._modalImages;
+        const modalImage = document.getElementById('modalImage');
+        const modalImageCounter = document.getElementById('modalImageCounter');
+        const modalThumbnails = document.getElementById('modalThumbnails');
+        
+        if (!images || index < 0 || index >= images.length) return;
+        
+        window._modalImageIndex = index;
+        modalImage.src = images[index];
+        modalImageCounter.textContent = `${index + 1} / ${images.length}`;
+        
+        // Update thumbnail active state
+        const thumbs = modalThumbnails.querySelectorAll('img');
+        thumbs.forEach((thumb, i) => {
+            thumb.className = `w-14 h-14 object-cover cursor-pointer border-2 ${i === index ? 'border-[#C5A467]' : 'border-transparent'} hover:border-[#C5A467] transition-colors`;
+        });
     };
     
     window.closeProductModal = function() {
