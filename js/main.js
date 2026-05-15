@@ -446,8 +446,10 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Update product cards on the page with dynamic data from JSON
     function updateProductCards() {
+        console.log('[DEBUG] updateProductCards called. jewelry:', dynamicProducts.jewelry.length, 'watch:', dynamicProducts.watch.length);
         // Update Jewelry cards
         const jewelryGrid = document.getElementById('jewelryGrid');
+        console.log('[DEBUG] jewelryGrid element:', jewelryGrid ? 'found' : 'NOT FOUND');
         if (jewelryGrid) {
             if (dynamicProducts.jewelry && dynamicProducts.jewelry.length > 0) {
                 const placeholderImg = 'https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=600&q=80';
@@ -886,7 +888,12 @@ document.addEventListener('DOMContentLoaded', function() {
     }, 100);
 
     // Load products on page load
-    loadProducts();
+    console.log('[DEBUG] About to call loadProducts...');
+    loadProducts().then(() => {
+        console.log('[DEBUG] loadProducts completed. jewelry:', dynamicProducts.jewelry.length, 'watch:', dynamicProducts.watch.length, 'featured:', dynamicProducts.featured.length);
+    }).catch(err => {
+        console.error('[DEBUG] loadProducts ERROR:', err);
+    });
 });
 
 // FAQ Accordion Toggle
