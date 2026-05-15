@@ -3932,8 +3932,6 @@
 
         function renderHomeEditor(container, data) {
             brandPromisesData = Array.isArray(data.brand_promises) ? data.brand_promises : [];
-            // Initialize craft images from new format or fallback from old format
-            craftImages = data.craft_images || [data.craft_image_1, data.craft_image_2, data.craft_image_3].filter(Boolean);
             
             container.innerHTML = `
                 <div class="form-grid">
@@ -3946,15 +3944,6 @@
                     ${createFormField('推荐标题', 'featured_title', data.featured_title || '')}
                     ${createFormField('推荐副标题', 'featured_subtitle', data.featured_subtitle || '')}
 
-                    <div class="section-divider"><h3 class="section-title">工艺区域</h3></div>
-                    ${createFormField('工艺标签', 'craft_label', data.craft_label || '')}
-                    ${createFormField('工艺标题', 'craft_title', data.craft_title || '')}
-                    <div class="form-group">
-                        <label>工艺图片（滚动轮播）</label>
-                        <div id="craftImagesList" style="margin-bottom:12px;"></div>
-                        <button type="button" class="btn-save" style="font-size:13px;padding:6px 16px;" onclick="addCraftImage()">+ 添加图片</button>
-                    </div>
-
                     <div class="section-divider"><h3 class="section-title">品牌承诺</h3></div>
                     ${createFormField('板块标签', 'promises_label', data.promises_label || '')}
                     ${createFormField('板块标题', 'promises_title', data.promises_title || '')}
@@ -3966,55 +3955,6 @@
                 </div>
             `;
             renderBrandPromisesList();
-            renderCraftImagesList();
-        }
-
-        // ===== Craft Images Editor =====
-        let craftImages = [];
-
-        function renderCraftImagesList() {
-            const container = document.getElementById('craftImagesList');
-            if (!container) return;
-            
-            if (craftImages.length === 0) {
-                container.innerHTML = '<p style="color:#8A8A8A;font-size:13px;">暂无图片，点击下方按钮添加</p>';
-                return;
-            }
-            
-            container.innerHTML = craftImages.map((img, i) => `
-                <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;padding:8px;border:1px solid #E8E4DE;border-radius:6px;background:#fff;">
-                    <img src="${img.startsWith('/') ? 'https://raw.githubusercontent.com/leejackma/vesperajewels/main' + img : img}" 
-                         style="width:60px;height:60px;object-fit:cover;border-radius:4px;">
-                    <span style="flex:1;font-size:12px;word-break:break-all;color:#333;">${img}</span>
-                    <button type="button" class="btn-small btn-remove" onclick="removeCraftImage(${i})">删除</button>
-                </div>
-            `).join('');
-        }
-
-        function addCraftImage() {
-            // Create file input
-            const input = document.createElement('input');
-            input.type = 'file';
-            input.accept = 'image/*';
-            input.onchange = async (e) => {
-                const file = e.target.files[0];
-                if (!file) return;
-                try {
-                    const result = await uploadImageToGitHub(file, 'assets/uploads/home', 'craft_image', 'home');
-                    if (result && result.path) {
-                        craftImages.push('/assets/uploads/home/' + result.path.split('/').pop());
-                        renderCraftImagesList();
-                    }
-                } catch(err) {
-                    showToast('上传失败: ' + err.message, 'error');
-                }
-            };
-            input.click();
-        }
-
-        function removeCraftImage(index) {
-            craftImages.splice(index, 1);
-            renderCraftImagesList();
         }
 
         // ===== Brand Promises Editor =====
@@ -5132,14 +5072,9 @@
                     // Collect form values
                     const inputs = document.querySelectorAll('#tab-0 input, #tab-0 textarea');
                     
-                    // For home section, use brandPromisesData and craftImages directly
+                    // For home section, use brandPromisesData directly
                     if (currentSection === 'home') {
                         newData.brand_promises = brandPromisesData;
-                        newData.craft_images = craftImages;
-                        // Remove old format fields
-                        delete newData.craft_image_1;
-                        delete newData.craft_image_2;
-                        delete newData.craft_image_3;
                     }
                     
                     // For contact section, build social_links and contact_items from individual inputs
