@@ -2,7 +2,24 @@
  * VESPERA JEWELS - Main JavaScript
  */
 
-document.addEventListener('DOMContentLoaded', function() {
+// Cache-busting for content fetches - ensures fresh data after backend updates
+    function cacheBust(url) {
+        const sep = url.includes('?') ? '&' : '?';
+        return url + sep + '_t=' + Date.now();
+    }
+    
+    // Convert content paths to GitHub raw URLs for instant updates
+    // Backend saves go to GitHub immediately, but Cloudflare Pages takes 1-3 min to rebuild
+    // By fetching from GitHub raw directly, product data updates are reflected instantly
+    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main';
+    
+    function githubRawUrl(localPath) {
+        // Remove leading slash if present
+        const cleanPath = localPath.startsWith('/') ? localPath.substring(1) : localPath;
+        return cacheBust(GITHUB_RAW_BASE + '/' + cleanPath);
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
     
     // ============================================
     // Navigation
@@ -211,7 +228,7 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             // Load jewelry products from products-index.json
             try {
-                const jewelryResponse = await fetch('content/jewelry/products-index.json');
+                const jewelryResponse = await fetch(githubRawUrl('content/jewelry/products-index.json'));
                 if (jewelryResponse.ok) {
                     const jewelryData = await jewelryResponse.json();
                     if (Array.isArray(jewelryData)) {
@@ -240,7 +257,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Load watch products from products-index.json
             try {
-                const watchResponse = await fetch('content/watches/products-index.json');
+                const watchResponse = await fetch(githubRawUrl('content/watches/products-index.json'));
                 if (watchResponse.ok) {
                     const watchData = await watchResponse.json();
                     if (Array.isArray(watchData)) {
@@ -279,6 +296,21 @@ document.addEventListener('DOMContentLoaded', function() {
             console.log('Using default product data:', e.message);
         }
     }
+
+    // Manual refresh for product data (called after backend save or periodically)
+    window.refreshProducts = async function() {
+        console.log('Refreshing product data...');
+        await loadProducts();
+    };
+
+    // Auto-refresh product data every 60 seconds
+    setInterval(async () => {
+        try {
+            await loadProducts();
+        } catch(e) {
+            // Silent fail
+        }
+    }, 60000);
 
     // Convert relative image paths to GitHub raw URLs
     function convertImagePath(imagePath) {
@@ -509,7 +541,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Load and render order steps from order.json
     async function loadOrderSteps() {
         try {
-            const response = await fetch('content/order/order.json');
+            const response = await fetch(cacheBust('content/order/order.json'));
             if (response.ok) {
                 const data = await response.json();
                 if (data.steps && Array.isArray(data.steps)) {
@@ -788,7 +820,7 @@ async function loadProcessSteps() {
         // Try to load steps from content/process/ directory
         while (hasMore) {
             try {
-                const response = await fetch(`content/process/step-${stepNum}.md`);
+                const response = await fetch(cacheBust(`content/process/step-${stepNum}.md`));
                 if (!response.ok) {
                     hasMore = false;
                     break;
@@ -1019,7 +1051,7 @@ async function loadPartnerCases() {
         // Try to load cases from content/partner-cases/ directory
         while (hasMore) {
             try {
-                const response = await fetch(`content/partner-cases/case-${caseNum}.md`);
+                const response = await fetch(cacheBust(`content/partner-cases/case-${caseNum}.md`));
                 if (!response.ok) {
                     hasMore = false;
                     break;

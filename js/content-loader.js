@@ -3,6 +3,9 @@
  * Loads CMS content from JSON files and renders to page dynamically
  */
 
+// Cache-busting utility
+function cb(url) { return url + (url.includes('?') ? '&' : '?') + '_t=' + Date.now(); }
+
 class ContentLoader {
     constructor() {
         this.contentCache = {};
@@ -56,7 +59,7 @@ class ContentLoader {
 
     async loadTheme() {
         try {
-            const response = await fetch('content/settings/theme.json');
+            const response = await fetch(cb('content/settings/theme.json'));
             if (response.ok) {
                 this.contentCache.theme = await response.json();
                 this.applyTheme(this.contentCache.theme);
@@ -77,7 +80,7 @@ class ContentLoader {
         };
         
         try {
-            const response = await fetch(paths[section]);
+            const response = await fetch(cb(paths[section]));
             if (response.ok) {
                 this.contentCache[section] = await response.json();
             }
@@ -88,7 +91,7 @@ class ContentLoader {
 
     async loadFAQItems() {
         try {
-            const response = await fetch('content/faq/faq.json');
+            const response = await fetch(cb('content/faq/faq.json'));
             if (response.ok) {
                 const faqData = await response.json();
                 // Support both old array format and new object format
