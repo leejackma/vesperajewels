@@ -1241,7 +1241,7 @@ function initCraftCarousel(images) {
     let html = '';
     allImages.forEach((imgSrc, i) => {
         const src = imgSrc.startsWith('http') ? imgSrc : 
-                    imgSrc.startsWith('/') ? `${GITHUB_RAW_BASE}${imgSrc}` : imgSrc;
+                    imgSrc.startsWith('/') ? convertImagePath(imgSrc) : imgSrc;
         html += `<div class="craft-slide"><img src="${src}" alt="Craft ${i+1}" loading="lazy"></div>`;
     });
     track.innerHTML = html;

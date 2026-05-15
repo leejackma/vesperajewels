@@ -28,13 +28,13 @@
   "craft_subtitle": "OUR CRAFT",
   "craft_label": "OUR CRAFT",
   "craft_images": [
-    "/home/craft_image_1778837882178.jpg",
-    "/home/craft_image_1778837906271.jpg",
-    "/home/craft_image_1778837913303.jpg",
-    "/home/craft_image_1778837920970.jpg",
-    "/home/craft_image_1778837928153.jpg",
-    "/home/craft_image_1778837937077.jpg",
-    "/home/craft_image_1778837946409.jpg"
+    "/assets/uploads/home/craft_image_1778837882178.jpg",
+    "/assets/uploads/home/craft_image_1778837906271.jpg",
+    "/assets/uploads/home/craft_image_1778837913303.jpg",
+    "/assets/uploads/home/craft_image_1778837920970.jpg",
+    "/assets/uploads/home/craft_image_1778837928153.jpg",
+    "/assets/uploads/home/craft_image_1778837937077.jpg",
+    "/assets/uploads/home/craft_image_1778837946409.jpg"
   ],
   "promises_label": "OUR EXPERTISE",
   "promises_title": "What We Offer",

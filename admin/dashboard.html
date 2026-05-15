@@ -4002,7 +4002,7 @@
                 try {
                     const result = await uploadImageToGitHub(file, 'assets/uploads/home', 'craft_image', 'home');
                     if (result && result.path) {
-                        craftImages.push('/home/' + result.path.split('/').pop());
+                        craftImages.push('/assets/uploads/home/' + result.path.split('/').pop());
                         renderCraftImagesList();
                     }
                 } catch(err) {
