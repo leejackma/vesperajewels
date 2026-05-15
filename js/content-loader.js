@@ -59,7 +59,7 @@ class ContentLoader {
 
     async loadTheme() {
         try {
-            const response = await fetch(cb('content/settings/theme.json'));
+            const response = await fetch('https://raw.githubusercontent.com/leejackma/vesperajewels/main/content/settings/theme.json?_t=' + Date.now());
             if (response.ok) {
                 this.contentCache.theme = await response.json();
                 this.applyTheme(this.contentCache.theme);
@@ -70,8 +70,10 @@ class ContentLoader {
     }
 
     async loadSection(section) {
+        // All content loads from GitHub Raw to bypass Cloudflare IP block (451 in mainland China)
+        const GITHUB_RAW = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main';
         const paths = {
-            home: 'GITHUB_RAW:content/home/home.json',
+            home: 'content/home/home.json',
             about: 'content/about/about.json',
             jewelry: 'content/jewelry/jewelry.json',
             watches: 'content/watches/watches.json',
@@ -80,13 +82,7 @@ class ContentLoader {
         };
         
         try {
-            const path = paths[section];
-            let url;
-            if (path.startsWith('GITHUB_RAW:')) {
-                url = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main/' + path.replace('GITHUB_RAW:', '');
-            } else {
-                url = cb(path);
-            }
+            const url = GITHUB_RAW + '/' + paths[section] + '?_t=' + Date.now();
             const response = await fetch(url);
             if (response.ok) {
                 this.contentCache[section] = await response.json();
@@ -98,7 +94,7 @@ class ContentLoader {
 
     async loadFAQItems() {
         try {
-            const response = await fetch(cb('content/faq/faq.json'));
+            const response = await fetch('https://raw.githubusercontent.com/leejackma/vesperajewels/main/content/faq/faq.json?_t=' + Date.now());
             if (response.ok) {
                 const faqData = await response.json();
                 // Support both old array format and new object format

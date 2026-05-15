@@ -566,7 +566,7 @@
     // Load and render order steps from order.json
     async function loadOrderSteps() {
         try {
-            const response = await fetch(cacheBust('content/order/order.json'));
+            const response = await fetch(githubRawUrl('content/order/order.json'));
             if (response.ok) {
                 const data = await response.json();
                 if (data.steps && Array.isArray(data.steps)) {
@@ -845,7 +845,7 @@ async function loadProcessSteps() {
         // Try to load steps from content/process/ directory
         while (hasMore) {
             try {
-                const response = await fetch(cacheBust(`content/process/step-${stepNum}.md`));
+                const response = await fetch(githubRawUrl(`content/process/step-${stepNum}.md`));
                 if (!response.ok) {
                     hasMore = false;
                     break;
@@ -1076,7 +1076,7 @@ async function loadPartnerCases() {
         // Try to load cases from content/partner-cases/ directory
         while (hasMore) {
             try {
-                const response = await fetch(cacheBust(`content/partner-cases/case-${caseNum}.md`));
+                const response = await fetch(githubRawUrl(`content/partner-cases/case-${caseNum}.md`));
                 if (!response.ok) {
                     hasMore = false;
                     break;
