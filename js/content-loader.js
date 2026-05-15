@@ -239,7 +239,12 @@ class ContentLoader {
         this.setText('[data-cms="about.story.2"]', storyParagraphs?.[2]);
         
         if (about.story_image) {
-            this.setImage('[data-cms="about.story_image"]', about.story_image);
+            let imgSrc = about.story_image;
+            // Convert relative paths to GitHub Raw URLs
+            if (imgSrc.startsWith('/')) {
+                imgSrc = 'https://raw.githubusercontent.com/leejackma/vesperajewels/main' + imgSrc;
+            }
+            this.setImage('[data-cms="about.story_image"]', imgSrc);
         }
 
         this.setText('[data-cms="about.process_label"]', about.process_label);

@@ -4126,8 +4126,17 @@ function renderAboutEditor(container, data) {
                     <div class="section-divider"><h3 class="section-title">品牌故事</h3></div>
                     ${createImageUploadComponent('story_image', data.story_image || '', 'about', 'story_image')}
                     <div class="form-group full-width">
-                        <label>故事段落（JSON 数组）</label>
-                        <textarea id="story_paragraphs" rows="6" style="font-family:monospace;font-size:13px;">${data.story_paragraphs ? JSON.stringify(data.story_paragraphs, null, 2) : '[]'}</textarea>
+                        <label>故事段落 1</label>
+                        <textarea name="story_paragraph_0" rows="3">${Array.isArray(data.story_paragraphs) ? (data.story_paragraphs[0] || '') : (data.story_paragraphs || '')}</textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>故事段落 2</label>
+                        <textarea name="story_paragraph_1" rows="3">${Array.isArray(data.story_paragraphs) ? (data.story_paragraphs[1] || '') : ''}</textarea>
+                    </div>
+                    <div class="form-group full-width">
+                        <label>故事段落 3</label>
+                        <textarea name="story_paragraph_2" rows="3">${Array.isArray(data.story_paragraphs) ? (data.story_paragraphs[2] || '') : ''}</textarea>
+                    </div>
                     <div class="section-divider"><h3 class="section-title">流程步骤</h3></div>
                     ${createFormField('流程标签', 'process_label', data.process_label || '')}
                     ${createFormField('流程标题', 'process_title', data.process_title || '')}
@@ -5158,8 +5167,8 @@ function renderAboutEditor(container, data) {
                         const name = input.name || input.id;
                         if (!name) return;
                         
-                        // Skip social_* and contact_* inputs - handled above for contact section
-                        if (name.startsWith('social_') || name.startsWith('contact_')) return;
+                        // Skip social_*, contact_* and story_paragraph_* inputs - handled separately
+                        if (name.startsWith('social_') || name.startsWith('contact_') || name.startsWith('story_paragraph_')) return;
                         
                         // Handle JSON fields
                         if (['brand_promises', 'story_paragraphs', 'highlights', 'process_steps', 'promises', 
@@ -5177,6 +5186,15 @@ function renderAboutEditor(container, data) {
                     // For about section, use processStepsData directly for process_steps
                     if (currentSection === 'about') {
                         newData.process_steps = processStepsData;
+                        // Merge story paragraph textareas into array
+                        const paragraphs = [];
+                        for (let i = 0; i < 3; i++) {
+                            const textarea = document.querySelector(`textarea[name="story_paragraph_${i}"]`);
+                            if (textarea && textarea.value.trim()) {
+                                paragraphs.push(textarea.value.trim());
+                            }
+                        }
+                        newData.story_paragraphs = paragraphs;
                     }
 
                     // Determine JSON file path based on section
