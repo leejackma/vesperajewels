@@ -7,11 +7,11 @@
     "We specialize in 100% solid 18K gold jewelry and conflict-free diamonds, ensuring every piece meets our exacting standards of quality and elegance.",
     "From engagement rings to luxury timepieces, each creation tells a story of passion, precision, and timeless beauty."
   ],
-  "story_image": "https://images.unsplash.com/photo-1617038260897-41a1f14a8ca0?w=800&q=80",
+  "story_image": "/about/story_image_1778837298873.jpg",
   "highlights_title": "What We Offer",
   "highlights_label": "OUR EXPERTISE",
   "highlights": [
-    "icon: \"💍"
+    "icon: \"ð"
   ],
   "process_title": "How We Create Your Jewelry",
   "process_label": "THE PROCESS",
@@ -28,5 +28,6 @@
     "Friendly customer service",
     "Respect for your privacy",
     "30-day return/exchange policy"
-  ]
+  ],
+  "file-img-story_image-1778837293535": ""
 }
