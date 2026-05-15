@@ -263,10 +263,11 @@ class ContentLoader {
                         }
                         return `
                             <div class="process-card animate-on-scroll">
+                                <div class="process-card-number" style="font-family:Playfair Display,serif;font-size:1.75rem;font-weight:700;color:#C5A467;text-align:center;padding:10px 0 6px;margin:0;">${step.order || (i + 1)}</div>
                                 <div class="process-card-image">
-                                    <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="${imgSrc}" alt="${i + 1} ${step.title || ''}" loading="lazy">
+                                    <img style="width:100%;height:200px;object-fit:cover;object-position:center;display:block;" src="${imgSrc}" alt="${step.order || (i + 1)} ${step.title || ''}" loading="lazy">
                                 </div>
-                                <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">${i + 1} ${step.title || ''}</p>
+                                <p class="process-card-title" style="font-family:Playfair Display,serif;font-size:1.375rem;font-weight:700;color:#C5A467 !important;text-align:center;padding:14px 16px 18px;margin:0;letter-spacing:0.02em;">${step.title || ''}</p>
                             </div>
                         `;
                     }).join('');
