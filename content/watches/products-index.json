@@ -19,7 +19,7 @@
     "subtitle": "Made of solid 18K gold",
     "price": "$14,700",
     "category": "18k-gold-watch-bracelet",
-    "description": "This watch bracelet is crafted from solid 18K rose gold. \nThe color is 100% accurate, with no color discrepancies. \nThe engraved stamp is flawless and fits perfectly onto the watch case. \nCompatible watch models: 26239or, 26331or, 15500or, 15400or.",
+    "description": "This watch bracelet is crafted from solid 18K rose gold. \nThe color is 100% accurate, with no color discrepancies. \nThe engraved stamp is perfect and fits perfectly onto the watch case. \nCompatible watch models: 26239or, 26331or, 15500or, 15400or.",
     "images": [
       "/assets/uploads/watches/product_1778821127952_1778821127959.jpg",
       "/assets/uploads/watches/product_1778821134891_1778821134896.jpg",
@@ -48,5 +48,26 @@
     "published": true,
     "_slug": "diamond-watch",
     "_path": "content/watches/products/diamond-watch.json"
+  },
+  {
+    "name": "PP 18K rose gold watch case",
+    "subtitle": "Made of solid 18K gold with natural diamonds",
+    "price": "$25,000",
+    "category": "18k-gold-watch-case",
+    "description": "This is a custom PP5723/1R watch case. Made of solid 18K rose gold and set with VS-grade natural T-shaped diamonds. If you own an authentic 240 movement, you can order an 18K gold case and install it yourself. You'll only need to spend a small amount on the movement; you won't have to spend a lot of money buying an original PP5723 from a store. This will save you a lot of money. Of course, you can also temporarily install a super clone 240 movement.",
+    "images": [
+      "/assets/uploads/watches/product_1778823175713_1778823175719.jpg",
+      "/assets/uploads/watches/product_1778823182550_1778823182555.jpg",
+      "/assets/uploads/watches/product_1778823185843_1778823185848.jpg",
+      "/assets/uploads/watches/product_1778823189891_1778823189897.jpg",
+      "/assets/uploads/watches/product_1778823194281_1778823194287.jpg",
+      "/assets/uploads/watches/product_1778823199441_1778823199446.jpg",
+      "/assets/uploads/watches/product_1778823203078_1778823203083.jpg",
+      "/assets/uploads/watches/product_1778823206195_1778823206199.jpg"
+    ],
+    "order": 3,
+    "published": true,
+    "_slug": "pp-18k-rose-gold-watch-case",
+    "_path": "content/watches/products/pp-18k-rose-gold-watch-case.json"
   }
 ]

@@ -3360,7 +3360,14 @@
             
             const productDir = `content/${currentProductType === 'watch' ? 'watches' : currentProductType}/products`;
             const filename = `${slug}.json`;
-            const path = editingProductPath || `${productDir}/${filename}`;
+            const newPath = `${productDir}/${filename}`;
+            
+            // If editing and slug changed, use new path and delete old file
+            let path = newPath;
+            let oldPathToDelete = null;
+            if (editingProductPath && editingProductPath !== newPath) {
+                oldPathToDelete = editingProductPath;
+            }
 
             // Build product data as JSON
             const productData = {
@@ -3376,6 +3383,38 @@
 
             try {
                 await saveJsonFile(path, productData, `保存产品: ${name}`);
+                
+                // Delete old file if slug changed
+                if (oldPathToDelete) {
+                    try {
+                        // Get SHA of old file first
+                        const checkResponse = await fetch(`${API_BASE}/${oldPathToDelete}?t=${Date.now()}`, {
+                            headers: {
+                                'Authorization': `Bearer ${token}`,
+                                'Accept': 'application/vnd.github.v3+json'
+                            }
+                        });
+                        if (checkResponse.ok) {
+                            const oldFileData = await checkResponse.json();
+                            await fetch(`${API_BASE}/${oldPathToDelete}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Authorization': `Bearer ${token}`,
+                                    'Accept': 'application/vnd.github.v3+json',
+                                    'Content-Type': 'application/json'
+                                },
+                                body: JSON.stringify({
+                                    message: `删除旧产品文件（名称已更改）`,
+                                    sha: oldFileData.sha,
+                                    branch: BRANCH
+                                })
+                            });
+                        }
+                    } catch (e) {
+                        console.warn('删除旧文件失败:', e);
+                    }
+                }
+                
                 await rebuildProductsIndex(currentProductType);
                 showToast('保存成功！');
                 closeProductModal();
