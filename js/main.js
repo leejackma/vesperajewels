@@ -3,7 +3,14 @@
  */
 
 // Cache-busting for content fetches - ensures fresh data after backend updates
-    function cacheBust(url) {
+function escapeHtml(text) {
+    if (text == null) return '';
+    const div = document.createElement('div');
+    div.textContent = String(text);
+    return div.innerHTML;
+}
+
+function cacheBust(url) {
         const sep = url.includes('?') ? '&' : '?';
         return url + sep + '_t=' + Date.now();
     }
