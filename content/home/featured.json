@@ -1,3 +1,24 @@
 {
-  "products": []
+  "products": [
+    {
+      "type": "jewelry",
+      "slug": "fiorever-diamond-ring"
+    },
+    {
+      "type": "jewelry",
+      "slug": "serpenti-diamond-ring"
+    },
+    {
+      "type": "watch",
+      "slug": "pp-18k-rose-gold-watch-case"
+    },
+    {
+      "type": "watch",
+      "slug": "pp-18k-rose-gold-bracelet"
+    },
+    {
+      "type": "watch",
+      "slug": "ap-18k-rose-gold-bracelet"
+    }
+  ]
 }
