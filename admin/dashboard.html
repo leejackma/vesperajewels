@@ -3213,6 +3213,8 @@
         window.closeProductModal = function() {
             const modal = document.getElementById('productModal');
             if (modal) modal.remove();
+            editingProductPath = null;
+            currentProductImages = [];
         };
 
         // Render image gallery
