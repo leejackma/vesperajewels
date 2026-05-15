@@ -19,6 +19,25 @@
     "_path": "content/jewelry/products/fiorever-diamond-ring.json"
   },
   {
+    "name": "Serpenti Diamond Earrings",
+    "subtitle": "18kt white gold set with Ruby eyes and pave diamonds",
+    "price": "$4,670",
+    "category": "earrings",
+    "description": "Material:18kt rose gold, Weight:19.5 grams, Diamonds: 2.3 carats,Gemstone: Ruby, Diamonds.(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
+    "images": [
+      "/assets/uploads/jewelry/product_1778828600233_1778828600251.jpg",
+      "/assets/uploads/jewelry/product_1778828603168_1778828603184.jpg",
+      "/assets/uploads/jewelry/product_1778828977185_1778828977199.jpg",
+      "/assets/uploads/jewelry/product_1778828985967_1778828985984.jpg",
+      "/assets/uploads/jewelry/product_1778828988865_1778828988878.jpg",
+      "/assets/uploads/jewelry/product_1778829009769_1778829009784.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "serpenti-diamond-earrings",
+    "_path": "content/jewelry/products/serpenti-diamond-earrings.json"
+  },
+  {
     "name": "Serpenti Diamond Ring",
     "subtitle": "18 kt yellow gold ring set with emeralds and full pavÃÂ© diamonds",
     "price": "$4,600",
