@@ -318,10 +318,9 @@ footer li {
 }
 
 .partner-image-carousel .carousel-track {
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    scrollbar-width: none;
+    overflow: hidden;
+    display: flex;
+    transition: transform 0.3s ease;
 }
 
 .partner-image-carousel .carousel-track::-webkit-scrollbar {
@@ -329,7 +328,9 @@ footer li {
 }
 
 .partner-image-carousel .carousel-track img {
-    scroll-snap-align: start;
+    flex-shrink: 0;
+    width: 100%;
+    object-fit: cover;
 }
 
 /* Hero background image - responsive adaptation */

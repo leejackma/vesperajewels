@@ -990,8 +990,7 @@ window.moveCarousel = function(caseId, direction) {
     const carousel = document.querySelector(`.partner-image-carousel[data-case="${caseId}"]`);
     if (carousel) {
         const track = carousel.querySelector('.carousel-track');
-        const imageWidth = 100 / state.totalImages;
-        track.style.transform = `translateX(-${state.currentIndex * imageWidth}%)`;
+        track.style.transform = `translateX(-${state.currentIndex * 100}%)`;
     }
     
     updateCarouselIndicators(caseId);
