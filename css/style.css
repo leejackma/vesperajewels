@@ -895,33 +895,33 @@ footer li {
 
 /* Hero background image - responsive adaptation */
 #heroBgImg {
-    object-fit: cover;
+    object-fit: contain;
     object-position: center center;
     width: 100%;
     height: 100%;
+    background: #000;
 }
 
-/* Desktop: focus on center of image */
+/* Desktop */
 @media (min-width: 1024px) {
     #heroBgImg {
         object-position: center center;
     }
 }
 
-/* Tablet: slightly adjust position */
+/* Tablet */
 @media (min-width: 768px) and (max-width: 1023px) {
     #heroBgImg {
-        object-position: center 30%;
+        object-position: center center;
     }
 }
 
-/* Mobile: focus on center-top to show main subject */
+/* Mobile */
 @media (max-width: 767px) {
     #heroBgImg {
-        object-position: center 25%;
+        object-position: center center;
     }
     
-    /* Ensure hero section has minimum height on mobile */
     #home .relative.h-screen {
         min-height: 100svh;
         min-height: 100vh;
