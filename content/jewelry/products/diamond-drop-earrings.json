@@ -1,12 +1,16 @@
 {
-  "name": "Diamond Drop Earrings",
-  "subtitle": "Stunning diamond drop earrings in 18K gold setting",
-  "price": "$99999",
-  "category": "earrings",
-  "description": "Stunning diamond drop earrings in 18K gold setting. Perfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.erfect for evening wear or special occasions.",
+  "name": "Serpenti Diamond Ring",
+  "subtitle": "18 kt yello gold ring set with emeralds and full pavé diamonds",
+  "price": "$4,600",
+  "category": "rings",
+  "description": "Material​: 18 kt yello gold,Weight:22.5 grams,Diamonds (Carats): 1.5\nGemstone: Narutals Diamonds, Emeralds,Size: 51(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
   "images": [
-    "/assets/uploads/jewelry/product_1778779576506_1778779576509.jpg",
-    "/assets/uploads/jewelry/product_1778779584920_1778779584922.jpg"
+    "/assets/uploads/jewelry/product_1778819468383_1778819468394.jpg",
+    "/assets/uploads/jewelry/product_1778819476418_1778819476432.jpg",
+    "/assets/uploads/jewelry/product_1778819480022_1778819480036.jpg",
+    "/assets/uploads/jewelry/product_1778819496439_1778819496451.jpg",
+    "/assets/uploads/jewelry/product_1778819507943_1778819507955.jpg",
+    "/assets/uploads/jewelry/product_1778819519773_1778819519785.jpg"
   ],
   "order": 1,
   "published": true
