@@ -9,6 +9,10 @@
       "name": "All"
     },
     {
+      "name": "18K Gold Watch Case",
+      "id": "18k-gold-watch-case"
+    },
+    {
       "name": "18K Gold Watch Bracelet",
       "id": "18k-gold-watch-bracelet"
     },
@@ -23,18 +27,6 @@
     {
       "id": "diamond-bezel",
       "name": "diamond bezel"
-    },
-    {
-      "id": "sport",
-      "name": "Sport"
-    },
-    {
-      "id": "ladies",
-      "name": "Ladies"
-    },
-    {
-      "id": "skeleton",
-      "name": "Skeleton"
     }
   ]
 }
