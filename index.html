@@ -269,11 +269,17 @@
     <section id="home" class="relative">
         <!-- Hero Area -->
         <div class="relative h-screen flex items-center justify-center">
-            <div class="absolute inset-0 overflow-hidden">
+            <div class="absolute inset-0 overflow-hidden" style="background:#FAFAF8;">
+                <!-- Blurred background layer for smooth edge transition -->
+                <img id="heroBgBlur" src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920&q=80" 
+                     alt="" 
+                     class="w-full h-full"
+                     style="object-fit:cover;filter:blur(40px) brightness(1.1);transform:scale(1.15);opacity:0.7;">
+                <!-- Sharp foreground image with contain -->
                 <img id="heroBgImg" src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?w=1920&q=80" 
                      alt="Luxury Jewelry Collection" 
                      class="w-full h-full"
-                     style="object-fit:contain;object-position:center center;width:100%;height:100%;background:#000;">
+                     style="object-fit:contain;object-position:center center;">
                 <div class="absolute inset-0 bg-black/40"></div>
             </div>
             

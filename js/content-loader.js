@@ -172,10 +172,12 @@ class ContentLoader {
         // Hero background image
         if (home.hero_image) {
             const heroImg = document.getElementById('heroBgImg') || document.querySelector('#home .absolute.inset-0 img');
+            const heroBlur = document.getElementById('heroBgBlur');
             if (heroImg) {
-                // If it's a relative path (uploaded image), prepend site base or use as-is
-                // Relative paths like /assets/uploads/... will resolve against the site domain
                 heroImg.src = home.hero_image;
+            }
+            if (heroBlur) {
+                heroBlur.src = home.hero_image;
             }
         }
         this.setText('[data-cms="home.featured_title"]', home.featured_title);
