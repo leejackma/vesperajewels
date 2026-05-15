@@ -1,5 +1,5 @@
 // Cloudflare Pages Function - Block mainland China IP access
-// Checks CF-IPCountry header (set by Cloudflare for all plans)
+// Only blocks HTML page requests, allows static assets (JS/CSS/images/fonts) through
 
 const BLOCKED_COUNTRIES = ['CN'];
 
@@ -77,8 +77,23 @@ export async function onRequest(context) {
     const country = request.headers.get('CF-IPCountry');
     
     if (country && BLOCKED_COUNTRIES.includes(country.toUpperCase())) {
+        // Get the URL path
+        const url = new URL(request.url);
+        const path = url.pathname;
+        
+        // Allow static assets through (JS, CSS, images, fonts, etc.)
+        // Only block HTML page requests (the main page load)
+        const staticExtensions = ['.js', '.css', '.jpg', '.jpeg', '.png', '.gif', '.svg', '.webp', '.ico', '.woff', '.woff2', '.ttf', '.eot', '.json', '.md'];
+        const isStaticAsset = staticExtensions.some(ext => path.toLowerCase().endsWith(ext));
+        
+        if (isStaticAsset) {
+            // Allow static assets through
+            return next();
+        }
+        
+        // Block HTML page requests
         return new Response(BLOCK_PAGE, {
-            status: 451, // 451 Unavailable For Legal Reasons
+            status: 451,
             headers: {
                 'Content-Type': 'text/html;charset=UTF-8',
                 'Cache-Control': 'no-store'
