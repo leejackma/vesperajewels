@@ -9,18 +9,6 @@
       "slug": "serpenti-diamond-ring"
     },
     {
-      "type": "watch",
-      "slug": "pp-18k-rose-gold-watch-case"
-    },
-    {
-      "type": "watch",
-      "slug": "pp-18k-rose-gold-bracelet"
-    },
-    {
-      "type": "watch",
-      "slug": "ap-18k-rose-gold-bracelet"
-    },
-    {
       "type": "jewelry",
       "slug": "18k-rose-gold-bracelet"
     },
@@ -31,6 +19,18 @@
     {
       "type": "jewelry",
       "slug": "serpent-boheme-diamond-ring"
+    },
+    {
+      "type": "watch",
+      "slug": "pp-18k-rose-gold-watch-case"
+    },
+    {
+      "type": "watch",
+      "slug": "ap-18k-rose-gold-bracelet"
+    },
+    {
+      "type": "watch",
+      "slug": "pp-18k-rose-gold-bracelet"
     }
   ]
 }
