@@ -34,11 +34,12 @@
       "_file": "faq-1778920106725"
     },
     {
-      "title": "Brand Box Package",
+      "title": "Do You Provide Brand Box & Package?",
       "question": "Do You Provide Brand Box & Package?",
-      "answer": "Yes! Every Vespera Jewels piece comes in a premium brand box with elegant packaging, perfect for gifting.",
-      "order": "4",
-      "_file": "brand-box"
+      "answer": "Yes, we offer free original packaging and certificate, but need US$100 for shipping cost.",
+      "order": 4,
+      "published": true,
+      "_file": "faq-1778920150174"
     },
     {
       "title": "Quality Confirmation",
@@ -75,7 +76,5 @@
       "order": "9",
       "_file": "delivery-time"
     }
-  ],
-  "faqSectionLabel": "QUESTIONS",
-  "faqSectionTitle": "Frequently Asked Questions"
+  ]
 }
