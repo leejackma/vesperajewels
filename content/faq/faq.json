@@ -18,11 +18,12 @@
       "_file": "quality-problem"
     },
     {
-      "title": "Out Of Stock",
+      "title": "What If The Product Is Out Of Stock?",
       "question": "What If The Product Is Out Of Stock?",
-      "answer": "Most items can be reproduced within 7-15 days. Contact us and we'll provide an estimated production time for your specific order.",
-      "order": "2",
-      "_file": "out-of-stock"
+      "answer": "Wait about 7 days for the production. For some complicated styles, it takes longer time.Contact us and we'll provide an estimated production time for your specific order.",
+      "order": 2,
+      "published": true,
+      "_file": "faq-1778919832966"
     },
     {
       "title": "How To Know Price",
