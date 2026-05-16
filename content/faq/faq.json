@@ -75,5 +75,7 @@
       "order": "9",
       "_file": "delivery-time"
     }
-  ]
+  ],
+  "faqSectionLabel": "QUESTIONS",
+  "faqSectionTitle": "Frequently Asked Questions"
 }
