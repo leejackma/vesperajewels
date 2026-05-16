@@ -2189,7 +2189,7 @@
             fileSha[path] = data.sha;
             
             if (data.encoding === 'base64') {
-                return JSON.parse(atob(data.content));
+                return JSON.parse(decodeURIComponent(escape(atob(data.content))));
             }
             return data;
         }
@@ -2216,7 +2216,7 @@
             fileSha[path] = data.sha;
             
             if (data.encoding === 'base64') {
-                const content = atob(data.content);
+                const content = decodeURIComponent(escape(atob(data.content)));
                 const frontmatter = parseFrontmatter(content);
                 return frontmatter;
             }
