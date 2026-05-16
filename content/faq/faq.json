@@ -5,10 +5,10 @@
     {
       "title": "How to pay?",
       "question": "How to pay?",
-      "answer": "Please tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount.\n\nWe accept Western Union, Money Gram, Wise (By Swift) and Bank Transfer. 50% deposit and 50% before shipping.we will make video and photos of the products to confirm with you before shipping.\nPlease tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount.",
+      "answer": "Please tell me your order. I will tell you the price of the item, the shipping cost, the original box fee and the total amount.\nWe accept Western Union, Wise via SWIFT, bank transfer and USDT cryptocurrency as payment methods. A 30% deposit is required, and the remaining 70% shall be paid before delivery. We will send you product photos and videos for your confirmation prior to shipment.",
       "order": 1,
       "published": true,
-      "_file": "faq-1778860433421"
+      "_file": "faq-1778919677681"
     },
     {
       "title": "Quality Problem",
@@ -73,7 +73,5 @@
       "order": "9",
       "_file": "delivery-time"
     }
-  ],
-  "faqSectionLabel": "QUESTIONS",
-  "faqSectionTitle": "Frequently Asked Questions"
+  ]
 }
