@@ -55,5 +55,43 @@
     "published": true,
     "_slug": "serpenti-diamond-ring",
     "_path": "content/jewelry/products/serpenti-diamond-ring.json"
+  },
+  {
+    "name": "18K rose gold bracelet",
+    "subtitle": "",
+    "price": "$5,700",
+    "category": "bracelets",
+    "description": "18k",
+    "images": [
+      "/assets/uploads/jewelry/product_1778835641562_1778835641576.jpg",
+      "/assets/uploads/jewelry/product_1778835647472_1778835647484.jpg",
+      "/assets/uploads/jewelry/product_1778835654645_1778835654657.jpg",
+      "/assets/uploads/jewelry/product_1778835658941_1778835658955.jpg",
+      "/assets/uploads/jewelry/product_1778835666152_1778835666167.jpg",
+      "/assets/uploads/jewelry/product_1778835675890_1778835675904.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "18k-rose-gold-bracelet",
+    "_path": "content/jewelry/products/18k-rose-gold-bracelet.json"
+  },
+  {
+    "name": "Serpenti Bracelet",
+    "subtitle": "Made of solid 18K gold with narutal diamonds",
+    "price": "2000",
+    "category": "bracelets",
+    "description": "18 kt rose gold bracelet set with pave diamonds on the head and tail.Weight 22grams, dianmond 0.5ct,size16.(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
+    "images": [
+      "/assets/uploads/jewelry/product_1778834867330_1778834867342.jpg",
+      "/assets/uploads/jewelry/product_1778834880280_1778834880292.jpg",
+      "/assets/uploads/jewelry/product_1778834941290_1778834941302.jpg",
+      "/assets/uploads/jewelry/product_1778834945070_1778834945081.jpg",
+      "/assets/uploads/jewelry/product_1778835117743_1778835117755.jpg",
+      "/assets/uploads/jewelry/product_1778835136897_1778835136907.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "serpenti-bracelet",
+    "_path": "content/jewelry/products/serpenti-bracelet.json"
   }
 ]
