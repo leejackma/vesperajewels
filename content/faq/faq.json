@@ -42,11 +42,12 @@
       "_file": "faq-1778920150174"
     },
     {
-      "title": "Quality Confirmation",
+      "title": "How Can I Confirm The Quality?",
       "question": "How Can I Confirm The Quality?",
-      "answer": "Each piece undergoes rigorous quality inspection before shipping. We provide detailed photos of your specific item and can arrange video calls for verification.",
-      "order": "5",
-      "_file": "quality-confirmation"
+      "answer": "Before we prepare to send, we will take photos and video to confirm with you.",
+      "order": 5,
+      "published": true,
+      "_file": "faq-1778920168969"
     },
     {
       "title": "More Pictures Videos",
