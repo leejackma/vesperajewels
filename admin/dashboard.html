@@ -3457,13 +3457,8 @@
             try {
                 await saveJsonFile(path, productData, `保存产品: ${name}`);
                 
-                // Track saved product for index rebuild (handles GitHub API delay)
-                window._lastSavedProduct = {
-                    type: currentProductType,
-                    slug: slug,
-                    path: path,
-                    data: productData
-                };
+                // Immediately update sectionData so rebuildProductsIndex can find it
+                sectionData[path] = productData;
                 
                 // Delete old file if slug changed
                 if (oldPathToDelete) {
@@ -3512,12 +3507,12 @@
                 const indexPath = `content/${productType === 'watch' ? 'watches' : productType}/products-index.json`;
                 const productsMap = {}; // Use slug as key to deduplicate
                 
-                // 1. First, use sectionData (already in memory) as the primary source
-                // This is the most reliable because it reflects all loaded/saved products
+                // 1. Use sectionData as primary source (most reliable - reflects all saves/deletes)
                 for (const [path, content] of Object.entries(sectionData)) {
                     if (!path.startsWith(productDir) || !path.endsWith('.json')) continue;
-                    const data = content.data || content || {};
+                    const data = (content && content.data) ? content.data : (content || {});
                     const slug = path.split('/').pop().replace('.json', '');
+                    if (!data || typeof data !== 'object' || Array.isArray(data)) continue;
                     productsMap[slug] = {
                         ...data,
                         _slug: slug,
@@ -3525,7 +3520,7 @@
                     };
                 }
                 
-                // 2. Also fetch directory listing from GitHub (catches files not in memory yet)
+                // 2. Also fetch directory listing from GitHub (catches files not in memory)
                 try {
                     const files = await fetchDirectory(productDir);
                     const jsonFiles = files.filter(f => f.name.endsWith('.json'));
@@ -3534,7 +3529,8 @@
                         if (productsMap[slug]) continue; // Already have it from sectionData
                         try {
                             const content = await fetchJsonFile(file.path);
-                            const data = content.data || content || {};
+                            const data = (content && content.data) ? content.data : (content || {});
+                            if (!data || typeof data !== 'object' || Array.isArray(data)) continue;
                             productsMap[slug] = {
                                 ...data,
                                 _slug: slug,
@@ -3546,13 +3542,6 @@
                     }
                 } catch(e) {
                     console.warn('获取目录列表失败:', e);
-                }
-                
-                // 3. Also check _lastSavedProduct (handles files not yet in sectionData or directory)
-                if (window._lastSavedProduct && window._lastSavedProduct.type === productType) {
-                    const saved = window._lastSavedProduct;
-                    productsMap[saved.slug] = { ...saved.data, _slug: saved.slug, _path: saved.path };
-                    window._lastSavedProduct = null;
                 }
                 
                 // Convert to array and sort
@@ -3934,6 +3923,8 @@
                 }
 
                 showToast('删除成功！');
+                // Remove from sectionData immediately
+                delete sectionData[path];
                 // Rebuild products index if deleting a product
                 if (path.includes('/products/')) {
                     const productType = path.includes('/watches/') ? 'watch' : 'jewelry';

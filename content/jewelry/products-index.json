@@ -1,5 +1,24 @@
 [
   {
+    "name": "18K rose gold bracelet",
+    "subtitle": "",
+    "price": "$5,700",
+    "category": "bracelets",
+    "description": "18k",
+    "images": [
+      "/assets/uploads/jewelry/product_1778835641562_1778835641576.jpg",
+      "/assets/uploads/jewelry/product_1778835647472_1778835647484.jpg",
+      "/assets/uploads/jewelry/product_1778835654645_1778835654657.jpg",
+      "/assets/uploads/jewelry/product_1778835658941_1778835658955.jpg",
+      "/assets/uploads/jewelry/product_1778835666152_1778835666167.jpg",
+      "/assets/uploads/jewelry/product_1778835675890_1778835675904.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "18k-rose-gold-bracelet",
+    "_path": "content/jewelry/products/18k-rose-gold-bracelet.json"
+  },
+  {
     "name": "Fiorever Diamond Ring",
     "subtitle": "18 kt rose gold ring set with a brilliant-cut diamond, a fancy-cut and a pear-shaped rubellite and pavé diamonds",
     "price": "$1,200",
@@ -17,6 +36,118 @@
     "published": true,
     "_slug": "fiorever-diamond-ring",
     "_path": "content/jewelry/products/fiorever-diamond-ring.json"
+  },
+  {
+    "name": "Kelly Diamond Bracelet, small model",
+    "subtitle": "Made of solid 18K gold with narutal diamonds",
+    "price": "$3,900",
+    "category": "bracelets",
+    "description": "Bracelet in rose gold set with 61 diamonds.Weight:26.5grams,Width:0.55cm,Diamonds:0.36 ct,Size17(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
+    "images": [
+      "/assets/uploads/jewelry/product_1778913461863_1778913461875.jpg",
+      "/assets/uploads/jewelry/product_1778913488635_1778913488648.jpg",
+      "/assets/uploads/jewelry/product_1778913513689_1778913513703.jpg",
+      "/assets/uploads/jewelry/product_1778913517445_1778913517457.jpg",
+      "/assets/uploads/jewelry/product_1778913521295_1778913521307.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "kelly-diamond-bracelet-small-model",
+    "_path": "content/jewelry/products/kelly-diamond-bracelet-small-model.json"
+  },
+  {
+    "name": "Lucky Butterfly Bracelet, 5 motifs",
+    "subtitle": "Made of solid 18K gold",
+    "price": "$1,650",
+    "category": "bracelets",
+    "description": "Hallmark clasp, small model in 18K yellow gold.Agate: 3 stones,Lapis Lazuli: 2 stones,Mother-of-pearl: 3 stones.Bracelet size: 18.5 cm.(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
+    "images": [
+      "/assets/uploads/jewelry/product_1778914093703_1778914093725.jpg",
+      "/assets/uploads/jewelry/product_1778914110719_1778914110744.jpg",
+      "/assets/uploads/jewelry/product_1778914121886_1778914121899.jpg",
+      "/assets/uploads/jewelry/product_1778914116374_1778914116398.jpg",
+      "/assets/uploads/jewelry/product_1778914130540_1778914130569.jpg",
+      "/assets/uploads/jewelry/product_1778914142526_1778914142548.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "lucky-butterfly-bracelet-5-motifs",
+    "_path": "content/jewelry/products/lucky-butterfly-bracelet-5-motifs.json"
+  },
+  {
+    "name": "Lucky Butterfly Ring",
+    "subtitle": "Made of solid 18K gold",
+    "price": "$1,700",
+    "category": "rings",
+    "description": "18K yellow gold, lapis lazuli, blue agate, white mother-of-pearl.Agate: 2 stones,Lapis Lazuli: 2 stones,Mother-of-pearl: 2 stones.(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
+    "images": [
+      "/assets/uploads/jewelry/product_1778914370742_1778914370769.jpg",
+      "/assets/uploads/jewelry/product_1778914374179_1778914374200.jpg",
+      "/assets/uploads/jewelry/product_1778914379212_1778914379231.jpg",
+      "/assets/uploads/jewelry/product_1778914388054_1778914388073.jpg",
+      "/assets/uploads/jewelry/product_1778914396541_1778914396560.jpg",
+      "/assets/uploads/jewelry/product_1778914383185_1778914383203.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "lucky-butterfly-ring",
+    "_path": "content/jewelry/products/lucky-butterfly-ring.json"
+  },
+  {
+    "name": "Malachite,10 motifs,Necklace",
+    "subtitle": "Made of solid 18K yellow gold",
+    "price": "$1,700",
+    "category": "necklaces",
+    "description": "Hallmark clasp, small model in 18K yellow gold.Malachite: 10 stones.Chain length: 42 cm.",
+    "images": [
+      "/assets/uploads/jewelry/product_1778914825773_1778914825793.jpg",
+      "/assets/uploads/jewelry/product_1778914831699_1778914831723.jpg",
+      "/assets/uploads/jewelry/product_1778914842213_1778914842236.jpg",
+      "/assets/uploads/jewelry/product_1778914803990_1778914804012.jpg",
+      "/assets/uploads/jewelry/product_1778914817646_1778914817669.jpg",
+      "/assets/uploads/jewelry/product_1778914822473_1778914822493.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "malachite-10-motifs-necklace",
+    "_path": "content/jewelry/products/malachite-10-motifs-necklace.json"
+  },
+  {
+    "name": "Serpent Boheme Diamond Ring",
+    "subtitle": "Made of solid 18K gold with narutal diamonds",
+    "price": "$2,900",
+    "category": "rings",
+    "description": "18kt yellow gold, weight 13.5g, diamond 0.66ct, size13.(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
+    "images": [
+      "/assets/uploads/jewelry/product_1778911496313_1778911496336.jpg",
+      "/assets/uploads/jewelry/product_1778911505853_1778911505870.jpg",
+      "/assets/uploads/jewelry/product_1778911514732_1778911514752.jpg",
+      "/assets/uploads/jewelry/product_1778911524187_1778911524206.jpg",
+      "/assets/uploads/jewelry/product_1778911534805_1778911534822.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "serpent-boheme-diamond-ring",
+    "_path": "content/jewelry/products/serpent-boheme-diamond-ring.json"
+  },
+  {
+    "name": "Serpenti Bracelet",
+    "subtitle": "Made of solid 18K gold with narutal diamonds",
+    "price": "2000",
+    "category": "bracelets",
+    "description": "18 kt rose gold bracelet set with pave diamonds on the head and tail.Weight 22grams, dianmond 0.5ct,size16.(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
+    "images": [
+      "/assets/uploads/jewelry/product_1778834867330_1778834867342.jpg",
+      "/assets/uploads/jewelry/product_1778834880280_1778834880292.jpg",
+      "/assets/uploads/jewelry/product_1778834941290_1778834941302.jpg",
+      "/assets/uploads/jewelry/product_1778834945070_1778834945081.jpg",
+      "/assets/uploads/jewelry/product_1778835117743_1778835117755.jpg",
+      "/assets/uploads/jewelry/product_1778835136897_1778835136907.jpg"
+    ],
+    "order": 1,
+    "published": true,
+    "_slug": "serpenti-bracelet",
+    "_path": "content/jewelry/products/serpenti-bracelet.json"
   },
   {
     "name": "Serpenti Diamond Earrings",
@@ -55,43 +186,5 @@
     "published": true,
     "_slug": "serpenti-diamond-ring",
     "_path": "content/jewelry/products/serpenti-diamond-ring.json"
-  },
-  {
-    "name": "18K rose gold bracelet",
-    "subtitle": "",
-    "price": "$5,700",
-    "category": "bracelets",
-    "description": "18k",
-    "images": [
-      "/assets/uploads/jewelry/product_1778835641562_1778835641576.jpg",
-      "/assets/uploads/jewelry/product_1778835647472_1778835647484.jpg",
-      "/assets/uploads/jewelry/product_1778835654645_1778835654657.jpg",
-      "/assets/uploads/jewelry/product_1778835658941_1778835658955.jpg",
-      "/assets/uploads/jewelry/product_1778835666152_1778835666167.jpg",
-      "/assets/uploads/jewelry/product_1778835675890_1778835675904.jpg"
-    ],
-    "order": 1,
-    "published": true,
-    "_slug": "18k-rose-gold-bracelet",
-    "_path": "content/jewelry/products/18k-rose-gold-bracelet.json"
-  },
-  {
-    "name": "Serpenti Bracelet",
-    "subtitle": "Made of solid 18K gold with narutal diamonds",
-    "price": "2000",
-    "category": "bracelets",
-    "description": "18 kt rose gold bracelet set with pave diamonds on the head and tail.Weight 22grams, dianmond 0.5ct,size16.(Please note that the carat weight, number of stones and product dimensions will vary based on the size of the creation you order. For detailed information please contact us.)",
-    "images": [
-      "/assets/uploads/jewelry/product_1778834867330_1778834867342.jpg",
-      "/assets/uploads/jewelry/product_1778834880280_1778834880292.jpg",
-      "/assets/uploads/jewelry/product_1778834941290_1778834941302.jpg",
-      "/assets/uploads/jewelry/product_1778834945070_1778834945081.jpg",
-      "/assets/uploads/jewelry/product_1778835117743_1778835117755.jpg",
-      "/assets/uploads/jewelry/product_1778835136897_1778835136907.jpg"
-    ],
-    "order": 1,
-    "published": true,
-    "_slug": "serpenti-bracelet",
-    "_path": "content/jewelry/products/serpenti-bracelet.json"
   }
 ]
