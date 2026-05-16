@@ -26,11 +26,12 @@
       "_file": "faq-1778919884925"
     },
     {
-      "title": "How To Know Price",
+      "title": "How To Know The Price?",
       "question": "How To Know The Price?",
-      "answer": "All products on our website show current prices. For custom designs or bulk orders, please contact us for a personalized quote.",
-      "order": "3",
-      "_file": "how-to-know-price"
+      "answer": "We are a direct jewelry manufacturer and offer all customers prices close to wholesale rates. This means our profit margin is very low. Since the costs of gold and diamonds fluctuate daily, the prices shown on the website are only for reference.So welcome to chat with us on Whatsapp ,Message or Telegram. Send the picture directly and we will reply you asap. It is also ok for you to send Email for us. We are online 24h.",
+      "order": 3,
+      "published": true,
+      "_file": "faq-1778920106725"
     },
     {
       "title": "Brand Box Package",
