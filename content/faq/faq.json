@@ -50,11 +50,12 @@
       "_file": "faq-1778920168969"
     },
     {
-      "title": "More Pictures Videos",
+      "title": "Can I Get More Pictures Or Videos?",
       "question": "Can I Get More Pictures Or Videos?",
-      "answer": "Absolutely! We can send additional photos and videos of any product. Contact us and we'll provide them within 24 hours.",
-      "order": "6",
-      "_file": "more-pictures"
+      "answer": "Welcome to chat with our customer service and they will take more picture for you.",
+      "order": 6,
+      "published": true,
+      "_file": "faq-1778920189940"
     },
     {
       "title": "Personal Wholesale",
